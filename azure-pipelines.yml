@@ -1,0 +1,25 @@
+jobs:
+  - job: Linux
+    pool:
+      vmImage: ubuntu-16.04
+    steps:
+      - checkout: self
+        submodules: true
+      - script: docker run -v${PWD}:/build
+          arbmind/qbs-clang10:1
+          build --file /build/co-cpp19.qbs --build-directory /tmp/build
+          -p autotest-runner
+
+  - job: Windows
+    pool:
+      vmImage: windows-2019
+    steps:
+      #- script: '"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" update --wait --quiet --norestart'
+      - script: choco install qbs
+      - script: qbs setup-toolchains --detect
+      - script: qbs config --list profiles
+      - checkout: self
+        submodules: true
+      - script: qbs
+          build profile:MSVC2019-x64 --file co-cpp19.qbs --build-directory %TMP%\build
+          -p autotest-runner
