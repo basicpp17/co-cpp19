@@ -11,6 +11,7 @@ Application {
 
     files: [
         "Strong.extras.ostream.test.cpp",
+        "Strong.hash.test.cpp",
         "Strong.test.cpp",
     ]
 }
