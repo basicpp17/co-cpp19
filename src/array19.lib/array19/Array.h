@@ -1,4 +1,6 @@
 #pragma once
+#include "SliceOf.h"
+
 #include <stddef.h> // size_t
 
 namespace array19 {
@@ -17,17 +19,18 @@ template<class T, size_t C> struct Array {
 
     [[nodiscard]] constexpr auto begin() const noexcept -> const T* { return m; }
     [[nodiscard]] constexpr auto end() const noexcept -> const T* { return m + C; }
-    [[nodiscard]] constexpr auto at(size_t i) const noexcept -> const T& { return m[i]; }
+    [[nodiscard]] constexpr auto operator[](size_t i) const noexcept -> const T& { return m[i]; }
+    constexpr operator SliceOf<const T>() const noexcept { return SliceOf{m, count}; }
 
     // hint: use `amendSliceOfArray()` if you need to iterate and mutate
     [[nodiscard]] constexpr auto amendBegin() noexcept -> T* { return m; }
     [[nodiscard]] constexpr auto amendEnd() noexcept -> T* { return m + C; }
-    [[nodiscard]] constexpr auto amendAt(size_t i) noexcept -> T& { return m[i]; }
+    [[nodiscard]] constexpr auto amend() noexcept -> SliceOf<T> { return SliceOf{m, count}; }
 };
 
 /// deduction guide without checking all types are the same
 /// usage:
 ///     Array{1, 2, 3};
-template<class T, class... Ts> Array(T, Ts...) -> Array<T, 1 + sizeof...(Ts)>;
+template<class T, class... Ts> Array(T, Ts...)->Array<T, 1 + sizeof...(Ts)>;
 
 } // namespace array19

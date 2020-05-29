@@ -29,19 +29,19 @@ TEST(Enum, example) {
 
     static_assert(metaEnum.members.count == 4);
 
-    static_assert(metaEnum.members.at(0).name == viewLiteral("red"));
-    static_assert(metaEnum.members.at(0).value == static_cast<my_test::Color>(0xf00));
-    EXPECT_EQ(metaEnum.members.at(0).name, viewLiteral("red"));
+    static_assert(metaEnum.members[0].name == viewLiteral("red"));
+    static_assert(metaEnum.members[0].value == static_cast<my_test::Color>(0xf00));
+    EXPECT_EQ(metaEnum.members[0].name, viewLiteral("red"));
 
-    static_assert(metaEnum.members.at(1).name == viewLiteral("green"));
-    static_assert(metaEnum.members.at(1).value == static_cast<my_test::Color>(0x0f0));
-    EXPECT_EQ(metaEnum.members.at(1).name, viewLiteral("green"));
+    static_assert(metaEnum.members[1].name == viewLiteral("green"));
+    static_assert(metaEnum.members[1].value == static_cast<my_test::Color>(0x0f0));
+    EXPECT_EQ(metaEnum.members[1].name, viewLiteral("green"));
 
-    static_assert(metaEnum.members.at(2).name == viewLiteral("blue"));
-    static_assert(metaEnum.members.at(2).value == static_cast<my_test::Color>(0x00f));
-    EXPECT_EQ(metaEnum.members.at(2).name, viewLiteral("blue"));
+    static_assert(metaEnum.members[2].name == viewLiteral("blue"));
+    static_assert(metaEnum.members[2].value == static_cast<my_test::Color>(0x00f));
+    EXPECT_EQ(metaEnum.members[2].name, viewLiteral("blue"));
 
-    static_assert(metaEnum.members.at(3).name == viewLiteral("last"));
-    static_assert(metaEnum.members.at(3).value == static_cast<my_test::Color>(0x010));
-    EXPECT_EQ(metaEnum.members.at(3).name, viewLiteral("last"));
+    static_assert(metaEnum.members[3].name == viewLiteral("last"));
+    static_assert(metaEnum.members[3].value == static_cast<my_test::Color>(0x010));
+    EXPECT_EQ(metaEnum.members[3].name, viewLiteral("last"));
 }

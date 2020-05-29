@@ -88,20 +88,18 @@ template<class T> struct DynamicArrayOf final {
     [[nodiscard]] auto totalCapacity() const -> Size { return m_storage.capacity; }
     [[nodiscard]] auto unusedCapacity() const -> Size { return m_storage.capacity - m_count; }
 
-    [[nodiscard]] auto begin() const& noexcept -> ConstIterator {
+    [[nodiscard]] auto begin() const & noexcept -> ConstIterator {
         return std::launder(reinterpret_cast<const T*>(m_storage.pointer));
     }
     // NOTE: end() is not laundered!
-    [[nodiscard]] auto end() const& noexcept -> ConstIterator {
+    [[nodiscard]] auto end() const & noexcept -> ConstIterator {
         return reinterpret_cast<const T*>(m_storage.pointer + m_count);
     }
 
-    [[nodiscard]] auto at(Index index) const& noexcept -> ConstReference {
+    [[nodiscard]] auto operator[](Index index) const & noexcept -> ConstReference {
         return *std::launder(reinterpret_cast<const T*>(m_storage.pointer + index));
     }
-    [[nodiscard]] auto front() const& noexcept -> ConstReference { return at(0); }
-    [[nodiscard]] auto back() const& noexcept -> ConstReference { return at(m_count - 1); }
-    [[nodiscard]] auto slice() const -> ConstSlice { return ConstSlice{begin(), end()}; }
+    [[nodiscard]] operator ConstSlice() const noexcept { return ConstSlice{begin(), end()}; }
 
     [[nodiscard]] auto amendBegin() & noexcept -> Iterator {
         return std::launder(reinterpret_cast<T*>(m_storage.pointer));
@@ -109,14 +107,9 @@ template<class T> struct DynamicArrayOf final {
     // NOTE: end() is not laundered!
     [[nodiscard]] auto amendEnd() & noexcept -> Iterator { return amendBegin() + m_count; }
 
-    [[nodiscard]] auto amendAt(Index index) & noexcept -> Reference {
-        return *std::launder(reinterpret_cast<T*>(m_storage.pointer + index));
-    }
-    [[nodiscard]] auto amendFront() & noexcept -> Reference { return amendAt(0); }
-    [[nodiscard]] auto amendBack() & noexcept -> Reference { return amendAt(m_count - 1); }
-    [[nodiscard]] auto amendSlice() -> Slice { return Slice{amendBegin(), amendEnd()}; }
+    [[nodiscard]] auto amend() -> Slice { return Slice{amendBegin(), amendEnd()}; }
 
-    void appendSlice(ConstSlice elems) {
+    void append(ConstSlice elems) {
         if (unusedCapacity() < elems.count()) grow(elems.count());
         copyConstructSlice(storageEnd(), elems);
         m_count += elems.count();

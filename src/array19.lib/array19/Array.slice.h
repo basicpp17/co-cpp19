@@ -8,13 +8,13 @@ namespace array19 {
 
 template<class T, size_t... Is>
 constexpr auto arrayFrom(const SliceOf<T>& slice, std::index_sequence<Is...>*) noexcept -> Array<T, sizeof...(Is)> {
-    return {slice.at(Is)...};
+    return {slice[Is]...};
 }
 
 template<class T, size_t... Is>
 constexpr auto arrayFrom(const SliceOf<const T>& slice, std::index_sequence<Is...>*) noexcept
     -> Array<T, sizeof...(Is)> {
-    return {slice.at(Is)...};
+    return {slice[Is]...};
 }
 
 } // namespace array19

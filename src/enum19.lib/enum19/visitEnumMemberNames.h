@@ -25,7 +25,7 @@ template<size_t N> constexpr auto extractEnumMemberNames(StringView body) -> Arr
         }
         auto identBegin = p;
         while (p != e && isCppIdentifierChar(*p)) ++p;
-        result.amendAt(i++) = StringView{identBegin, static_cast<unsigned>(p - identBegin), ExtraZero::Missing};
+        result.amend()[i++] = StringView{identBegin, static_cast<unsigned>(p - identBegin), ExtraZero::Missing};
 
         auto nested = 0;
         auto quoted = char{};

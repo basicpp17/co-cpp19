@@ -36,7 +36,7 @@ template<class T> auto endianFlipFor(T input) -> T {
     }
     else {
         auto array = Array<uint8_t, N>{};
-        for (auto i = 0u; i < N; i++) array.amendAt(i) = ((uint8_t*)&input)[N - i - 1];
+        for (auto i = 0u; i < N; i++) array.amend()[i] = ((uint8_t*)&input)[N - i - 1];
         return *(T*)array.m;
     }
 }

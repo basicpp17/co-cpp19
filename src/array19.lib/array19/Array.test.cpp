@@ -6,7 +6,7 @@ void constexpr_Array_test() {
     constexpr auto a = Array{1, 2, 3};
 
     static_assert(a.count == 3);
-    static_assert(a.at(1) == 2);
+    static_assert(a[1] == 2);
 
     constexpr auto s = [&] {
         auto s = 0;
@@ -19,9 +19,9 @@ void constexpr_Array_test() {
 void mutable_Array_test() {
     constexpr auto ca = [] {
         auto a = Array{1, 2, 3};
-        a.amendAt(1) = 5;
+        a.amend()[1] = 5;
         return a;
     }();
 
-    static_assert(ca.at(1) == 5);
+    static_assert(ca[1] == 5);
 }

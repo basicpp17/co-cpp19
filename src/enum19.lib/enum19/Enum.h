@@ -77,7 +77,7 @@ constexpr auto buildMetaEnumFor(
         viewLiteral(body),
         {MetaEnumMember<Enum>{
             index++,
-            memberNames.at(nameIndex++),
+            memberNames[nameIndex++],
             ((value = members.filled ? members.value : nextValue),
              nextValue = value + 1,
              static_cast<Enum>(value)) //

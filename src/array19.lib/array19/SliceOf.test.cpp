@@ -9,7 +9,7 @@ void constexpr_SliceOf_test() {
     constexpr auto s = sliceOfCArray(a);
 
     static_assert(s.count() == 3);
-    static_assert(s.at(1) == 2);
+    static_assert(s[1] == 2);
 
     constexpr auto sum = [&] {
         auto r = 0;
@@ -23,9 +23,9 @@ void mutable_SliceOf_test() {
     constexpr auto sa = [] {
         int a[] = {1, 2, 3};
         auto s = amendSliceOfCArray(a);
-        s.at(1) = 5;
+        s[1] = 5;
         return arrayFrom(s, static_cast<std::make_index_sequence<3>*>(nullptr));
     }();
 
-    static_assert(sa.at(1) == 5);
+    static_assert(sa[1] == 5);
 }
