@@ -1,19 +1,20 @@
 
 Product {
     Depends { name: "cpp" }
-    Depends { name: "meta19" }
+    Depends { name: "string19" }
 
     files: [
         "ADL.h",
-        "Strong.compare.h",
+        "Strong.extras.ostream.h",
         "Strong.h",
         "Strong.hash.h",
         "Strong.ostream.h",
+        "Strong.traits.h",
     ]
 
     Export {
         Depends { name: "cpp" }
         cpp.includePaths: [".."]
-        Depends { name: "meta19" }
+        Depends { name: "string19" }
     }
 }

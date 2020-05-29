@@ -10,5 +10,7 @@ Application {
     Depends { name: "googletest" }
 
     files: [
+        "Strong.extras.ostream.test.cpp",
+        "Strong.test.cpp",
     ]
 }
