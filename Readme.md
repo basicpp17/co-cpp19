@@ -3,6 +3,9 @@
 
 A versatile collection of compile time optimized tools for C++ programming.
 
+[![Travis Status](https://travis-ci.org/basicpp17/co-cpp19.svg?branch=develop)](https://travis-ci.org/basicpp17/co-cpp19)
+[![Actions: Test Runner](https://github.com/basicpp17/co-cpp19/workflows/Test%20Runner/badge.svg)](https://github.com/basicpp17/co-cpp19/actions)
+
 ## Target Compilers
 
 This library uses the latest C++ features available in Clang and Visual Studio 2019.
