@@ -9,8 +9,8 @@ This library uses the latest C++ features available in Clang and Visual Studio 2
 It compiles in "c++2a" on clang and "c++latest" on Visual Studio.
 
 Currently testd Compilers:
-* Clang 9, Clang 10
-* Visual Studio 2019 v16.5.5
+* Clang 10
+* Visual Studio 2019 v16.6.0
 
 GCC may be supported once the following bugs have been fixed:
 * Lambdas in constexpr context
