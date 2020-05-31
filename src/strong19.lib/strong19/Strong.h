@@ -20,7 +20,7 @@ template<class V> struct Weak {
     V v;
     constexpr Weak() = default;
     constexpr explicit Weak(V v) : v(v) {}
-    constexpr auto operator<=>(const Weak&) const = default;
+    bool operator==(const Weak&) const = default;
 };
 
 #ifndef DEFINE_STRONG_EXTRAS
@@ -32,11 +32,11 @@ template<class V> struct Weak {
     struct NAME : private strong19::Weak<VALUE> {                                                                      \
         using Weak::Weak;                                                                                              \
         using Weak::v;                                                                                                 \
-        constexpr auto operator<=>(const NAME&) const = default;                                                       \
+        bool operator==(const NAME&) const = default;                                                                  \
     };                                                                                                                 \
     constexpr inline auto isStrong(strong19::ADL*, NAME*)->bool { return true; }                                       \
     auto strongValueType(NAME*)->VALUE;                                                                                \
-    auto strongTags(NAME*)->meta19::TypePack<##__VA_ARGS__>;                                                           \
+    auto strongTags(NAME*)->meta19::TypePack<__VA_ARGS__>;                                                             \
     constexpr inline auto strongName(NAME*)->string19::StringView { return string19::viewLiteral(#NAME); }             \
     DEFINE_STRONG_EXTRAS(NAME)                                                                                         \
     struct NAME
