@@ -1,12 +1,15 @@
 jobs:
   - job: Linux
     pool:
-      vmImage: ubuntu-16.04
+      vmImage: ubuntu-20.04
     steps:
       - checkout: self
         submodules: true
+      - task: ShellScript@2
+        inputs:
+          scriptPath: third_party/git_clone_googletest.sh
       - script: docker run -v${PWD}:/build
-          arbmind/qbs-clang10:1
+          arbmind/qbs-clang10
           build --file /build/co-cpp19.qbs --build-directory /tmp/build
           -p autotest-runner
 
@@ -20,6 +23,9 @@ jobs:
       - script: qbs config --list profiles
       - checkout: self
         submodules: true
+      - task: ShellScript@2
+        inputs:
+          scriptPath: third_party/git_clone_googletest.sh
       - script: qbs
           build profile:MSVC2019-x64 --file co-cpp19.qbs --build-directory %TMP%\build
           -p autotest-runner
