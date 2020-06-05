@@ -15,7 +15,10 @@ using meta19::type;
 
 namespace details {
 
-template<size_t I, class T> struct TupleEntry { T v; };
+template<size_t I, class T> struct TupleEntry {
+    T v;
+    constexpr bool operator==(const TupleEntry&) const = default;
+};
 
 template<size_t I, class T> constexpr auto entryAt(const TupleEntry<I, T>& te) -> const T& { return te.v; }
 template<class T, size_t I> constexpr auto entryOf(const TupleEntry<I, T>& te) -> const T& { return te.v; }
@@ -36,10 +39,10 @@ private:
     template<size_t... Is> struct IndexedTuple<std::index_sequence<Is...>> : details::TupleEntry<Is, Ts>... {
 
         constexpr IndexedTuple() = default;
-
         constexpr IndexedTuple(const Ts&... ts) : details::TupleEntry<Is, Ts>({ts})... {}
-
         constexpr IndexedTuple(Ts&&... ts) : details::TupleEntry<Is, Ts>({std::move(ts)})... {}
+
+        constexpr bool operator==(const IndexedTuple&) const = default;
 
         template<class F> constexpr void visitAll(F&& f) const& {
             (void)((f(*static_cast<const details::TupleEntry<Is, Ts>*>(this)), ...));
@@ -59,6 +62,8 @@ public:
     constexpr Tuple() = default;
     constexpr Tuple(const Ts&... ts) : indexed(ts...) {}
     constexpr Tuple(Ts&&... ts) : indexed(std::move(ts)...) {}
+
+    constexpr bool operator==(const Tuple&) const = default;
 
     template<class... Os> static constexpr auto fromArgs(Os&&... os) -> Tuple {
         auto res = Tuple{};
@@ -100,6 +105,7 @@ public:
 
 template<> struct Tuple<> {
     constexpr Tuple() = default;
+    constexpr bool operator==(const Tuple&) const = default;
 
     static constexpr auto fromArgs() -> Tuple { return {}; }
     static constexpr auto fromTuple(const Tuple&) -> Tuple { return {}; }
@@ -110,6 +116,6 @@ template<> struct Tuple<> {
     template<class F> void amendAll(F&&) & {}
 };
 
-template<class... Ts> Tuple(Ts...) -> Tuple<Ts...>;
+template<class... Ts> Tuple(Ts...)->Tuple<Ts...>;
 
 } // namespace tuple19

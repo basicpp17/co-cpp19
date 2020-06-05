@@ -1,5 +1,4 @@
 #include "Rope.store.h"
-#include "StringStore.equals.h"
 #include "StringStore.literal.h"
 #include "StringView.equals.h"
 #include "StringView.literal.h"

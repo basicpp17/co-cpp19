@@ -23,5 +23,5 @@ void mutable_Array_test() {
         return a;
     }();
 
-    static_assert(ca[1] == 5);
+    static_assert(ca == Array{1, 5, 3});
 }

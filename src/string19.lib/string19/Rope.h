@@ -12,6 +12,7 @@ template<class... Ts> struct Rope {
     constexpr Rope() = default;
     constexpr Rope(const Ts&... ts) : parts(ts...) {}
     constexpr Rope(Ts&&... ts) : parts(std::move(ts)...) {}
+    constexpr bool operator==(const Rope&) const = default;
 };
 
 template<class... Ts> Rope(Ts&&...)->Rope<StoredOf<Ts>...>;

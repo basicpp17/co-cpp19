@@ -3,7 +3,6 @@ Product {
     Depends { name: "cpp19" }
 
     files: [
-        "Array.equals.h",
         "Array.h",
         "Array.ostream.h",
         "Array.slice.h",

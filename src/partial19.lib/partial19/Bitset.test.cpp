@@ -10,18 +10,18 @@ TEST(Bitset, example10) {
 
     auto bits10 = Bits10{};
     bits10.setAt(0);
-    EXPECT_TRUE(bits10.at(0));
+    EXPECT_TRUE(bits10[0]);
 
     bits10.setAt(9);
 
-    EXPECT_TRUE(bits10.at(9));
-    EXPECT_FALSE(bits10.at(8));
+    EXPECT_TRUE(bits10[9]);
+    EXPECT_FALSE(bits10[8]);
 
     bits10.resetAt(9);
-    EXPECT_FALSE(bits10.at(9));
+    EXPECT_FALSE(bits10[9]);
 
     bits10.reset();
-    EXPECT_FALSE(bits10.at(0));
+    EXPECT_FALSE(bits10[0]);
 }
 
 TEST(Bitset, example99) {
@@ -30,15 +30,15 @@ TEST(Bitset, example99) {
 
     auto bits99 = Bits99{};
     bits99.setAt(0);
-    EXPECT_TRUE(bits99.at(0));
+    EXPECT_TRUE(bits99[0]);
 
     bits99.setAt(98);
-    EXPECT_TRUE(bits99.at(98));
-    EXPECT_FALSE(bits99.at(97));
+    EXPECT_TRUE(bits99[98]);
+    EXPECT_FALSE(bits99[97]);
 
     bits99.resetAt(98);
-    EXPECT_FALSE(bits99.at(98));
+    EXPECT_FALSE(bits99[98]);
 
     bits99.reset();
-    EXPECT_FALSE(bits99.at(0));
+    EXPECT_FALSE(bits99[0]);
 }

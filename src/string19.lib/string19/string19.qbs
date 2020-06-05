@@ -19,7 +19,6 @@ Product {
     Group {
         name: "StringStore"
         files: [
-            "StringStore.equals.h",
             "StringStore.h",
             "StringStore.literal.h",
             "StringStore.range.h",

@@ -1,5 +1,4 @@
 #include "Endianess.h"
-#include "array19/Array.equals.h"
 #include "array19/Array.ostream.h"
 
 #include <gtest/gtest.h>

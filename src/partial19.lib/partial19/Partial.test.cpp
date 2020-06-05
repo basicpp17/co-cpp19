@@ -10,9 +10,9 @@ using meta19::type;
 TEST(Partial, empty) {
     using P = Partial<char, int, float>;
     auto p0 = P{};
-    ASSERT_FALSE(p0.which().at(0));
-    ASSERT_FALSE(p0.which().at(1));
-    ASSERT_FALSE(p0.which().at(2));
+    ASSERT_FALSE(p0.which()[0]);
+    ASSERT_FALSE(p0.which()[1]);
+    ASSERT_FALSE(p0.which()[2]);
 }
 
 TEST(Partial, construction) {
@@ -69,13 +69,13 @@ TEST(Partial, assignment) {
 // TEST(Partial, type) {
 //    auto p = Partial<char, int, float>{'\x23', 23};
 //    ASSERT_TRUE(p.which().of(type<char>));
-//    ASSERT_TRUE(p.which().at(0));
+//    ASSERT_TRUE(p.which()[0]);
 //    EXPECT_EQ(0x23, p.of(type<char>));
-//    EXPECT_EQ(0x23, p.at(_index<0>));
+//    EXPECT_EQ(0x23, p[_index<0>]);
 //    ASSERT_TRUE(p.which().of(type<int>));
-//    ASSERT_TRUE(p.which().at(1));
+//    ASSERT_TRUE(p.which()[1]);
 //    ASSERT_EQ(23, p.of(type<int>));
-//    EXPECT_EQ(23, p.at(_index<1>));
+//    EXPECT_EQ(23, p[_index<1>]);
 
 //    // TODO CK: Does prevent valid compilation? Microsoft Visual C++ BUG?
 //    // auto m = Partial<int, int>{23, 32};
@@ -126,11 +126,11 @@ TEST(Partial, assignment) {
 //    p.visitAll([&](auto i, auto t) {
 //        ++count;
 //        if (i == 0) {
-//            EXPECT_TRUE(p.which().at(i));
+//            EXPECT_TRUE(p.which()[i]);
 //            EXPECT_EQ(t, type<char>);
 //        }
 //        else {
-//            EXPECT_FALSE(p.which().at(i));
+//            EXPECT_FALSE(p.which()[i]);
 //            EXPECT_NE(t, type<char>);
 //        }
 //    });

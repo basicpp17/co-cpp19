@@ -5,7 +5,6 @@ Product {
 
     files: [
         "Tuple.bind.h",
-        "Tuple.equals.h",
         "Tuple.h",
         "Tuple.trait.h",
     ]

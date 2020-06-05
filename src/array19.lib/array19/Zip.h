@@ -5,6 +5,9 @@ namespace array19 {
 
 /// Zip allows to iterate two containers in lockstep
 ///
+/// precondition:
+///  * both containers have the same length
+///
 /// usage:
 ///   for (auto [valueA, valueB] : Zip{a, b});
 template<class A, class B> struct Zip {
@@ -19,19 +22,12 @@ template<class A, class B> struct Zip {
     };
 
     struct iterator {
-        constexpr iterator(AIt aIt, BIt bIt) : aIt(aIt), bIt(bIt) {}
-
-        constexpr auto operator*() const -> result { return {*aIt, *bIt}; }
-
-        constexpr auto operator++() -> iterator& { return (++aIt, ++bIt, *this); }
-        constexpr auto operator--() -> iterator& { return (--aIt, --bIt, *this); }
-
-        constexpr bool operator==(const iterator& o) const { return aIt == o.aIt && bIt == o.bIt; }
-        constexpr bool operator!=(const iterator& o) const { return !(*this == o); }
-
-    private:
         AIt aIt;
         BIt bIt;
+
+        constexpr auto operator*() const -> result { return {*aIt, *bIt}; }
+        constexpr auto operator++() -> iterator& { return (++aIt, ++bIt, *this); }
+        constexpr bool operator==(const iterator& o) const = default;
     };
 
     constexpr Zip() = default;
@@ -45,6 +41,6 @@ private:
     B* b{};
 };
 
-template<class A, class B> Zip(A&, B&) -> Zip<A, B>;
+template<class A, class B> Zip(A&, B&)->Zip<A, B>;
 
 } // namespace array19

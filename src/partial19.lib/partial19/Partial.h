@@ -52,14 +52,13 @@ struct PartialWhich {
         return PartialWhich{bits};
     }
 
+    constexpr bool operator==(const PartialWhich& o) const = default;
+
     constexpr operator Bits() const { return m; }
 
-    constexpr bool operator==(PartialWhich o) const { return o.m == m; }
-    constexpr bool operator!=(PartialWhich o) const { return o.m != m; }
+    constexpr bool operator[](size_t i) const { return m[i]; }
 
-    constexpr bool at(size_t i) const { return m.at(i); }
-
-    template<class T> constexpr bool of(Type<T>* = {}) const { return m.at(index_of_map<T, Map>); }
+    template<class T> constexpr bool of(Type<T>* = {}) const { return m[index_of_map<T, Map>]; }
 
 private:
     Bits m{};
@@ -103,12 +102,12 @@ public:
 
     // copy
     Partial(const Partial& o) {
-        auto hasValue = [&](auto i) { return o.m_bits.at(i); };
+        auto hasValue = [&](auto i) { return o.m_bits[i]; };
         auto factory = [&]<class T>(Type<T>*, void* ptr) { new (ptr) T(o.of<T>()); };
         *this = fromFactory(hasValue, factory);
     }
     auto operator=(const Partial& o) -> Partial& {
-        auto hasValue = [&](auto i) { return o.m_bits.at(i); };
+        auto hasValue = [&](auto i) { return o.m_bits[i]; };
         auto factory = [&]<class T>(Type<T>*, void* ptr) { new (ptr) T(o.of<T>()); };
         *this = fromFactory(hasValue, factory);
         return *this;
@@ -137,7 +136,7 @@ public:
     template<class... Vs> static auto fromArgs(Vs&&... vs) -> Partial {
         auto bits = Bits{};
         (bits.setAt(index_of_map<StoredOf<Vs>, Map>), ...);
-        auto hasValue = [&](size_t i) { return bits.at(i); };
+        auto hasValue = [&](size_t i) { return bits[i]; };
         auto factory = [&]<class T>(Type<T>*, void* ptr) {
             ((details::ConditionalPlacementNew<isSame(&type<T>, &type<StoredOf<Vs>>)>::apply((Vs &&) vs, ptr), 0), ...);
         };
@@ -147,7 +146,7 @@ public:
     [[nodiscard]] constexpr auto which() const -> Which { return Which{m_bits}; }
 
     // returns the value stored as type Ts...[I]
-    // precondition: which().at(I) == true
+    // precondition: which()[I] == true
     template<size_t I>[[nodiscard]] auto at(Index<I>* = {}) const -> const TypeAtMap<I, Map>& {
         using T = TypeAtMap<I, Map>;
         return *std::launder(reinterpret_cast<const T*>(m_pointer + offsetAt(I)));
@@ -174,22 +173,22 @@ public:
         auto i = 0u;
         auto offset = size_t{};
         auto ptr = m_pointer;
-        ((m_bits.at(i) ? (offset = alignOffset(alignof_ts[i], offset),
-                          f(*std::launder(reinterpret_cast<const Ts*>(ptr + offset))),
-                          offset += sizeof_ts[i],
-                          ++i)
-                       : ++i),
+        ((m_bits[i] ? (offset = alignOffset(alignof_ts[i], offset),
+                       f(*std::launder(reinterpret_cast<const Ts*>(ptr + offset))),
+                       offset += sizeof_ts[i],
+                       ++i)
+                    : ++i),
          ...);
     }
     template<class F> auto amendVisitInitialized(F&& f) {
         auto i = 0u;
         auto offset = size_t{};
         auto ptr = m_pointer;
-        ((m_bits.at(i) ? (offset = alignOffset(alignof_ts[i], offset),
-                          f(*std::launder(reinterpret_cast<Ts*>(ptr + offset))),
-                          offset += sizeof_ts[i],
-                          ++i)
-                       : ++i),
+        ((m_bits[i] ? (offset = alignOffset(alignof_ts[i], offset),
+                       f(*std::launder(reinterpret_cast<Ts*>(ptr + offset))),
+                       offset += sizeof_ts[i],
+                       ++i)
+                    : ++i),
          ...);
     }
 
@@ -197,7 +196,7 @@ private:
     void destructAll() {
         amendVisitInitialized([]<class T>(T & v) { v.~T(); });
         if constexpr (__STDCPP_DEFAULT_NEW_ALIGNMENT__ < max_align) {
-            auto hasValue = [&](size_t i) { return m_bits.at(i); };
+            auto hasValue = [&](size_t i) { return m_bits[i]; };
             auto size = storageSize(hasValue);
             ::operator delete[](m_pointer, size, std::align_val_t{max_align});
         }
@@ -222,7 +221,7 @@ private:
     [[nodiscard]] auto offsetAt(size_t index) const {
         auto offset = size_t{};
         for (auto i = 0u; i < index; i++)
-            if (m_bits.at(i)) offset = alignOffset(alignof_ts[i], offset) + sizeof_ts[i];
+            if (m_bits[i]) offset = alignOffset(alignof_ts[i], offset) + sizeof_ts[i];
         return alignOffset(alignof_ts[index], offset);
     }
 

@@ -10,8 +10,6 @@ using array19::SliceOf;
 /// UniqueBuffer is allocated on construction and carries the ownership of the memory
 /// Use slices to access the data
 struct UniqueBuffer {
-    using Size = size_t;
-    using Index = size_t;
     using Slice = SliceOf<uint8_t>;
     using ConstSlice = SliceOf<const uint8_t>;
 
@@ -28,15 +26,13 @@ struct UniqueBuffer {
         return *this;
     }
 
-    [[nodiscard]] auto size() const -> Size { return m_size; }
-
-    [[nodiscard]] auto slice() const -> ConstSlice { return ConstSlice{m_pointer, m_pointer + m_size}; }
-
-    [[nodiscard]] auto amendSlice() -> Slice { return Slice{m_pointer, m_pointer + m_size}; }
+    [[nodiscard]] auto size() const -> size_t { return m_size; }
+    [[nodiscard]] auto slice() const -> ConstSlice { return ConstSlice{m_pointer, m_size}; }
+    [[nodiscard]] auto amendSlice() -> Slice { return Slice{m_pointer, m_size}; }
 
 private:
     uint8_t* m_pointer{};
-    Size m_size{};
+    size_t m_size{};
 };
 
 } // namespace serialize19

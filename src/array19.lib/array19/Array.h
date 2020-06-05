@@ -7,28 +7,29 @@ namespace array19 {
 
 /// simplified version of std::array
 /// * no member types
-/// * no `operator[]` - use `at` and `amendAt`
 /// * no exceptions
 template<class T, size_t C> struct Array {
     using Element = T;
     static constexpr auto count = C;
-    using Size = decltype(C);
-    using Index = size_t;
 
     T m[count];
 
+    constexpr bool operator==(const Array&) const = default;
+
+    [[nodiscard]] constexpr auto isEmpty() const noexcept -> bool { return count == 0; }
     [[nodiscard]] constexpr auto begin() const noexcept -> const T* { return m; }
     [[nodiscard]] constexpr auto end() const noexcept -> const T* { return m + C; }
     [[nodiscard]] constexpr auto operator[](size_t i) const noexcept -> const T& { return m[i]; }
-    constexpr operator SliceOf<const T>() const noexcept { return SliceOf{m, count}; }
+    constexpr operator SliceOf<const T>() const noexcept { return SliceOf{m, C}; }
 
     // hint: use `amendSliceOfArray()` if you need to iterate and mutate
     [[nodiscard]] constexpr auto amendBegin() noexcept -> T* { return m; }
     [[nodiscard]] constexpr auto amendEnd() noexcept -> T* { return m + C; }
-    [[nodiscard]] constexpr auto amend() noexcept -> SliceOf<T> { return SliceOf{m, count}; }
+    [[nodiscard]] constexpr auto amend() noexcept -> SliceOf<T> { return SliceOf{m, C}; }
 };
 
-/// deduction guide without checking all types are the same
+/// simplified deduction guide
+/// * not checking that all types are the same
 /// usage:
 ///     Array{1, 2, 3};
 template<class T, class... Ts> Array(T, Ts...)->Array<T, 1 + sizeof...(Ts)>;

@@ -40,7 +40,7 @@ template<class ElemStorage> struct DynamicStorage final {
 
 template<class T> struct DynamicArrayOf final {
     using Element = T;
-    using Size = size_t;
+    using Count = size_t;
     using Index = size_t;
 
     using Reference = Element&;
@@ -54,52 +54,52 @@ template<class T> struct DynamicArrayOf final {
     ~DynamicArrayOf() noexcept(std::is_nothrow_destructible_v<Element>) { destructSlice(amendSlice()); }
 
     DynamicArrayOf(const DynamicArrayOf& o) noexcept(std::is_nothrow_copy_constructible_v<Element>)
-            : m_storage(Storage::create(o._count))
-            , m_count(o._count) {
+            : m_storage(Storage::create(o.m_count))
+            , m_count(o.m_count) {
         copyConstructSlice(m_storage.pointer, o.slice());
     }
     DynamicArrayOf& operator=(const DynamicArrayOf& o) noexcept(std::is_nothrow_copy_assignable_v<Element>) {
-        if (m_storage.capacity < o.count()) {
+        if (m_storage.capacity < o.m_count) {
             *this = DynamicArrayOf(o);
         }
         else {
-            auto countDiff = m_count - o._count;
+            auto countDiff = m_count - o.m_count;
             if (countDiff > 0) {
-                copyAssignSlice(amendBegin(), ConstSlice{o.begin(), o.begin() + m_count});
-                copyConstructSlice(storageEnd(), ConstSlice{o.begin() + m_count, o.end()});
+                copyAssignSlice(amendBegin(), o.slice());
+                destructSlice(Slice{amendBegin() + o.m_count, countDiff});
             }
             else {
-                copyAssignSlice(amendBegin(), o.slice());
-                destructSlice(Slice{amendBegin() + o._count, amendEnd()});
+                copyAssignSlice(amendBegin(), ConstSlice{o.begin(), m_count});
+                copyConstructSlice(storageEnd(), ConstSlice{o.begin() + m_count, -countDiff});
             }
-            m_count = o.count();
+            m_count = o.m_count;
         }
     }
 
-    DynamicArrayOf(DynamicArrayOf&& o) noexcept : m_storage(std::move(o)), m_count(o._count) { o._count = 0; }
+    DynamicArrayOf(DynamicArrayOf&& o) noexcept : m_storage(std::move(o)), m_count(o.m_count) { o.m_count = 0; }
     DynamicArrayOf& operator=(DynamicArrayOf&& o) noexcept {
         destructSlice(amendSlice());
-        m_storage = std::move(o);
-        m_count = o._count;
-        o._count = 0;
+        m_storage = std::move(o.m_storage);
+        m_count = o.m_count;
+        o.m_count = 0;
     }
 
-    [[nodiscard]] auto count() const -> Size { return m_count; }
-    [[nodiscard]] auto totalCapacity() const -> Size { return m_storage.capacity; }
-    [[nodiscard]] auto unusedCapacity() const -> Size { return m_storage.capacity - m_count; }
+    [[nodiscard]] constexpr auto isEmpty() const noexcept -> bool { return m_count == 0; }
+    [[nodiscard]] auto count() const -> Count { return m_count; }
+    [[nodiscard]] auto totalCapacity() const -> Count { return m_storage.capacity; }
+    [[nodiscard]] auto unusedCapacity() const -> Count { return m_storage.capacity - m_count; }
 
-    [[nodiscard]] auto begin() const & noexcept -> ConstIterator {
+    [[nodiscard]] auto begin() const noexcept -> ConstIterator {
         return std::launder(reinterpret_cast<const T*>(m_storage.pointer));
     }
     // NOTE: end() is not laundered!
-    [[nodiscard]] auto end() const & noexcept -> ConstIterator {
+    [[nodiscard]] auto end() const noexcept -> ConstIterator {
         return reinterpret_cast<const T*>(m_storage.pointer + m_count);
     }
-
-    [[nodiscard]] auto operator[](Index index) const & noexcept -> ConstReference {
+    [[nodiscard]] auto operator[](Index index) const noexcept -> ConstReference {
         return *std::launder(reinterpret_cast<const T*>(m_storage.pointer + index));
     }
-    [[nodiscard]] operator ConstSlice() const noexcept { return ConstSlice{begin(), end()}; }
+    [[nodiscard]] operator ConstSlice() const noexcept { return ConstSlice{begin(), m_count}; }
 
     [[nodiscard]] auto amendBegin() & noexcept -> Iterator {
         return std::launder(reinterpret_cast<T*>(m_storage.pointer));
@@ -107,31 +107,38 @@ template<class T> struct DynamicArrayOf final {
     // NOTE: end() is not laundered!
     [[nodiscard]] auto amendEnd() & noexcept -> Iterator { return amendBegin() + m_count; }
 
-    [[nodiscard]] auto amend() -> Slice { return Slice{amendBegin(), amendEnd()}; }
+    [[nodiscard]] auto amend() -> Slice { return Slice{amendBegin(), m_count}; }
+
+    void ensureCapacity(Count count) {
+        if (totalCapacity() < size) growBy(size - totalCapacity());
+    }
+    void ensureUnusedCapacity(Count count) {
+        if (unusedCapacity() < count) growBy(count);
+    }
 
     void append(ConstSlice elems) {
-        if (unusedCapacity() < elems.count()) grow(elems.count());
+        ensureUnusedCapacity(elems.count());
         copyConstructSlice(storageEnd(), elems);
         m_count += elems.count();
     }
 
     void pop() noexcept(std::is_nothrow_destructible_v<Element>) {
-        destructSlice(Slice{amendBegin() + m_count - 1, amendEnd()});
+        destructSlice(Slice{amendBegin() + m_count - 1, 1});
         m_count--;
     }
 
-    void splice(Iterator it, Size removeCount, ConstSlice insertSlice) {
+    void splice(Iterator it, Count removeCount, ConstSlice insertSlice) {
         auto offset = it - amendBegin();
         auto insertCount = insertSlice.count();
         auto remainCount = m_count - offset - removeCount;
-        auto remainSlice = Slice{it + removeCount, amendEnd()};
+        auto remainSlice = Slice{it + removeCount, remainCount};
         // old: [ ..(offset)..,[it] ..(removeCount).., ..(remainCount)... ]
         // new: [ ..(offset)..,[it] ..(insertCount).., ..(remainCount)... ]
 
         auto countDiff = insertCount - removeCount;
         if (unusedCapacity() < countDiff) { // not enough storage => arrange everything in new storage
             auto newStorage = grownStorage(countDiff);
-            moveConstructSlice(newStorage.pointer, Slice{amendBegin(), it});
+            moveConstructSlice(newStorage.pointer, Slice{amendBegin(), offset});
             copyConstructSlice(newStorage.pointer + offset, insertSlice);
             moveConstructSlice(newStorage.pointer + offset + insertCount, remainSlice);
             destructSlice(amendSlice());
@@ -140,7 +147,7 @@ template<class T> struct DynamicArrayOf final {
         else if (countDiff <= 0) { // shrinking
             copyAssignSlice(it, insertSlice);
             forwardMoveConstructSlice(it + insertCount, remainSlice);
-            destructSlice(Slice{amendEnd() + countDiff, amendEnd()});
+            destructSlice(Slice{amendEnd() + countDiff, -countDiff});
         }
         else if (offset + insertCount <= m_count) { // parts of remainSlice is moved beyond end()
             moveConstructSlice(storageEnd(), remainSlice.slice(remainCount - countDiff, countDiff));
@@ -165,8 +172,8 @@ private:
     using StorageIterator = ElementStorage*;
     constexpr static auto element_size = sizeof(ElementStorage);
 
-    auto byteSize() const -> Size { return m_count * element_size; }
-    auto storageEnd() -> StorageIterator { return m_storage.pointer + m_count; }
+    [[nodiscard]] auto byteSize() const -> size_t { return m_count * element_size; }
+    [[nodiscard]] auto storageEnd() -> StorageIterator { return m_storage.pointer + m_count; }
 
     static void destructSlice(Slice slice) {
         for (auto& elem : slice) elem.~Element();
@@ -222,14 +229,14 @@ private:
             for (auto& from : fromSlice) new (to++) Element(std::move(from));
         }
     }
-    auto grownStorage(int growBy) const -> Size {
+    [[nodiscard]] auto grownStorage(int growBy) const -> Storage {
         auto cur = totalCapacity();
         auto res = (cur << 1) - (cur >> 1) + (cur >> 4); // * 1.563
         if (res < 5) res = 5;
         if (res < totalCapacity() + growBy) res = totalCapacity() + growBy;
         return Storage::create(res);
     }
-    void grow(int by) {
+    void growBy(int by) {
         auto newStorage = grownStorage(by);
         moveConstructSlice(newStorage.pointer, amendSlice());
         destructSlice(amendSlice());
@@ -238,7 +245,7 @@ private:
 
 private:
     Storage m_storage;
-    Size m_count;
+    Count m_count;
 };
 
 } // namespace array19

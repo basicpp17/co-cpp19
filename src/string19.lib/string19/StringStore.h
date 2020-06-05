@@ -15,6 +15,7 @@ template<size_t N> struct StringStore {
     CharArray<N + 1> data{};
 
     constexpr char operator[](size_t i) const noexcept { return data[i]; }
+    constexpr bool operator==(const StringStore&) const = default;
 };
 
 /// note: always use storeLiteral("Hello") - or you get a 2nd \0 into your string!

@@ -82,8 +82,7 @@ template<class... Ts> struct VariantWhich {
 
     constexpr operator Value() const { return m; }
 
-    constexpr bool operator==(VariantWhich o) const { return o.m == m; }
-    constexpr bool operator!=(VariantWhich o) const { return o.m != m; }
+    constexpr bool operator==(const VariantWhich& o) const = default;
 
     template<class T> static constexpr auto of(Type<T>* = {}) -> VariantWhich {
         return VariantWhich{static_cast<Value>(index_of_map<T, Map>)};
