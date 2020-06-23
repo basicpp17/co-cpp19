@@ -12,7 +12,7 @@ template<size_t N> constexpr auto ropeCount(ADL*, const StringStore<N>&) -> size
 
 template<class... Ts> constexpr auto ropeCount(ADL*, const Rope<Ts...>& rope) -> size_t {
     auto result = size_t{};
-    rope.parts.visitAll([&](const auto& p) { result += ropeCount(adl, p.v); });
+    rope.parts.visitAll([&](const auto& p) { result += ropeCount(adl, p); });
     return result;
 }
 

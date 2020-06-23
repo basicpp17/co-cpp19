@@ -1,4 +1,5 @@
 #include "Tuple.h"
+#include "Tuple.ostream.h"
 #include "meta19/Index.h"
 #include "meta19/isSame.h"
 
@@ -69,6 +70,7 @@ TEST(Tuple, construct_single) {
     SingleArg s1(s0); // Test that it won't use the argument forward constructor
 
     EXPECT_EQ(s0.at<0>(), s1.at<0>());
+    EXPECT_EQ(s0, s1);
 }
 TEST(Tuple, construct_two) {
     using TwoArgs = Tuple<int, float>;

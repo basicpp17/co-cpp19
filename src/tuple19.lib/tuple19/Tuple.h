@@ -45,10 +45,10 @@ private:
         constexpr bool operator==(const IndexedTuple&) const = default;
 
         template<class F> constexpr void visitAll(F&& f) const& {
-            (void)((f(*static_cast<const details::TupleEntry<Is, Ts>*>(this)), ...));
+            (void)((f(static_cast<const details::TupleEntry<Is, Ts>*>(this)->v), ...));
         }
         template<class F> constexpr void amendAll(F&& f) & {
-            (void)((f(*static_cast<details::TupleEntry<Is, Ts>*>(this)), ...));
+            (void)((f(static_cast<details::TupleEntry<Is, Ts>*>(this)->v), ...));
         }
     };
 
@@ -116,6 +116,6 @@ template<> struct Tuple<> {
     template<class F> void amendAll(F&&) & {}
 };
 
-template<class... Ts> Tuple(Ts...)->Tuple<Ts...>;
+template<class... Ts> Tuple(Ts...) -> Tuple<Ts...>;
 
 } // namespace tuple19

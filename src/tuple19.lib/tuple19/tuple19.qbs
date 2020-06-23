@@ -6,6 +6,7 @@ Product {
     files: [
         "Tuple.bind.h",
         "Tuple.h",
+        "Tuple.ostream.h",
         "Tuple.trait.h",
     ]
 

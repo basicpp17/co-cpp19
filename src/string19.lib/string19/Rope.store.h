@@ -12,7 +12,7 @@ template<size_t N> constexpr auto ropeAppend(ADL*, char*& data, const StringStor
 }
 
 template<class... Ts> constexpr auto ropeAppend(ADL*, char*& data, const Rope<Ts...>& rope) {
-    rope.parts.visitAll([&](const auto& p) { ropeAppend(adl, data, p.v); });
+    rope.parts.visitAll([&](const auto& p) { ropeAppend(adl, data, p); });
 }
 
 /// @returns a StringStore that concats all parts of the Rope

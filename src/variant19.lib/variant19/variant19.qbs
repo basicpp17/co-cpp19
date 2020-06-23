@@ -6,6 +6,7 @@ Product {
     files: [
         "Variant.equals.h",
         "Variant.h",
+        "Variant.ostream.h",
     ]
 
     Export {
