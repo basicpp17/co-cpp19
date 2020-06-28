@@ -1,6 +1,7 @@
 #pragma once
-#include "Archive.h"
+#include "SizeArchive.h"
 #include "UniqueBuffer.h"
+#include "WriteToArchive.h"
 
 namespace serialize19 {
 

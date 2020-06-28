@@ -4,13 +4,17 @@ Product {
     Depends { name: "meta19" }
 
     files: [
-        "Archive.h",
+        "ArchiveMode.h",
         "Endianess.h",
+        "ReadArchive.h",
         "SizeAppender.h",
+        "SizeArchive.h",
         "SliceReader.h",
         "UniqueBuffer.h",
         "WriteAppender.h",
+        "WriteToArchive.h",
         "dynamicWrite.h",
+        "serialize.h",
     ]
 
     Export {
