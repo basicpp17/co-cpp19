@@ -22,6 +22,11 @@ template<EndianBehaviour endian = EndianBehaviour::Keep> struct ReadArchive {
         m_slice = m_slice.skipOf(type<T>);
     }
 
+    void withPrimitive(bool& value) {
+        value = m_slice.as(type<uint8_t>) == 1;
+        m_slice = m_slice.skipOf(type<uint8_t>);
+    }
+
 private:
     SliceReader<endian> m_slice;
 };

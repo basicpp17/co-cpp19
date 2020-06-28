@@ -16,6 +16,11 @@ struct SizeArchive {
 
     template<class T> void withPrimitive(const T& value) { m_appender = m_appender.appendValue(value); }
 
+    void withPrimitive(const bool& value) {
+        auto v = value ? uint8_t{1} : uint8_t{};
+        m_appender = m_appender.appendValue(v);
+    }
+
 private:
     SizeAppender m_appender;
 };
