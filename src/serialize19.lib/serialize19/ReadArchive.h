@@ -1,5 +1,5 @@
 #pragma once
-#include "ArchiveMode.h"
+#include "Archive.h"
 #include "SliceReader.h"
 #include "meta19/Type.h"
 #include "serialize.h"
@@ -8,6 +8,8 @@ namespace serialize19 {
 
 using meta19::type;
 
+/// Archive Adapter that allows reading from serialize() methods
+/// see SliceReader
 template<EndianBehaviour endian = EndianBehaviour::Keep> struct ReadArchive {
     static constexpr auto mode = ArchiveMode::Read;
 
@@ -23,5 +25,7 @@ template<EndianBehaviour endian = EndianBehaviour::Keep> struct ReadArchive {
 private:
     SliceReader<endian> m_slice;
 };
+
+static_assert(Archive<ReadArchive<>>);
 
 } // namespace serialize19

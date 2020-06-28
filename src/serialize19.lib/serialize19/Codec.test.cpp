@@ -1,3 +1,4 @@
+#include "Archive.h"
 #include "ReadArchive.h"
 #include "dynamicWrite.h"
 
@@ -15,7 +16,7 @@ struct Person {
     bool operator==(const Person&) const = default;
 };
 
-template<class Archive> void serialize(Archive& a, std::string& s) {
+template<class A> void serialize(A& a, std::string& s) {
     auto size = s.size();
     serialize(a, size);
     if (a.mode == ArchiveMode::Read) {
@@ -27,7 +28,7 @@ template<class Archive> void serialize(Archive& a, std::string& s) {
     }
 }
 
-template<class Archive> void serialize(Archive& a, Person& p) {
+template<class A> void serialize(A& a, Person& p) {
     serialize(a, p.name);
     serialize(a, p.birthYear);
     serialize(a, p.profession);

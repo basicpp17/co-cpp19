@@ -1,10 +1,14 @@
 #pragma once
-#include "ArchiveMode.h"
+#include "Archive.h"
 #include "SizeAppender.h"
 #include "serialize.h"
 
+#include <stdint.h>
+
 namespace serialize19 {
 
+/// Simple Archive adapter to calculate the size required to store the data
+/// see: SizeAppender
 struct SizeArchive {
     static constexpr auto mode = ArchiveMode::Size;
 
@@ -16,7 +20,12 @@ private:
     SizeAppender m_appender;
 };
 
-// Writing wont modify the value, but serialize methods can only have one signature
-template<class T> void serialize(SizeArchive& wa, const T& v) { serialize(wa, const_cast<T&>(v)); }
+static_assert(Archive<SizeArchive>);
+
+// note: SizeArchive wont modify the value, but serialize methods can only have one signature
+// note: Archive is a template argument to allow fallback to Fallback
+template<Archive A, class T> requires(std::same_as<A, SizeArchive>) void serialize(A& a, const T& v) {
+    serialize(a, const_cast<T&>(v));
+}
 
 } // namespace serialize19

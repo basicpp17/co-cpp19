@@ -1,10 +1,12 @@
 #pragma once
-#include "ArchiveMode.h"
+#include "Archive.h"
 #include "WriteAppender.h"
 #include "serialize.h"
 
 namespace serialize19 {
 
+/// Archive adapter for writing to a slice of memory
+/// see: WriteAppender
 template<EndianBehaviour endian = EndianBehaviour::Keep> struct WriteToArchive {
     static constexpr auto mode = ArchiveMode::Write;
 
@@ -16,7 +18,9 @@ private:
     WriteAppender<endian> m_appender;
 };
 
-// Writing wont modify the value, but serialize methods can only have one signature
+static_assert(Archive<WriteToArchive<>>);
+
+// note: Writing wont modify the value, but serialize methods can only have one signature
 template<class T, EndianBehaviour endian> void serialize(WriteToArchive<endian>& wa, const T& v) {
     serialize(wa, const_cast<T&>(v));
 }
