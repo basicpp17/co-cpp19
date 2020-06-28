@@ -200,11 +200,8 @@ public:
     constexpr Variant() = default;
 
     /// construct from move/copy
-    template<
-        class T,
-        class BT = std::remove_cv_t<std::remove_reference_t<T>>,
-        class = std::enable_if_t<(!std::is_base_of_v<Variant, BT>)>>
-    Variant(T&& t) {
+    template<class T, class BT = std::remove_cv_t<std::remove_reference_t<T>>>
+    requires(!std::is_base_of_v<Variant, BT>) Variant(T&& t) {
         static_assert((std::is_same_v<BT, Ts> || ...), "type not part of variant");
         indexed.template constructAs<BT>(std::forward<T>(t));
         indexed.which = index_of_map<BT, Map>;
