@@ -27,7 +27,7 @@ Project {
         Export {
             Depends { name: "cpp" }
             cpp.cxxLanguageVersion: "c++2a"
-            // cpp.treatWarningsAsErrors: true
+            cpp.treatWarningsAsErrors: true
 
             Properties {
                 condition: qbs.toolchain.contains('msvc')
