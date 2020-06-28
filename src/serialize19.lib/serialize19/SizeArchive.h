@@ -29,7 +29,7 @@ static_assert(Archive<SizeArchive>);
 
 // note: SizeArchive wont modify the value, but serialize methods can only have one signature
 // note: Archive is a template argument to allow fallback to Fallback
-template<Archive A, class T> requires(std::same_as<A, SizeArchive>&& std::is_const_v<T>) void serialize(A& a, T& v) {
+template<Archive A, class T> requires(std::is_same_v<A, SizeArchive>&& std::is_const_v<T>) void serialize(A& a, T& v) {
     serialize(a, const_cast<std::remove_const_t<T>&>(v));
 }
 
