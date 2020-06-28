@@ -4,6 +4,7 @@
 #include "string19/StringView.literal.h"
 
 #include <compare>
+#include <type_traits>
 
 namespace strong19 {
 
@@ -19,25 +20,34 @@ template<class V> struct Weak {
     static_assert(!is_strong<V>);
     V v;
     constexpr Weak() = default;
-    constexpr explicit Weak(V v) : v(v) {}
+    constexpr explicit Weak(V v) : v((V &&) v) {}
     bool operator==(const Weak&) const = default;
 };
 
+#ifndef DECLARE_STRONG_EXTRAS
+#    define DECLARE_STRONG_EXTRAS(NAME)
+#endif
 #ifndef DEFINE_STRONG_EXTRAS
 #    define DEFINE_STRONG_EXTRAS(NAME)
 #endif
 
-/// Defines a strong value type with name @param NAME that stores value of type @param VALUE and optional tags
-#define DEFINE_STRONG(NAME, VALUE, ...)                                                                                \
-    struct NAME : private strong19::Weak<VALUE> {                                                                      \
-        using Weak::Weak;                                                                                              \
-        using Weak::v;                                                                                                 \
-        bool operator==(const NAME&) const = default;                                                                  \
-    };                                                                                                                 \
+/// Forward declares a strong value type with name @param NAME that stores value of type @param VALUE and optional tags
+#define DECLARE_STRONG(NAME, VALUE, ...)                                                                               \
+    struct NAME;                                                                                                       \
     constexpr inline auto isStrong(strong19::ADL*, NAME*)->bool { return true; }                                       \
     auto strongValueType(NAME*)->VALUE;                                                                                \
     auto strongTags(NAME*)->meta19::TypePack<__VA_ARGS__>;                                                             \
     constexpr inline auto strongName(NAME*)->string19::StringView { return string19::viewLiteral(#NAME); }             \
+    DECLARE_STRONG_EXTRAS(NAME)                                                                                        \
+    struct NAME
+
+/// Defines a strong value type with name @param NAME that stores value of type @param VALUE and optional tags
+#define DEFINE_STRONG(NAME, VALUE, ...)                                                                                \
+    DECLARE_STRONG(NAME, VALUE, __VA_ARGS__) : private strong19::Weak<VALUE> {                                         \
+        using Weak::Weak;                                                                                              \
+        using Weak::v;                                                                                                 \
+        bool operator==(const NAME&) const = default;                                                                  \
+    };                                                                                                                 \
     DEFINE_STRONG_EXTRAS(NAME)                                                                                         \
     struct NAME
 
