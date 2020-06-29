@@ -34,6 +34,7 @@ Product {
         name: "serialize co-cpp19"
         files: [
             "serialize.Array.h",
+            "serialize.BufferSlice.h",
             "serialize.DynamicArrayOf.h",
         ]
     }

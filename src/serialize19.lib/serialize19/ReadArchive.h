@@ -17,6 +17,12 @@ template<EndianBehaviour endian = EndianBehaviour::Keep> struct ReadArchive {
 
     auto slice() const -> BufferSlice { return m_slice; }
 
+    auto withSlice(size_t n) -> BufferSlice {
+        auto r = m_slice.sliceBytes(n);
+        m_slice = m_slice.skipBytes(n);
+        return r;
+    }
+
     template<class T> void withPrimitive(T& value) {
         value = m_slice.as(type<T>);
         m_slice = m_slice.skipOf(type<T>);

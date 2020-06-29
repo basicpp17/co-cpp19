@@ -17,7 +17,7 @@ struct SliceReaderCommon {
     constexpr auto count() const -> size_t { return m_count; }
     constexpr operator BufferSlice() const { return BufferSlice{m_data, m_count}; }
 
-    template<class T> auto sliceBytes(size_t count) const -> BufferSlice { return SliceOf{m_data, count}; }
+    auto sliceBytes(size_t count) const -> BufferSlice { return SliceOf{m_data, count}; }
     constexpr auto limitBytes(size_t count) const -> SliceReaderCommon { return SliceReaderCommon{m_data, count}; }
 
     constexpr auto skipBytes(size_t count) const -> SliceReaderCommon {

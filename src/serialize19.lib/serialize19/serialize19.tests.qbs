@@ -12,6 +12,7 @@ Application {
     files: [
         "Codec.test.cpp",
         "Endianness.test.cpp",
+        "serialize.BufferSlice.test.cpp",
         "serialize.std_bitset.test.cpp",
         "serialize.std_optional.test.cpp",
         "serialize.std_tuple.test.cpp",

@@ -1,5 +1,6 @@
 #pragma once
 #include "Archive.h"
+#include "BufferSlice.h"
 #include "WriteAppender.h"
 #include "serialize.h"
 
@@ -11,6 +12,8 @@ template<EndianBehaviour endian = EndianBehaviour::Keep> struct WriteToArchive {
     static constexpr auto mode = ArchiveMode::Write;
 
     WriteToArchive(SliceOf<uint8_t> slice) : m_appender(slice.begin()) {}
+
+    void withSlice(BufferSlice slice) { m_appender = m_appender.appendSlice(slice); }
 
     template<class T> void withPrimitive(const T& value) { m_appender = m_appender.appendValue(value); }
 
