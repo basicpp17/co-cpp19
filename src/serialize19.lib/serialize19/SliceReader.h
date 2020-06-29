@@ -1,15 +1,11 @@
 #pragma once
+#include "BufferSlice.h"
 #include "Endianess.h"
-#include "array19/SliceOf.h"
 #include "meta19/Type.h"
-
-#include <stdint.h>
 
 namespace serialize19 {
 
-using array19::SliceOf;
 using meta19::Type;
-using BufferSlice = SliceOf<const uint8_t>;
 
 namespace details {
 

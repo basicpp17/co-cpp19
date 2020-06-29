@@ -1,17 +1,13 @@
 #pragma once
-#include "array19/SliceOf.h"
-
-#include <stdint.h> // uint8_t
+#include "BufferSlice.h"
 
 namespace serialize19 {
-
-using array19::SliceOf;
 
 /// UniqueBuffer is allocated on construction and carries the ownership of the memory
 /// Use slices to access the data
 struct UniqueBuffer {
     using Slice = SliceOf<uint8_t>;
-    using ConstSlice = SliceOf<const uint8_t>;
+    using ConstSlice = BufferSlice;
 
     UniqueBuffer() = default;
     explicit UniqueBuffer(size_t size) : m_pointer(new uint8_t[size]), m_size(size) {}

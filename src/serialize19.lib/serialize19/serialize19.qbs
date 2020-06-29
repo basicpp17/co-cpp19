@@ -21,6 +21,7 @@ Product {
     Group {
         name: "Impl"
         files: [
+            "BufferSlice.h",
             "Endianess.h",
             "SizeAppender.h",
             "SliceReader.h",
