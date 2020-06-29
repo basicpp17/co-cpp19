@@ -6,7 +6,7 @@
 namespace serialize19 {
 
 template<Archive A, class T, class... Ts> void serialize(A& a, std::vector<T, Ts...>& vector) {
-    auto size = vector.size();
+    auto size = static_cast<uint32_t>(vector.size());
     serialize(a, size);
     if (a.mode == ArchiveMode::Read) {
         vector.resize(size);

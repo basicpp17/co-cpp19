@@ -6,7 +6,7 @@
 namespace serialize19 {
 
 template<Archive A, class K, class... Ts> void serialize(A& a, std::map<K, Ts...>& map) {
-    auto size = map.size();
+    auto size = static_cast<uint32_t>(map.size());
     serialize(a, size);
     if (a.mode == ArchiveMode::Read) {
         for (auto i = 0u; i < size; i++) {

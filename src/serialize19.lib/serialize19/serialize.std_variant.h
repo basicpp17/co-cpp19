@@ -9,7 +9,7 @@ namespace serialize19 {
 using meta19::nullptr_to;
 
 template<Archive A, class... Ts> void serialize(A& a, std::variant<Ts...>& variant) {
-    auto index = variant.index();
+    auto index = static_cast<uint32_t>(variant.index());
     serialize(a, index);
 
     constexpr static auto handleT = []<class T>(auto& a, auto& variant, T*) {

@@ -2,12 +2,14 @@
 #include "array19/DynamicArrayOf.h"
 #include "serialize.h"
 
+#include <stdint.h> // uint32_t
+
 namespace serialize19 {
 
 using array19::DynamicArrayOf;
 
 template<Archive A, class T> void serialize(A& a, DynamicArrayOf<T>& dynArray) {
-    auto count = dynArray.count();
+    auto count = static_cast<uint32_t>(dynArray.count());
     serialize(a, count);
     if (a.mode == ArchiveMode::Read) {
         dynArray.ensureCapacity(count);
