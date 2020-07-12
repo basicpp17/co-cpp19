@@ -1,4 +1,5 @@
 #include "DynamicArrayOf.h"
+#include "Zip.h"
 
 namespace array19 {
 
