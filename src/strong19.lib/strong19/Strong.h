@@ -1,5 +1,6 @@
 #pragma once
 #include "ADL.h"
+#include "Macro.h"
 #include "meta19/TypePack.h"
 #include "string19/StringView.literal.h"
 
@@ -35,7 +36,7 @@ template<class V> struct Weak {
 #define DECLARE_STRONG(NAME, VALUE, ...)                                                                               \
     struct NAME;                                                                                                       \
     constexpr inline auto isStrong(strong19::ADL*, NAME*)->bool { return true; }                                       \
-    auto strongValueType(NAME*)->VALUE;                                                                                \
+    auto strongValueType(NAME*)->STRONG19_REMOVEPAREN(VALUE);                                                          \
     auto strongTags(NAME*)->meta19::TypePack<__VA_ARGS__>;                                                             \
     constexpr inline auto strongName(NAME*)->string19::StringView { return string19::viewLiteral(#NAME); }             \
     DECLARE_STRONG_EXTRAS(NAME)                                                                                        \
@@ -43,7 +44,7 @@ template<class V> struct Weak {
 
 /// Defines a strong value type with name @param NAME that stores value of type @param VALUE and optional tags
 #define DEFINE_STRONG(NAME, VALUE, ...)                                                                                \
-    DECLARE_STRONG(NAME, VALUE, __VA_ARGS__) : private strong19::Weak<VALUE> {                                         \
+    DECLARE_STRONG(NAME, VALUE, __VA_ARGS__) : private strong19::Weak<STRONG19_REMOVEPAREN(VALUE)> {                   \
         using Weak::Weak;                                                                                              \
         using Weak::v;                                                                                                 \
         bool operator==(const NAME&) const = default;                                                                  \

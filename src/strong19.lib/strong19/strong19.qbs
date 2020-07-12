@@ -5,6 +5,7 @@ Product {
 
     files: [
         "ADL.h",
+        "Macro.h",
         "Strong.extras.ostream.h",
         "Strong.h",
         "Strong.hash.h",
