@@ -1,3 +1,6 @@
+#include "Rope.StringStore.h"
+#include "Rope.StringView.h"
+#include "Rope.char.h"
 #include "Rope.store.h"
 #include "StringStore.literal.h"
 #include "StringView.equals.h"

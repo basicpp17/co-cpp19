@@ -10,9 +10,13 @@ Product {
     Group {
         name: "Rope"
         files: [
-            "Rope.count.h",
-            "Rope.decimal.h",
+            "Rope.Decimal.h",
+            "Rope.Rope.h",
+            "Rope.StringStore.h",
+            "Rope.StringView.h",
+            "Rope.char.h",
             "Rope.h",
+            "Rope.join.h",
             "Rope.store.h",
         ]
     }

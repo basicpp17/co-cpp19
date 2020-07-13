@@ -1,4 +1,6 @@
-#include "Rope.decimal.h"
+#include "Rope.Decimal.h"
+#include "Rope.Rope.h"
+#include "Rope.StringView.h"
 #include "Rope.store.h"
 #include "StringStore.literal.h"
 #include "StringView.equals.h"

@@ -11,6 +11,7 @@ Application {
 
     files: [
         "Rope.decimal.test.cpp",
+        "Rope.join.test.cpp",
         "Rope.test.cpp",
         "StringStore.test.cpp",
         "StringView.test.cpp",

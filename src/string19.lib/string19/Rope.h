@@ -7,7 +7,9 @@ namespace string19 {
 using meta19::StoredOf;
 using tuple19::Tuple;
 
-template<class... Ts> struct Rope {
+template<class... Ts> struct Rope;
+
+template<class... Ts> requires(sizeof...(Ts) > 0) struct Rope<Ts...> {
     Tuple<Ts...> parts;
     constexpr Rope() = default;
     constexpr Rope(const Ts&... ts) : parts(ts...) {}
@@ -15,6 +17,8 @@ template<class... Ts> struct Rope {
     constexpr bool operator==(const Rope&) const = default;
 };
 
-template<class... Ts> Rope(Ts&&...)->Rope<StoredOf<Ts>...>;
+template<> struct Rope<> {};
+
+template<class... Ts> Rope(Ts&&...) -> Rope<StoredOf<Ts>...>;
 
 } // namespace string19
