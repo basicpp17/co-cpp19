@@ -10,6 +10,7 @@ Application {
     Depends { name: "googletest" }
 
     files: [
+        "NanOptional.test.cpp",
         "Optional.test.cpp",
         "PackedOptional.test.cpp",
     ]

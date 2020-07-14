@@ -40,9 +40,9 @@ TEST(PackedOptional, defaultOfInt) {
     }
 
     auto optInt = OptInt{};
-    // ASSERT_NE(optInt, 23);
+    ASSERT_NE(optInt, OptInt{23});
     optInt = 23;
-    // ASSERT_EQ(optInt, 23);
+    ASSERT_EQ(optInt, OptInt{23});
 }
 
 constexpr auto intInvalid() { return -1; }
@@ -68,7 +68,7 @@ TEST(PackedOptional, invalidFunc) {
     {
         constexpr auto optInt = OptInt{23};
         static_assert(optInt);
-        //        static_assert(optInt == 23);
+        static_assert(optInt == OptInt{23});
 
         static_assert(optInt.value() == 23);
         static_assert((optInt || 42) == 23);
@@ -82,9 +82,9 @@ TEST(PackedOptional, invalidFunc) {
     }
 
     auto optInt = OptInt{};
-    // ASSERT_NE(optInt, 23);
+    ASSERT_NE(optInt, OptInt{23});
     optInt = 23;
-    // ASSERT_EQ(optInt, 23);
+    ASSERT_EQ(optInt, OptInt{23});
 }
 
 TEST(PackedOptional, pointer) {

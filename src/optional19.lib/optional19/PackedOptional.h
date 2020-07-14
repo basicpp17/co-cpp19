@@ -16,7 +16,7 @@ private:
 
 public:
     constexpr PackedOptional() = default;
-    constexpr PackedOptional(T v) : m_data((T &&) v){};
+    constexpr PackedOptional(T v) : m_data((T &&) v) {}
 
     constexpr explicit operator bool() const { return !(m_data == makeInvalid()); }
 

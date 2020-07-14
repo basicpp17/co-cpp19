@@ -27,7 +27,7 @@ TEST(Optional, int) {
         constexpr auto optInt = OptInt{23};
         constexpr const auto constOpt = optInt;
         ASSERT_TRUE(optInt);
-        //        ASSERT_EQ(constOpt, 23);
+        ASSERT_EQ(constOpt, OptInt{23});
 
         ASSERT_EQ(optInt.value(), 23);
         ASSERT_EQ(optInt || 42, 23);
@@ -40,7 +40,7 @@ TEST(Optional, int) {
     }
 
     auto optInt = OptInt{};
-    //    ASSERT_NE(optInt, 23);
+    ASSERT_NE(optInt, OptInt{23});
     optInt = 23;
-    //    ASSERT_EQ(optInt, 23);
+    ASSERT_EQ(optInt, OptInt{23});
 }
