@@ -6,6 +6,7 @@ Product {
     files: [
         "ADL.h",
         "Enum.h",
+        "Enum.names.h",
         "Enum.ostream.h",
         "visitEnumMemberNames.h",
     ]
