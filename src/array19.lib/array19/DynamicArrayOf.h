@@ -53,10 +53,19 @@ template<class T> struct DynamicArrayOf final {
     DynamicArrayOf() = default;
     ~DynamicArrayOf() noexcept(std::is_nothrow_destructible_v<Element>) { destructSlice(amend()); }
 
+    DynamicArrayOf(ConstSlice slice) { append(slice); }
+
+    template<class... Ts>
+    requires(sizeof...(Ts) > 0) DynamicArrayOf(Ts&&... args) noexcept(std::is_nothrow_copy_constructible_v<Element>)
+            : m_storage(Storage::create(sizeof...(Ts)))
+            , m_count(0) {
+        (copyConstructSlice(m_storage.pointer + m_count++, ConstSlice{&args, 1}), ...);
+    }
+
     DynamicArrayOf(const DynamicArrayOf& o) noexcept(std::is_nothrow_copy_constructible_v<Element>)
             : m_storage(Storage::create(o.m_count))
             , m_count(o.m_count) {
-        copyConstructSlice(m_storage.pointer, o.slice());
+        copyConstructSlice(m_storage.pointer, o);
     }
     DynamicArrayOf& operator=(const DynamicArrayOf& o) noexcept(std::is_nothrow_copy_assignable_v<Element>) {
         if (m_storage.capacity < o.m_count) {
@@ -76,7 +85,9 @@ template<class T> struct DynamicArrayOf final {
         }
     }
 
-    DynamicArrayOf(DynamicArrayOf&& o) noexcept : m_storage(std::move(o)), m_count(o.m_count) { o.m_count = 0; }
+    DynamicArrayOf(DynamicArrayOf&& o) noexcept : m_storage(std::move(o.m_storage)), m_count(o.m_count) {
+        o.m_count = 0;
+    }
     DynamicArrayOf& operator=(DynamicArrayOf&& o) noexcept {
         destructSlice(amend());
         m_storage = std::move(o.m_storage);
