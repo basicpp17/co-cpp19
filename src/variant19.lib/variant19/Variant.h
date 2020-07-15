@@ -21,6 +21,9 @@ using meta19::PackFront;
 using meta19::Type;
 using meta19::TypeAtMap;
 
+template<class... Ts> struct Overloaded : Ts... { using Ts::operator()...; };
+template<class... Ts> Overloaded(Ts...) -> Overloaded<Ts...>;
+
 namespace details {
 
 template<size_t I, size_t... Is> constexpr auto constexprMaxOf() {
@@ -238,6 +241,16 @@ public:
     }
     template<class F> constexpr auto amendVisit(F&& f) -> decltype(auto) {
         return indexed.amendVisitImpl(std::forward<F>(f));
+    }
+
+    template<class... Fs>
+    requires(sizeof...(Fs) > 0) constexpr auto visitOverloaded(Fs&&... fs) const -> decltype(auto) {
+        return indexed.visitImpl(Overloaded{(Fs &&) fs...});
+    }
+
+    template<class... Fs>
+    requires(sizeof...(Fs) > 0) constexpr auto amendOverloaded(Fs&&... fs) const -> decltype(auto) {
+        return indexed.amendVisitImpl(Overloaded{(Fs &&) fs...});
     }
 };
 
