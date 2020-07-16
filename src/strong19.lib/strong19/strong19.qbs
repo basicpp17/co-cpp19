@@ -7,6 +7,7 @@ Product {
         "ADL.h",
         "Macro.h",
         "Strong.extras.ostream.h",
+        "Strong.fmt.h",
         "Strong.h",
         "Strong.hash.h",
         "Strong.less.h",
