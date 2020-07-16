@@ -9,6 +9,7 @@ Product {
         "Strong.extras.ostream.h",
         "Strong.h",
         "Strong.hash.h",
+        "Strong.less.h",
         "Strong.ostream.h",
         "Strong.traits.h",
     ]
