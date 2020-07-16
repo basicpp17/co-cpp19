@@ -19,9 +19,11 @@ template<class T> constexpr inline auto strong_name = strongName(nullptr_to<T>);
 /// note: required or constexpr would be an error for non-constexpr types (like std::string)
 template<class V> struct Weak {
     static_assert(!is_strong<V>);
-    V v;
+    V v{};
     constexpr Weak() = default;
-    constexpr explicit Weak(V v) : v((V &&) v) {}
+    template<class... Ts>
+    requires(sizeof...(Ts) > 0 && std::is_constructible_v<V, Ts...>) constexpr explicit Weak(Ts&&... ts)
+            : v((Ts &&) ts...) {}
     bool operator==(const Weak&) const = default;
 };
 
