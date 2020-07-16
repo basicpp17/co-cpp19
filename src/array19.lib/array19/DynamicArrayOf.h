@@ -127,6 +127,12 @@ template<class T> struct DynamicArrayOf final {
         if (unusedCapacity() < count) growBy(count);
     }
 
+    template<class... Ts> void emplace_back(Ts&&... args) {
+        ensureUnusedCapacity(1);
+        new (m_storage.pointer + m_count) Element((Ts &&) args...);
+        m_count++;
+    }
+
     void append(ConstSlice elems) {
         ensureUnusedCapacity(elems.count());
         copyConstructSlice(storageEnd(), elems);
