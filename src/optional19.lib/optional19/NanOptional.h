@@ -9,9 +9,11 @@ namespace optional19 {
 
 using meta19::nullptr_to;
 
+template<class T> requires(std::numeric_limits<T>::has_quiet_NaN) struct NanPacked;
+
 /// Specialized packed optional storing a floating point value
 /// NaN (not a number) values are treated as not present values
-template<class T> requires(std::numeric_limits<T>::has_quiet_NaN) struct Optional<T> {
+template<class T> struct Optional<NanPacked<T>> {
 private:
     static constexpr auto nan = std::numeric_limits<T>::quiet_NaN();
     static constexpr bool isNan(T v) { return v != v; } // note: Only NaN values are not equal to themself

@@ -7,7 +7,7 @@
 using namespace optional19;
 
 TEST(Optional, double) {
-    using OptDbl = Optional<double>;
+    using OptDbl = Optional<NanPacked<double>>;
 
     static_assert(sizeof(OptDbl) == sizeof(double));
     {
