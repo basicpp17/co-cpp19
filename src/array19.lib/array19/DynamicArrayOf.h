@@ -100,6 +100,9 @@ template<class T> struct DynamicArrayOf final {
     [[nodiscard]] auto totalCapacity() const -> Count { return m_storage.capacity; }
     [[nodiscard]] auto unusedCapacity() const -> Count { return m_storage.capacity - m_count; }
 
+    [[nodiscard]] auto front() const -> const T& { return *begin(); }
+    [[nodiscard]] auto back() const -> const T& { return *(begin() + m_count - 1); }
+
     [[nodiscard]] auto begin() const noexcept -> ConstIterator {
         return std::launder(reinterpret_cast<const T*>(m_storage.pointer));
     }
