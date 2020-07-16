@@ -42,6 +42,7 @@ Product {
             "TypePack.contains.h",
             "TypePack.h",
             "TypePackTemplate.Change.h",
+            "TypePackTemplate.Join.h",
             "TypePackTemplate.h",
         ]
     }
