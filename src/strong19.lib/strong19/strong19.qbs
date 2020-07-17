@@ -13,6 +13,7 @@ Product {
         "Strong.less.h",
         "Strong.ostream.h",
         "Strong.traits.h",
+        "WeakOf.h",
     ]
 
     Export {
