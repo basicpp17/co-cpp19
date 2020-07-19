@@ -16,7 +16,7 @@ template<size_t N> constexpr auto ropeCount(ADL*, Decimal<N>*) -> size_t {
     return c;
 }
 
-template<size_t N> constexpr auto ropeAppend(ADL*, char*& data, Decimal<N>*) {
+template<size_t N> constexpr void ropeAppend(ADL*, char*& data, Decimal<N>*) {
     auto c = ropeCount(adl, decimal<N>);
     auto n = N;
     for (int o = c - 1; o >= 0; o--, n /= 10) data[o] = n % 10 + '0';

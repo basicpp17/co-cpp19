@@ -11,6 +11,14 @@
 
 using namespace string19;
 
+TEST(Rope, joinEmpty) {
+    constexpr auto rope = Seperator{','}.join();
+    constexpr auto N = ropeCount(rope);
+    constexpr auto store = ropeStore<N>(rope);
+    static_assert(viewStore(store) == viewLiteral(""));
+    EXPECT_EQ(store, storeLiteral(""));
+}
+
 TEST(Rope, joinChar) {
     constexpr auto rope = Seperator{','}.join('1', '2', '3');
     constexpr auto N = ropeCount(rope);
@@ -20,7 +28,7 @@ TEST(Rope, joinChar) {
 }
 
 TEST(Rope, joinView) {
-    constexpr auto rope = Seperator{viewLiteral(", ")}.join('1', '2', '3');
+    constexpr auto rope = Seperator{viewLiteral(", ")}.join(viewLiteral("1"), '2', '3');
     constexpr auto N = ropeCount(rope);
     constexpr auto store = ropeStore<N>(rope);
     static_assert(viewStore(store) == viewLiteral("1, 2, 3"));

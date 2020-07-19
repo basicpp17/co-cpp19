@@ -6,7 +6,7 @@ namespace string19 {
 
 constexpr auto ropeCount(ADL*, StringView sv) -> size_t { return sv.count; }
 
-constexpr auto ropeAppend(ADL*, char*& data, StringView sv) {
+constexpr void ropeAppend(ADL*, char*& data, StringView sv) {
     for (auto i = 0u; i < sv.count; ++i) *data++ = sv[i];
 }
 
