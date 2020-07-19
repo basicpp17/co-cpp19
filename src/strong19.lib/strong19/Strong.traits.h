@@ -1,6 +1,6 @@
 #pragma once
 #include "Strong.h"
-#include "meta19/TypePack.contains.h"
+#include "meta19/TypePackTemplate.contains.h"
 
 namespace strong19 {
 

@@ -39,10 +39,10 @@ Product {
         name: "TypePack"
         files: [
             "TypePack.Front.h",
-            "TypePack.contains.h",
             "TypePack.h",
             "TypePackTemplate.Change.h",
             "TypePackTemplate.Join.h",
+            "TypePackTemplate.contains.h",
             "TypePackTemplate.h",
         ]
     }

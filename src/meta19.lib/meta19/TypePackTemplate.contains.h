@@ -5,7 +5,8 @@
 
 namespace meta19 {
 
-template<class... Ts, class T> constexpr auto typePackContains(TypePack<Ts...>* = {}, Type<T>* = {}) {
+template<template<class...> class Tpl, class... Ts, class T>
+constexpr auto typePackContains(Tpl<Ts...>* = {}, Type<T>* = {}) {
     return (isSame(&type<Ts>, &type<T>) || ...);
 }
 
