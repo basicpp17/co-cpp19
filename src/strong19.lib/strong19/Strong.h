@@ -17,6 +17,7 @@ template<class T> constexpr inline auto strong_name = strongName(nullptr_to<T>);
 
 /// private base class for a strong type
 /// note: required or constexpr would be an error for non-constexpr types (like std::string)
+/// note: operator== is automatically removed when V is not equality comparable
 template<class V> struct Weak {
     static_assert(!is_strong<V>);
     V v{};
@@ -44,12 +45,24 @@ template<class V> struct Weak {
     DECLARE_STRONG_EXTRAS(NAME)                                                                                        \
     struct NAME
 
+/// Without this supression clang would trigger a warning
+#if defined(__clang__)
+#    define STRONG19_IGNORE_DEFAULTED_FUNCTION_DELETED                                                                 \
+        _Pragma("clang diagnostic push") _Pragma("clang diagnostic ignored \"-Wdefaulted-function-deleted\"")
+#    define STRONG19_RESTORE_DEFAULTED_FUNCTION_DELETED _Pragma("clang diagnostic pop")
+#else
+#    define STRONG19_IGNORE_DEFAULTED_FUNCTION_DELETED
+#    define STRONG19_RESTORE_DEFAULTED_FUNCTION_DELETED
+#endif
+
 /// Defines a strong value type with name @param NAME that stores value of type @param VALUE and optional tags
 #define DEFINE_STRONG(NAME, VALUE, ...)                                                                                \
-    DECLARE_STRONG(NAME, VALUE, __VA_ARGS__) : private strong19::Weak<STRONG19_REMOVEPAREN(VALUE)> {                   \
+    DECLARE_STRONG(NAME, VALUE, ##__VA_ARGS__) : private strong19::Weak<STRONG19_REMOVEPAREN(VALUE)> {                 \
         using Weak::Weak;                                                                                              \
         using Weak::v;                                                                                                 \
+        STRONG19_IGNORE_DEFAULTED_FUNCTION_DELETED                                                                     \
         bool operator==(const NAME&) const = default;                                                                  \
+        STRONG19_RESTORE_DEFAULTED_FUNCTION_DELETED                                                                    \
     };                                                                                                                 \
     DEFINE_STRONG_EXTRAS(NAME)                                                                                         \
     struct NAME
