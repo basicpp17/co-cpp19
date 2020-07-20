@@ -74,7 +74,7 @@ template<class T> struct DynamicArrayOf final {
         else {
             auto countDiff = m_count - o.m_count;
             if (countDiff > 0) {
-                copyAssignSlice(amendBegin(), o.slice());
+                copyAssignSlice(amendBegin(), o);
                 destructSlice(Slice{amendBegin() + o.m_count, countDiff});
             }
             else {
@@ -83,6 +83,7 @@ template<class T> struct DynamicArrayOf final {
             }
             m_count = o.m_count;
         }
+        return *this;
     }
 
     DynamicArrayOf(DynamicArrayOf&& o) noexcept : m_storage(std::move(o.m_storage)), m_count(o.m_count) {
@@ -93,6 +94,7 @@ template<class T> struct DynamicArrayOf final {
         m_storage = std::move(o.m_storage);
         m_count = o.m_count;
         o.m_count = 0;
+        return *this;
     }
 
     [[nodiscard]] constexpr auto isEmpty() const noexcept -> bool { return m_count == 0; }
