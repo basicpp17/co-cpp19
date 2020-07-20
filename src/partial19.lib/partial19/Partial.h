@@ -35,7 +35,7 @@ template<> struct ConditionalPlacementNew<true> {
     template<class T> static auto apply(T&& v, void* ptr) { new (ptr) T((T &&) v); }
 };
 template<> struct ConditionalPlacementNew<false> {
-    static auto apply(...) {}
+    template<class T> static auto apply(T&&, void*) {}
 };
 
 } // namespace details
