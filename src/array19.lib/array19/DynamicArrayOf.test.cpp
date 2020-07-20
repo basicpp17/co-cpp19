@@ -2,6 +2,7 @@
 #include "DynamicArrayOf.h"
 #include "DynamicArrayOf.ostream.h"
 #include "SliceOf.carray.h"
+#include "SliceOf.equals.h"
 
 #include <gtest/gtest.h>
 
@@ -36,6 +37,14 @@ TEST(DynamicArrayOf, intExample) {
     auto v2 = DynamicArrayOf<int>{};
     v2.append(sliceOfCArray({12, 99, 64}));
     ASSERT_EQ(v, v2);
+
+    v2.append(sliceOfCArray({45}));
+    v2 = v; // copy
+    ASSERT_EQ(v, v2);
+
+    v.append(sliceOfCArray({45}));
+    v2 = std::move(v);
+    ASSERT_EQ(sliceOfCArray({12, 99, 64, 45}), SliceOf{v2});
 }
 
 struct NonTrivial {

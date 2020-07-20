@@ -270,4 +270,6 @@ private:
     Count m_count;
 };
 
+template<class T> SliceOf(const DynamicArrayOf<T>&) -> SliceOf<const T>;
+
 } // namespace array19
