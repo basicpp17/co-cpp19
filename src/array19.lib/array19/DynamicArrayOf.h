@@ -59,7 +59,7 @@ template<class T> struct DynamicArrayOf final {
     requires(sizeof...(Ts) > 0) DynamicArrayOf(Ts&&... args) noexcept(std::is_nothrow_copy_constructible_v<Element>)
             : m_storage(Storage::create(sizeof...(Ts)))
             , m_count(0) {
-        (copyConstructSlice(m_storage.pointer + m_count++, ConstSlice{&T{args}, 1}), ...);
+        (copyConstructSlice(m_storage.pointer + m_count++, ConstSlice{args}), ...);
     }
 
     DynamicArrayOf(const DynamicArrayOf& o) noexcept(std::is_nothrow_copy_constructible_v<Element>)
