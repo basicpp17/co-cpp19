@@ -17,7 +17,7 @@ namespace details {
 
 template<size_t I, class T> struct TupleEntry {
     T v;
-    constexpr bool operator==(const TupleEntry&) const = default;
+    bool operator==(const TupleEntry&) const = default;
 };
 
 template<size_t I, class T> constexpr auto entryAt(const TupleEntry<I, T>& te) -> const T& { return te.v; }
@@ -42,7 +42,7 @@ private:
         constexpr IndexedTuple(const Ts&... ts) : details::TupleEntry<Is, Ts>({ts})... {}
         constexpr IndexedTuple(Ts&&... ts) : details::TupleEntry<Is, Ts>({std::move(ts)})... {}
 
-        constexpr bool operator==(const IndexedTuple&) const = default;
+        bool operator==(const IndexedTuple&) const = default;
 
         template<class F> constexpr void visitAll(F&& f) const& {
             (void)((f(static_cast<const details::TupleEntry<Is, Ts>*>(this)->v), ...));
@@ -63,7 +63,7 @@ public:
     constexpr Tuple(const Ts&... ts) : indexed(ts...) {}
     constexpr Tuple(Ts&&... ts) : indexed(std::move(ts)...) {}
 
-    constexpr bool operator==(const Tuple&) const = default;
+    bool operator==(const Tuple&) const = default;
 
     template<class... Os> static constexpr auto fromArgs(Os&&... os) -> Tuple {
         auto res = Tuple{};
