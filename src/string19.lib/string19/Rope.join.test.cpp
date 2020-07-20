@@ -1,3 +1,4 @@
+#include "Rope.Decimal.h"
 #include "Rope.StringView.h"
 #include "Rope.char.h"
 #include "Rope.join.h"
@@ -33,4 +34,12 @@ TEST(Rope, joinView) {
     constexpr auto store = ropeStore<N>(rope);
     static_assert(viewStore(store) == viewLiteral("1, 2, 3"));
     EXPECT_EQ(store, storeLiteral("1, 2, 3"));
+}
+
+TEST(Rope, joinDecimal) {
+    constexpr auto rope = Seperator{viewLiteral(", ")}.join(decimal<1>, decimal<-2>, decimal<3>);
+    constexpr auto N = ropeCount(rope);
+    constexpr auto store = ropeStore<N>(rope);
+    static_assert(viewStore(store) == viewLiteral("1, -2, 3"));
+    EXPECT_EQ(store, storeLiteral("1, -2, 3"));
 }
