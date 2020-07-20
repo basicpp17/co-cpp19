@@ -3,6 +3,7 @@
 #include "align.h"
 #include "array19/SliceOf.carray.h"
 #include "array19/SliceOf.max.h"
+#include "meta19/Index.h"
 #include "meta19/RemoveReference.h"
 #include "meta19/TypeAt.h"
 #include "meta19/TypePack.h"
@@ -15,10 +16,12 @@ namespace partial19 {
 
 using array19::sliceMaximum;
 using array19::sliceOfCArray;
+using meta19::_index;
 using meta19::Index;
 using meta19::index_of_map;
 using meta19::IndexTypeMap;
 using meta19::isSame;
+using meta19::nullptr_to;
 using meta19::StoredOf;
 using meta19::Type;
 using meta19::type;
@@ -172,9 +175,8 @@ public:
     template<class F> auto visitInitialized(F&& f) const {
         auto i = 0u;
         auto offset = size_t{};
-        auto ptr = m_pointer;
         ((m_bits[i] ? (offset = alignOffset(alignof_ts[i], offset),
-                       f(*std::launder(reinterpret_cast<const Ts*>(ptr + offset))),
+                       f(*std::launder(reinterpret_cast<const Ts*>(m_pointer + offset))),
                        offset += sizeof_ts[i],
                        ++i)
                     : ++i),
@@ -183,18 +185,30 @@ public:
     template<class F> auto amendVisitInitialized(F&& f) {
         auto i = 0u;
         auto offset = size_t{};
-        auto ptr = m_pointer;
         ((m_bits[i] ? (offset = alignOffset(alignof_ts[i], offset),
-                       f(*std::launder(reinterpret_cast<Ts*>(ptr + offset))),
+                       f(*std::launder(reinterpret_cast<Ts*>(m_pointer + offset))),
                        offset += sizeof_ts[i],
                        ++i)
                     : ++i),
          ...);
     }
 
+    // functor: f(Index<I>*, const auto&) - called with every actually stored type
+    template<class F> auto visitWithIndex(F&& f) const {
+        [&f]<size_t... Is, class... Vs>(std::index_sequence<Is...>*, const Partial<Vs...>& p) {
+            auto offset = size_t{};
+            ((p.m_bits[Is] ? (offset = alignOffset(alignof_ts[Is], offset),
+                              f(_index<Is>, *std::launder(reinterpret_cast<const Vs*>(p.m_pointer + offset))),
+                              offset += sizeof_ts[Is])
+                           : offset),
+             ...);
+        }
+        (nullptr_to<std::make_index_sequence<sizeof...(Ts)>>, *this);
+    }
+
 private:
     void destructAll() {
-        amendVisitInitialized([]<class T>(T & v) { v.~T(); });
+        amendVisitInitialized([]<class T>(T& v) { v.~T(); });
         if constexpr (__STDCPP_DEFAULT_NEW_ALIGNMENT__ < max_align) {
             auto hasValue = [&](size_t i) { return m_bits[i]; };
             auto size = storageSize(hasValue);

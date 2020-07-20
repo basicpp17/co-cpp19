@@ -1,10 +1,13 @@
 #include "Partial.equals.h"
 #include "Partial.h"
+#include "Partial.ostream.h"
+#include "meta19/isSame.h"
 
 #include <gtest/gtest.h>
 
 using namespace partial19;
 
+using meta19::isSame;
 using meta19::type;
 
 TEST(Partial, empty) {
@@ -24,9 +27,9 @@ TEST(Partial, construction) {
 
     EXPECT_EQ(p1.at<0>(), 'c');
     EXPECT_EQ(p1.at<2>(), 2.3f);
-    // EXPECT_EQ(p1, p3);
-    // EXPECT_EQ(p1, p2);
-    // EXPECT_EQ(p2, p3);
+    EXPECT_EQ(p1, p3);
+    EXPECT_EQ(p1, p2);
+    EXPECT_EQ(p2, p3);
 }
 
 TEST(Partial, assignment) {
@@ -34,37 +37,37 @@ TEST(Partial, assignment) {
     auto p0 = P::fromArgs('c', 2.3f);
     auto p1 = P{};
     p1 = p0; // copy operator
-    // EXPECT_EQ(p0, p1);
+    EXPECT_EQ(p0, p1);
     auto p2 = P{};
-    // EXPECT_EQ(p2, P{});
+    EXPECT_EQ(p2, P{});
     p2 = std::move(p1); // move operator
 
     EXPECT_EQ(p0.at<0>(), 'c');
     EXPECT_EQ(p0.at<2>(), 2.3f);
-    // EXPECT_EQ(p0, p2);
+    EXPECT_EQ(p0, p2);
 }
 
-// TEST(Partial, fromFactory) {
-//    const auto p = Partial<char, int, float>::fromFactory(
-//        [](size_t i) { return (0 == i % 2); },
-//        [](auto i) {
-//            if constexpr (i == _index<0>) {
-//                return 'a';
-//            }
-//            if constexpr (i == _index<1>) {
-//                return 23;
-//            }
-//            if constexpr (i == _index<2>) {
-//                return 3.14f;
-//            }
-//        });
-//    ASSERT_TRUE(p.which().at<0>());
-//    ASSERT_FALSE(p.which().at<1>());
-//    ASSERT_TRUE(p.which().at<2>());
+TEST(Partial, fromFactory) {
+    const auto p = Partial<char, int, float>::fromFactory(
+        [](size_t i) { return (0 == i % 2); },
+        []<class T>(Type<T>*, void* ptr) {
+            if constexpr (std::is_same_v<T, char>) {
+                new (ptr) char('a');
+            }
+            if constexpr (std::is_same_v<T, int>) {
+                new (ptr) int(23);
+            }
+            if constexpr (std::is_same_v<T, float>) {
+                new (ptr) float(3.14f);
+            }
+        });
+    ASSERT_TRUE(p.which()[0]);
+    ASSERT_FALSE(p.which()[1]);
+    ASSERT_TRUE(p.which()[2]);
 
-//    EXPECT_EQ(p.at<0>(), 'a');
-//    EXPECT_EQ(p.at<2>(), 3.14f);
-//}
+    EXPECT_EQ(p.at<0>(), 'a');
+    EXPECT_EQ(p.at<2>(), 3.14f);
+}
 
 // TEST(Partial, type) {
 //    auto p = Partial<char, int, float>{'\x23', 23};
@@ -115,39 +118,27 @@ TEST(Partial, assignment) {
 //    EXPECT_EQ(p6.at<1>(), 2);
 //}
 
-// TEST(Partial, visitAll) {
-//    using P = Partial<char, int, float>;
-//    auto p = P{'\x23'};
+TEST(Partial, visitInitialized) {
+    using P = Partial<char, int, float>;
+    auto p = P::fromArgs('\x23', 2.3f);
 
-//    ASSERT_EQ(p.which().count(), 1ul);
-//    ASSERT_EQ(p.countAll(), 3ul);
+    size_t count = 0;
+    p.visitInitialized([&]<class V>(const V&) {
+        ++count;
+        EXPECT_TRUE((std::is_same_v<V, char> || std::is_same_v<V, float>));
+    });
+    EXPECT_EQ(count, 2);
+}
 
-//    size_t count = 0;
-//    p.visitAll([&](auto i, auto t) {
-//        ++count;
-//        if (i == 0) {
-//            EXPECT_TRUE(p.which()[i]);
-//            EXPECT_EQ(t, type<char>);
-//        }
-//        else {
-//            EXPECT_FALSE(p.which()[i]);
-//            EXPECT_NE(t, type<char>);
-//        }
-//    });
-//    EXPECT_EQ(count, p.countAll());
-//}
+TEST(Partial, visitWithIndex) {
+    using P = Partial<char, int, float>;
+    auto p = P::fromArgs('\x23', 2.3f);
 
-// TEST(Partial, visitInitialized) {
-//    using P = Partial<char, int, float>;
-//    auto p = P{'\x23', 2.3f};
-
-//    ASSERT_EQ(p.which().count(), 2ul);
-//    ASSERT_EQ(p.countAll(), 3ul);
-
-//    size_t count = 0;
-//    p.visitInitialized([&](auto v) {
-//        ++count;
-//        EXPECT_TRUE(type<decltype(v)> == type<char> || type<decltype(v)> == type<float>);
-//    });
-//    EXPECT_EQ(count, p.which().count());
-//}
+    size_t count = 0;
+    p.visitWithIndex([&]<size_t I, class V>(Index<I>*, const V&) {
+        ++count;
+        EXPECT_TRUE(I == 0 || I == 2);
+        EXPECT_TRUE((std::is_same_v<V, char> || std::is_same_v<V, float>));
+    });
+    EXPECT_EQ(count, 2);
+}
