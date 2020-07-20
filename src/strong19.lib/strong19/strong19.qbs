@@ -20,5 +20,12 @@ Product {
         Depends { name: "cpp" }
         cpp.includePaths: [".."]
         Depends { name: "string19" }
+
+        Properties {
+            condition: qbs.toolchain.contains('clang')
+            cpp.cxxFlags: base.concat(
+                "-Wno-gnu-zero-variadic-macro-arguments" // accept this extensions for opaque strong types
+            )
+        }
     }
 }
