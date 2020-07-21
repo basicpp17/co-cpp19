@@ -1,5 +1,6 @@
 #pragma once
 #include "SliceOf.h"
+#include "SliceOf.single.h"
 
 #include <new> // launder
 #include <string.h> // memcpy
@@ -38,6 +39,9 @@ template<class ElemStorage> struct DynamicStorage final {
 
 } // namespace details
 
+/// replacement for std::vector with different API
+/// * focus on SliceOf
+/// * mutable is explicit - use amend()
 template<class T> struct DynamicArrayOf final {
     using Element = T;
     using Count = size_t;
@@ -59,7 +63,7 @@ template<class T> struct DynamicArrayOf final {
     requires(sizeof...(Ts) > 0) DynamicArrayOf(Ts&&... args) noexcept(std::is_nothrow_copy_constructible_v<Element>)
             : m_storage(Storage::create(sizeof...(Ts)))
             , m_count(0) {
-        (copyConstructSlice(m_storage.pointer + m_count++, ConstSlice{args}), ...);
+        (copyConstructSlice(m_storage.pointer + m_count++, sliceOfSingle(args)), ...);
     }
 
     DynamicArrayOf(const DynamicArrayOf& o) noexcept(std::is_nothrow_copy_constructible_v<Element>)
@@ -132,23 +136,35 @@ template<class T> struct DynamicArrayOf final {
         if (unusedCapacity() < count) growBy(count);
     }
 
+    /// append a single element constructed in place with the given arguments
     template<class... Ts> void emplace_back(Ts&&... args) {
         ensureUnusedCapacity(1);
         new (m_storage.pointer + m_count) Element((Ts &&) args...);
         m_count++;
     }
 
+    /// appends possibly multiple elements at the end
     void append(ConstSlice elems) {
         ensureUnusedCapacity(elems.count());
         copyConstructSlice(storageEnd(), elems);
         m_count += elems.count();
     }
 
+    /// removes the last element
     void pop() noexcept(std::is_nothrow_destructible_v<Element>) {
         destructSlice(Slice{amendBegin() + m_count - 1, 1});
         m_count--;
     }
 
+    /// swiss army knife of mutating an dynamic array
+    /// replaces:
+    /// * insert - splice(it, 0, sliceOfSingle{V})
+    /// * erase - splice(it, N, {})
+    /// extensions:
+    /// * insert of elements at once
+    /// * combined remove and insert
+    /// known limits:
+    /// * no in place or move construction (not needed so far)
     void splice(Iterator it, Count removeCount, ConstSlice insertSlice) {
         auto offset = it - amendBegin();
         auto insertCount = insertSlice.count();
@@ -270,6 +286,15 @@ private:
     Count m_count;
 };
 
+/// simplified deduction guide
+/// usage:
+///     DynamicArrayOf{1,2,3}
+template<class T, class... Ts> DynamicArrayOf(T&&, Ts&&...) -> DynamicArrayOf<T>;
+
+/// deduce SliceOf from DynamicArray
+/// usage:
+///     auto a = DynamicArrayOf{1,2,3;
+///     auto slice = SliceOf{a};
 template<class T> SliceOf(const DynamicArrayOf<T>&) -> SliceOf<const T>;
 
 } // namespace array19

@@ -47,6 +47,11 @@ TEST(DynamicArrayOf, intExample) {
     ASSERT_EQ(sliceOfCArray({12, 99, 64, 45}), SliceOf{v2});
 }
 
+TEST(DynamicArrayOf, construct) {
+    auto v = DynamicArrayOf{1, 2, 3};
+    ASSERT_EQ(sliceOfCArray({1, 2, 3}), SliceOf{v});
+}
+
 struct NonTrivial {
     NonTrivial() : v(1) {}
     explicit NonTrivial(int v) : v(v) {}

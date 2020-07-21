@@ -14,6 +14,7 @@ Product {
         "SliceOf.h",
         "SliceOf.max.h",
         "SliceOf.ostream.h",
+        "SliceOf.single.h",
         "WithIndex.h",
         "Zip.h",
         "adlRange.h",
