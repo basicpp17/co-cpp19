@@ -13,7 +13,7 @@ template<Archive A, class... Ts> void serialize(A& a, std::variant<Ts...>& varia
     serialize(a, index);
 
     constexpr static auto handleT = []<class T>(auto& a, auto& variant, T*) {
-        if (a.mode == ArchiveMode::Read) {
+        if constexpr (A::mode == ArchiveMode::Read) {
             auto value = T{};
             serialize(a, value);
             variant = value;

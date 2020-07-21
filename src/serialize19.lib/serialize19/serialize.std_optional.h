@@ -8,7 +8,7 @@ namespace serialize19 {
 template<Archive A, class T> void serialize(A& a, std::optional<T>& optional) {
     auto hasValue = optional.has_value();
     serialize(a, hasValue);
-    if (a.mode == ArchiveMode::Read) {
+    if constexpr (A::mode == ArchiveMode::Read) {
         if (hasValue) {
             auto value = T{};
             serialize(a, value);

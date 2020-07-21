@@ -36,6 +36,11 @@ Product {
             "serialize.Array.h",
             "serialize.BufferSlice.h",
             "serialize.DynamicArrayOf.h",
+            "serialize.None.h",
+            "serialize.Partial.h",
+            "serialize.Strong.h",
+            "serialize.Tuple.h",
+            "serialize.Variant.h",
         ]
     }
     Group {
