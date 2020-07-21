@@ -4,6 +4,8 @@ Product {
     Depends { name: "meta19" }
 
     files: [
+        "None.h",
+        "None.ostream.h",
         "Variant.equals.h",
         "Variant.h",
         "Variant.ostream.h",
