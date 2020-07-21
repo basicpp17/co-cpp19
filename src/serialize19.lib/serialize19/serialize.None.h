@@ -4,6 +4,6 @@
 
 namespace serialize19 {
 
-template<Archive A> void serialize(A&, valiant19::None&) {}
+template<Archive A> void serialize(A&, variant19::None&) {}
 
 } // namespace serialize19

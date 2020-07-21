@@ -13,14 +13,14 @@ template<Archive A, class... Ts> void serialize(A& a, variant19::Variant<Ts...>&
     auto whichValue = static_cast<typename Which::Value>(variant.which());
     serialize(a, whichValue);
 
-    constexpr static auto handleT = []<class T>(auto& a, auto& variant, T*) {
+    constexpr static auto handleT = []<class Value>(auto& a, auto& variant, Value*) {
         if constexpr (A::mode == ArchiveMode::Read) {
-            auto value = T{};
+            auto value = Value{};
             serialize(a, value);
             variant = value;
         }
         else {
-            auto& value = variant.as(type<T>);
+            auto& value = variant.as(type<Value>);
             serialize(a, value);
         }
     };
