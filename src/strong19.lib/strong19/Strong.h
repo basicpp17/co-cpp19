@@ -69,7 +69,7 @@ template<class V> struct Weak {
 
 /// Fallback for any type that does not have isStrong overload
 /// note: This overload is found through argument dependent lookup of strong19::ADL
-constexpr inline auto isStrong(ADL*, void*) -> bool { return false; }
+constexpr inline auto isStrong(ADL*, const void*) -> bool { return false; }
 
 /// stored type of the strong type T (is_strong<T> == true)
 template<class T> using StrongValueType = decltype(strongValueType(nullptr_to<T>));
