@@ -1,5 +1,6 @@
 #pragma once
 #include "meta19/Index.h"
+#include "meta19/RemoveReference.h"
 #include "meta19/Type.h"
 #include "meta19/TypeAt.h"
 #include "meta19/TypePack.Front.h"
@@ -18,6 +19,7 @@ using meta19::index_pack;
 using meta19::IndexPack;
 using meta19::IndexTypeMap;
 using meta19::PackFront;
+using meta19::StoredOf;
 using meta19::Type;
 using meta19::TypeAtMap;
 
@@ -202,12 +204,10 @@ private:
 public:
     constexpr Variant() = default;
 
-    /// construct from move/copy
-    template<class T, class BT = std::remove_cv_t<std::remove_reference_t<T>>>
-    requires(!std::is_base_of_v<Variant, BT>) Variant(T&& t) {
-        static_assert((std::is_same_v<BT, Ts> || ...), "type not part of variant");
-        indexed.template constructAs<BT>(std::forward<T>(t));
-        indexed.which = index_of_map<BT, Map>;
+    /// construct from Ts move/copy
+    template<class T> requires((std::is_same_v<StoredOf<T>, Ts> || ...)) Variant(T&& t) {
+        indexed.template constructAs<StoredOf<T>>(std::forward<T>(t));
+        indexed.which = index_of_map<StoredOf<T>, Map>;
     }
 
     /// construct of type inside variant
