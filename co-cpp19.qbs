@@ -42,7 +42,6 @@ Project {
                 condition: qbs.toolchain.contains('clang')
                 cpp.cxxFlags: base.concat(
                     "--pedantic", // best C++ compatibility
-                    "-Wall", "-Wextra", // enable more warnings
                     "-ftemplate-backtrace-limit=0", // do not cut template backtraces
                     "-Wno-gnu-zero-variadic-macro-arguments" // accept this extensions for opaque strong types
                 )
