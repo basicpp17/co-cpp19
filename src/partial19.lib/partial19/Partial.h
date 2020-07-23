@@ -11,6 +11,7 @@
 
 #include <new> // std::launder, operator new[], operator delete[]
 #include <stdint.h> // uint8_t
+#include <type_traits>
 
 namespace partial19 {
 
@@ -32,7 +33,10 @@ namespace details {
 
 template<bool> struct ConditionalPlacementNew;
 template<> struct ConditionalPlacementNew<true> {
-    template<class T> static auto apply(T&& v, void* ptr) { new (ptr) T((T &&) v); }
+    template<class T> static auto apply(T&& v, void* ptr) {
+        using V = std::remove_const_t<std::remove_reference_t<T>>;
+        new (ptr) V((T &&) v);
+    }
 };
 template<> struct ConditionalPlacementNew<false> {
     template<class T> static auto apply(T&&, void*) {}
