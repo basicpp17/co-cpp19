@@ -1,3 +1,4 @@
+#pragma once
 #include "DynamicArrayOf.h"
 #include "Zip.h"
 
@@ -11,8 +12,6 @@ template<class T> bool operator==(const DynamicArrayOf<T>& a, const DynamicArray
     return true;
 }
 
-template<class T> constexpr bool operator!=(const DynamicArrayOf<T>& a, const DynamicArrayOf<T>& b) {
-    return !(a == b);
-}
+template<class T> bool operator!=(const DynamicArrayOf<T>& a, const DynamicArrayOf<T>& b) noexcept { return !(a == b); }
 
 } // namespace array19
