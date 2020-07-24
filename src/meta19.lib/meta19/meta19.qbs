@@ -39,6 +39,7 @@ Product {
         name: "TypePack"
         files: [
             "TypePack.Front.h",
+            "TypePack.count.h",
             "TypePack.h",
             "TypePackTemplate.Change.h",
             "TypePackTemplate.Join.h",
