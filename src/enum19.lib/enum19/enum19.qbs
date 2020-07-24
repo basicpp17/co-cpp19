@@ -5,6 +5,7 @@ Product {
 
     files: [
         "ADL.h",
+        "Enum.extras.ostream.h",
         "Enum.h",
         "Enum.names.h",
         "Enum.ostream.h",

@@ -6,14 +6,21 @@
 
 namespace enum19 {
 
+template<class Enum> auto enumNameOstream(std::ostream& out, const Enum& e) -> std::ostream& {
+    auto underlying = static_cast<std::underlying_type_t<T>>(e);
+    return out << valueName(e) << " (" << underlying << ")";
+}
+
 /// This wrapper enables ADL for ostream operator
 template<class T> requires(std::is_enum_v<T>) struct EnumName { T v; };
-
 template<class T> EnumName(T) -> EnumName<T>;
 
 template<class T> auto operator<<(std::ostream& out, EnumName<T> wrapper) -> std::ostream& {
-    auto underlying = static_cast<std::underlying_type_t<T>>(wrapper.v);
-    return out << valueName(wrapper.v) << " (" << underlying << ")";
+    return enumNameOstream(out, wrapper.v);
 }
+
+/// defines an ostream operator for given enum type
+#define ENUM19_NAME_OSTREAM(NAME)                                                                                      \
+    inline auto operator<<(std::ostream& out, const NAME& s)->std::ostream& { return enum19::enumNameOstream(out, s); }
 
 } // namespace enum19
