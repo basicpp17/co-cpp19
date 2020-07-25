@@ -10,6 +10,7 @@ Application {
     Depends { name: "googletest" }
 
     files: [
+        "Tuple.bind.test.cpp",
         "Tuple.test.cpp",
     ]
 }
