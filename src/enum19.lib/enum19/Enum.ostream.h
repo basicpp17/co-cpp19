@@ -7,7 +7,7 @@
 namespace enum19 {
 
 template<class Enum> auto enumNameOstream(std::ostream& out, const Enum& e) -> std::ostream& {
-    auto underlying = static_cast<std::underlying_type_t<T>>(e);
+    auto underlying = static_cast<std::underlying_type_t<Enum>>(e);
     return out << valueName(e) << " (" << underlying << ")";
 }
 
