@@ -69,7 +69,7 @@ constexpr auto amendVisitRecursive(V&& v, F&& f, IndexPack<I, Is...>*) -> declty
         return f(*v.template amendAsPtr<T>());
     }
     if constexpr (0 != sizeof...(Ts) && 0 != sizeof...(Is)) {
-        return visitRecursive<Ts...>(std::forward<V>(v), std::forward<F>(f), index_pack<Is...>);
+        return amendVisitRecursive<Ts...>(std::forward<V>(v), std::forward<F>(f), index_pack<Is...>);
     }
     else {
         META19_UNREACHABLE();
@@ -248,8 +248,7 @@ public:
         return indexed.visitImpl(Overloaded{(Fs &&) fs...});
     }
 
-    template<class... Fs>
-    requires(sizeof...(Fs) > 0) constexpr auto amendOverloaded(Fs&&... fs) const -> decltype(auto) {
+    template<class... Fs> requires(sizeof...(Fs) > 0) constexpr auto amendOverloaded(Fs&&... fs) -> decltype(auto) {
         return indexed.amendVisitImpl(Overloaded{(Fs &&) fs...});
     }
 };
