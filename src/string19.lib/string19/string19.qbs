@@ -2,6 +2,7 @@
 Product {
     Depends { name: "cpp" }
     Depends { name: "tuple19" }
+    Depends { name: "fmt"; required: false }
 
     files: [
         "ADL.h",
@@ -32,6 +33,7 @@ Product {
         name: "StringView"
         files: [
             "StringView.equals.h",
+            "StringView.fmt.h",
             "StringView.h",
             "StringView.literal.h",
             "StringView.ostream.h",

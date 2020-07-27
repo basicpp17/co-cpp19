@@ -2,6 +2,7 @@
 Product {
     Depends { name: "cpp" }
     Depends { name: "string19" }
+    Depends { name: "fmt"; required: false }
 
     files: [
         "ADL.h",

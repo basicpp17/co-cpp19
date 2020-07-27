@@ -1,8 +1,8 @@
 #pragma once
 #include "Strong.h"
-#include "string19/StringView.std.h"
+#include "string19/StringView.fmt.h"
 
-/// not for this header you need fmt library (not included here)
+/// noto: for this header you need fmt library (not included as library dependency)
 #include <fmt/format.h>
 
 namespace fmt {
@@ -12,7 +12,7 @@ template<class T, class char_type> requires(strong19::is_strong<T>) struct forma
     constexpr auto parse(format_parse_context& ctx) { return ctx.begin(); }
 
     template<typename FormatCtx> auto format(const T& v, FormatCtx& ctx) {
-        return format_to(ctx.out(), "{} [{}]", v.v, string19::toStd(strong19::strong_name<T>));
+        return format_to(ctx.out(), "{} [{}]", v.v, strong19::strong_name<T>);
     }
 };
 
