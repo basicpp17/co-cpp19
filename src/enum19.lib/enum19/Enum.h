@@ -34,6 +34,8 @@ template<class T> constexpr void metaEnumFor(ADL*, T*) {
 
 template<class T> constexpr auto meta_enum_for = metaEnumFor(adl, nullptr_to<T>);
 
+template<class T> concept HasMetaEnum = requires(T v) { {meta_enum_for<T>}; };
+
 template<class Enum> struct MetaEnumMember {
     size_t index;
     StringView name;
