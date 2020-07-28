@@ -30,7 +30,7 @@ public:
         if constexpr (std::is_invocable_r_v<bool, F, T>)
             return *this ? f(value()) : false;
         else {
-            return *this ? f : false;
+            return *this ? (bool)f : false;
         }
     }
 
