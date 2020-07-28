@@ -25,6 +25,12 @@ public:
 
     constexpr explicit operator bool() const { return !isNan(m_data); }
 
+    constexpr bool operator==(const Optional& o) const {
+        if (!*this) return !o;
+        return (bool)(o) && m_data == o.m_data;
+    }
+    constexpr bool operator!=(const Optional& o) const { return !((*this) == o); }
+
     /// @return predicate(value()) if optional is set else return false
     template<class F> constexpr auto operator&&(F&& f) const -> bool {
         if constexpr (std::is_invocable_r_v<bool, F, T>)
