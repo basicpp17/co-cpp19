@@ -6,12 +6,12 @@ Application {
     consoleApplication: true
     type: ["application", "autotest"]
 
-    Depends { name: "serialize19" }
-    Depends { name: "variant19" }
-    Depends { name: "tuple19" }
-    Depends { name: "partial19" }
-    Depends { name: "optional19" }
     Depends { name: "googletest" }
+    Depends { name: "optional19" }
+    Depends { name: "partial19" }
+    Depends { name: "serialize19" }
+    Depends { name: "tuple19" }
+    Depends { name: "variant19" }
 
     Group {
         name: "std"
@@ -35,7 +35,6 @@ Application {
             "serialize.Variant.test.cpp",
         ]
     }
-
     files: [
         "Codec.test.cpp",
         "Endianness.test.cpp",

@@ -1,13 +1,14 @@
 
 Product {
-    Depends { name: "cpp" }
     Depends { name: "tuple19" }
     Depends { name: "fmt"; required: false }
 
-    files: [
-        "ADL.h",
-        "DynamicString.h",
-    ]
+    Export {
+        Depends { name: "cpp" }
+        cpp.includePaths: [".."]
+        Depends { name: "tuple19" }
+    }
+
     Group {
         name: "Rope"
         files: [
@@ -42,10 +43,8 @@ Product {
             "StringView.store.h",
         ]
     }
-
-    Export {
-        Depends { name: "cpp" }
-        cpp.includePaths: [".."]
-        Depends { name: "tuple19" }
-    }
+    files: [
+        "ADL.h",
+        "DynamicString.h",
+    ]
 }

@@ -2,6 +2,12 @@
 Product {
     Depends { name: "array19" }
 
+    Export {
+        Depends { name: "cpp" }
+        cpp.includePaths: [".."]
+        Depends { name: "array19" }
+    }
+
     Group {
         name: "Index"
         files: [
@@ -47,16 +53,9 @@ Product {
             "TypePackTemplate.h",
         ]
     }
-
     files: [
         "Unreachable.h",
         "isSame.h",
         "nullptr_to.h",
     ]
-
-    Export {
-        Depends { name: "cpp" }
-        cpp.includePaths: [".."]
-        Depends { name: "array19" }
-    }
 }

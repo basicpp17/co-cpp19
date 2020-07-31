@@ -3,14 +3,17 @@ Product {
     Depends { name: "cpp" }
     Depends { name: "meta19" }
 
-    Depends { name: "variant19"; required: false }
-    Depends { name: "strong19"; required: false }
     Depends { name: "optional19"; required: false }
+    Depends { name: "partial19"; required: false }
+    Depends { name: "strong19"; required: false }
+    Depends { name: "tuple19"; required: false }
+    Depends { name: "variant19"; required: false }
 
-    files: [
-        "dynamicWrite.h",
-        "serialize.h",
-    ]
+    Export {
+        Depends { name: "cpp" }
+        cpp.includePaths: [".."]
+        Depends { name: "meta19" }
+    }
 
     Group {
         name: "Archive"
@@ -33,7 +36,6 @@ Product {
             "WriteAppender.h",
         ]
     }
-
     Group {
         name: "serialize co-cpp19"
         files: [
@@ -62,10 +64,8 @@ Product {
             "serialize.std_vector.h",
         ]
     }
-
-    Export {
-        Depends { name: "cpp" }
-        cpp.includePaths: [".."]
-        Depends { name: "meta19" }
-    }
+    files: [
+        "dynamicWrite.h",
+        "serialize.h",
+    ]
 }

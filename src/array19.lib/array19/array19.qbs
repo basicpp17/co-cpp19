@@ -2,6 +2,12 @@
 Product {
     Depends { name: "cpp19" }
 
+    Export {
+        Depends { name: "cpp" }
+        cpp.includePaths: [".."]
+        Depends { name: "cpp19" }
+    }
+
     files: [
         "Array.h",
         "Array.ostream.h",
@@ -19,10 +25,4 @@ Product {
         "Zip.h",
         "adlRange.h",
     ]
-
-    Export {
-        Depends { name: "cpp" }
-        cpp.includePaths: [".."]
-        Depends { name: "cpp19" }
-    }
 }

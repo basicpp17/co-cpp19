@@ -1,7 +1,12 @@
 
 Product {
-    Depends { name: "cpp" }
     Depends { name: "meta19" }
+
+    Export {
+        Depends { name: "cpp" }
+        cpp.includePaths: [".."]
+        Depends { name: "meta19" }
+    }
 
     files: [
         "Tuple.bind.h",
@@ -9,10 +14,4 @@ Product {
         "Tuple.ostream.h",
         "Tuple.trait.h",
     ]
-
-    Export {
-        Depends { name: "cpp" }
-        cpp.includePaths: [".."]
-        Depends { name: "meta19" }
-    }
 }

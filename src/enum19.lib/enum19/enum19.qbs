@@ -4,6 +4,12 @@ Product {
     Depends { name: "string19" }
     Depends { name: "fmt"; required: false }
 
+    Export {
+        Depends { name: "cpp" }
+        cpp.includePaths: [".."]
+        Depends { name: "string19" }
+    }
+
     files: [
         "ADL.h",
         "Enum.extras.ostream.h",
@@ -13,10 +19,4 @@ Product {
         "Enum.ostream.h",
         "visitEnumMemberNames.h",
     ]
-
-    Export {
-        Depends { name: "cpp" }
-        cpp.includePaths: [".."]
-        Depends { name: "string19" }
-    }
 }
