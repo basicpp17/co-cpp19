@@ -17,6 +17,8 @@ private:
     T m_data{makeInvalid()};
 
 public:
+    using Value = T;
+
     constexpr PackedOptional() = default;
     constexpr PackedOptional(T v) : m_data((T &&) v) {}
 
