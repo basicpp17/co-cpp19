@@ -10,20 +10,34 @@ Application {
     Depends { name: "variant19" }
     Depends { name: "tuple19" }
     Depends { name: "partial19" }
+    Depends { name: "optional19" }
     Depends { name: "googletest" }
+
+    Group {
+        name: "std"
+        files: [
+            "serialize.std_bitset.test.cpp",
+            "serialize.std_optional.test.cpp",
+            "serialize.std_tuple.test.cpp",
+            "serialize.std_variant.test.cpp",
+            "serialize.std_vector.test.cpp",
+        ]
+    }
+    Group {
+        name: "co-cpp19"
+        files: [
+            "serialize.BufferSlice.test.cpp",
+            "serialize.DynamicArrayOf.test.cpp",
+            "serialize.Optional.test.cpp",
+            "serialize.PackedOptional.test.cpp",
+            "serialize.Partial.test.cpp",
+            "serialize.Tuple.test.cpp",
+            "serialize.Variant.test.cpp",
+        ]
+    }
 
     files: [
         "Codec.test.cpp",
         "Endianness.test.cpp",
-        "serialize.BufferSlice.test.cpp",
-        "serialize.DynamicArrayOf.test.cpp",
-        "serialize.Partial.test.cpp",
-        "serialize.Tuple.test.cpp",
-        "serialize.Variant.test.cpp",
-        "serialize.std_bitset.test.cpp",
-        "serialize.std_optional.test.cpp",
-        "serialize.std_tuple.test.cpp",
-        "serialize.std_variant.test.cpp",
-        "serialize.std_vector.test.cpp",
     ]
 }

@@ -7,9 +7,11 @@ namespace optional19 {
 
 using meta19::nullptr_to;
 
+template<auto make> constexpr bool notEqualBy(const decltype(make())& v) { return v != make(); }
+
 /// PackedOptional saves the extra bool by using one value as invalid
 /// note: we cannot pass any value to templates, so we pass a constexpr functor that returns the invalid value
-template<auto makeInvalid> struct PackedOptional {
+template<auto makeInvalid, auto isValid = notEqualBy<makeInvalid>> struct PackedOptional {
 private:
     using T = decltype(makeInvalid());
     T m_data{makeInvalid()};
@@ -18,7 +20,7 @@ public:
     constexpr PackedOptional() = default;
     constexpr PackedOptional(T v) : m_data((T &&) v) {}
 
-    constexpr explicit operator bool() const { return !(m_data == makeInvalid()); }
+    constexpr explicit operator bool() const { return isValid(m_data); }
 
     /// @return predicate(value()) if optional is set else return false
     template<class F> constexpr auto operator&&(F&& f) const -> bool {

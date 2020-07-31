@@ -1,13 +1,13 @@
-#include "NanOptional.h"
-#include "Optional.equals.h"
-#include "Optional.ostream.h"
+#include "PackedOptional.equals.h"
+#include "PackedOptional.ostream.h"
+#include "PackedOptionalNan.h"
 
 #include <gtest/gtest.h>
 
 using namespace optional19;
 
 TEST(Optional, double) {
-    using OptDbl = Optional<NanPacked<double>>;
+    using OptDbl = PackedOptionalNan<double>;
 
     static_assert(sizeof(OptDbl) == sizeof(double));
     {

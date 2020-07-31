@@ -3,6 +3,10 @@ Product {
     Depends { name: "cpp" }
     Depends { name: "meta19" }
 
+    Depends { name: "variant19"; required: false }
+    Depends { name: "strong19"; required: false }
+    Depends { name: "optional19"; required: false }
+
     files: [
         "dynamicWrite.h",
         "serialize.h",
@@ -37,6 +41,8 @@ Product {
             "serialize.BufferSlice.h",
             "serialize.DynamicArrayOf.h",
             "serialize.None.h",
+            "serialize.Optional.h",
+            "serialize.PackedOptional.h",
             "serialize.Partial.h",
             "serialize.Strong.h",
             "serialize.Tuple.h",

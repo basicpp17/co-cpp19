@@ -5,7 +5,7 @@
 
 namespace optional19 {
 
-template<auto mI> auto operator<<(std::ostream& out, const PackedOptional<mI>& opt) -> std::ostream& {
+template<auto m, auto i> auto operator<<(std::ostream& out, const PackedOptional<m, i>& opt) -> std::ostream& {
     if (opt)
         return out << opt.value();
     else
