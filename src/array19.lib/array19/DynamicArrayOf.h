@@ -209,9 +209,8 @@ private:
     using Storage = details::DynamicStorage<ElementStorage>;
     using StorageSlice = SliceOf<ElementStorage>;
     using StorageIterator = ElementStorage*;
-    constexpr static auto element_size = sizeof(ElementStorage);
 
-    [[nodiscard]] auto byteSize() const -> size_t { return m_count * element_size; }
+    [[nodiscard]] auto byteSize() const -> size_t { return m_count * sizeof(ElementStorage); }
     [[nodiscard]] auto storageEnd() -> StorageIterator { return m_storage.pointer + m_count; }
 
     static void destructSlice(Slice slice) {
@@ -219,7 +218,7 @@ private:
     }
     static void copyAssignSlice(Iterator to, ConstSlice fromSlice) {
         if constexpr (std::is_trivially_copy_assignable_v<Element>) {
-            memcpy(to, fromSlice.begin(), fromSlice.count() * element_size);
+            memcpy(to, fromSlice.begin(), fromSlice.count() * sizeof(ElementStorage));
         }
         else {
             for (const auto& e : fromSlice) *to++ = e;
@@ -227,7 +226,7 @@ private:
     }
     static void moveAssignSlice(Iterator to, Slice fromSlice) {
         if constexpr (std::is_trivially_move_assignable_v<Element>) {
-            memcpy(to, fromSlice.begin(), fromSlice.count() * element_size);
+            memcpy(to, fromSlice.begin(), fromSlice.count() * sizeof(ElementStorage));
         }
         else {
             for (const auto& e : fromSlice) *to++ = std::move(e);
@@ -235,7 +234,7 @@ private:
     }
     static void reverseMoveAssignSlice(Iterator to, Slice fromSlice) {
         if constexpr (std::is_trivially_move_assignable_v<Element>) {
-            memmove(to, fromSlice.begin(), fromSlice.count() * element_size);
+            memmove(to, fromSlice.begin(), fromSlice.count() * sizeof(ElementStorage));
         }
         else {
             auto rTo = to + fromSlice.count();
@@ -246,7 +245,7 @@ private:
     }
     static void copyConstructSlice(StorageIterator to, ConstSlice fromSlice) {
         if constexpr (std::is_trivially_copy_constructible_v<Element>) {
-            memcpy(to, fromSlice.begin(), fromSlice.count() * element_size);
+            memcpy(to, fromSlice.begin(), fromSlice.count() * sizeof(ElementStorage));
         }
         else {
             for (auto& from : fromSlice) new (to++) Element(from);
@@ -254,7 +253,7 @@ private:
     }
     static void moveConstructSlice(StorageIterator to, Slice fromSlice) {
         if constexpr (std::is_trivially_move_constructible_v<Element>) {
-            memcpy(to, fromSlice.begin(), fromSlice.count() * element_size);
+            memcpy(to, fromSlice.begin(), fromSlice.count() * sizeof(ElementStorage));
         }
         else {
             for (auto& from : fromSlice) new (to++) Element(std::move(from));
@@ -262,7 +261,7 @@ private:
     }
     static void forwardMoveConstructSlice(StorageIterator to, Slice fromSlice) {
         if constexpr (std::is_trivially_move_constructible_v<Element>) {
-            memmove(to, fromSlice.begin(), fromSlice.count() * element_size);
+            memmove(to, fromSlice.begin(), fromSlice.count() * sizeof(ElementStorage));
         }
         else {
             for (auto& from : fromSlice) new (to++) Element(std::move(from));

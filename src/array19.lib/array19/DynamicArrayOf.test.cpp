@@ -52,6 +52,15 @@ TEST(DynamicArrayOf, construct) {
     ASSERT_EQ(sliceOfCArray({1, 2, 3}), SliceOf{v});
 }
 
+struct NonTrivial;
+using NonTrivialArray = DynamicArrayOf<NonTrivial>;
+
+struct User {
+    NonTrivialArray v;
+
+    User() = default;
+};
+
 struct NonTrivial {
     NonTrivial() : v(1) {}
     explicit NonTrivial(int v) : v(v) {}
