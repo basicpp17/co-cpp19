@@ -3,6 +3,7 @@
 #include "Rope.char.h"
 #include "Rope.store.h"
 #include "StringStore.literal.h"
+#include "StringStore.ostream.h"
 #include "StringView.equals.h"
 #include "StringView.literal.h"
 #include "StringView.store.h"

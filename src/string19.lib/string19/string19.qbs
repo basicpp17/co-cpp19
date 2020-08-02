@@ -27,6 +27,7 @@ Product {
         files: [
             "StringStore.h",
             "StringStore.literal.h",
+            "StringStore.ostream.h",
             "StringStore.range.h",
         ]
     }
