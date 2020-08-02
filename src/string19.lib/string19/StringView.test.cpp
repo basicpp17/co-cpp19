@@ -1,5 +1,4 @@
 #include "StringView.h"
-//#include "viewCString.h"
 #include "StringView.literal.h"
 
 #include <gtest/gtest.h>
@@ -26,21 +25,3 @@ TEST(StringView, fromLiteral) {
     EXPECT_EQ(z.count, 5u);
     EXPECT_EQ(x.extraZero, ExtraZero::Present);
 }
-
-// TEST(StringView, fromCString) {
-//  static constexpr auto* cstr = "Hello";
-//  constexpr auto x = viewCString(cstr);
-//  static_assert(x[0] == 'H');
-//  static_assert(x.size() == 5u);
-//  static_assert(!x.empty());
-
-//  EXPECT_EQ(x[0], 'H');
-//  // EXPECT_EQ(x.size(), 5u); // MSVC seems to have a bug here
-//  EXPECT_FALSE(x.empty());
-
-//  auto* ystr = "World";
-//  auto y = viewCString(ystr);
-//  EXPECT_EQ(y[0], 'W');
-//  EXPECT_EQ(y.size(), 5u);
-//  EXPECT_FALSE(y.empty());
-//}
