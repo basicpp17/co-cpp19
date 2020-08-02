@@ -59,9 +59,8 @@ template<class T> struct DynamicArrayOf final {
 
     DynamicArrayOf(ConstSlice slice) { append(slice); }
 
-    template<class... Ts>
-    requires((sizeof...(Ts) > 0) && ... && std::is_constructible_v<T, Ts>)
-        DynamicArrayOf(Ts&&... args) noexcept(std::is_nothrow_copy_constructible_v<Element>)
+    template<class... Ts> requires(sizeof...(Ts) > 1) && requires(Ts... args) { (T(args), ...); }
+    DynamicArrayOf(Ts&&... args) noexcept(std::is_nothrow_copy_constructible_v<Element>)
             : m_storage(Storage::create(sizeof...(Ts)))
             , m_count(0) {
         (copyConstructSlice(m_storage.pointer + m_count++, sliceOfSingle<const T>(args)), ...);
