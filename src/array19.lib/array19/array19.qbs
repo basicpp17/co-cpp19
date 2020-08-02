@@ -9,6 +9,10 @@ Product {
     }
 
     files: [
+        "AllocatedArrayOf.equals.h",
+        "AllocatedArrayOf.h",
+        "AllocatedArrayOf.ostream.h",
+        "AllocatedArrayUtils.h",
         "Array.h",
         "Array.ostream.h",
         "Array.slice.h",

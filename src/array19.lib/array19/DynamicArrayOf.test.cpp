@@ -52,6 +52,8 @@ TEST(DynamicArrayOf, construct) {
     ASSERT_EQ(sliceOfCArray({1, 2, 3}), SliceOf{v});
 }
 
+namespace {
+
 struct NonTrivial;
 using NonTrivialArray = DynamicArrayOf<NonTrivial>;
 
@@ -66,9 +68,9 @@ struct NonTrivial {
     explicit NonTrivial(int v) : v(v) {}
     NonTrivial(const NonTrivial& o) : v(o.v) {}
     NonTrivial& operator=(const NonTrivial& o) { return v = o.v, *this; }
-    NonTrivial(NonTrivial&& o) : v(o.v) {}
-    NonTrivial& operator=(NonTrivial&& o) { return v = o.v, *this; }
-    ~NonTrivial() {}
+    NonTrivial(NonTrivial&& o) noexcept : v(o.v) {}
+    NonTrivial& operator=(NonTrivial&& o) noexcept { return v = o.v, *this; }
+    ~NonTrivial() noexcept {}
     bool operator==(const NonTrivial&) const = default;
 
     int value() const { return v; }
@@ -77,6 +79,8 @@ private:
     int v;
 };
 auto operator<<(std::ostream& out, const NonTrivial& c) -> std::ostream& { return out << c.value(); }
+
+} // namespace
 
 TEST(DynamicArrayOf, NontrivialExample) {
 

@@ -1,43 +1,10 @@
 #pragma once
-#include "SliceOf.h"
+#include "AllocatedArrayUtils.h"
 #include "SliceOf.single.h"
 
 #include <new> // launder
-#include <string.h> // memcpy
 
 namespace array19 {
-
-namespace details {
-
-template<class ElemStorage> struct DynamicStorage final {
-    using ElementStorage = ElemStorage;
-    using Capacity = size_t;
-    using Index = size_t;
-
-    DynamicStorage() = default;
-    ~DynamicStorage() noexcept { delete[] pointer; }
-
-    DynamicStorage(DynamicStorage&& o) noexcept : pointer(o.pointer), capacity(o.capacity) { o.pointer = {}; }
-    DynamicStorage& operator=(DynamicStorage&& o) noexcept {
-        delete[] pointer;
-        pointer = o.pointer;
-        capacity = o.capacity;
-        o.pointer = {};
-        return *this;
-    }
-
-    [[nodiscard]] static auto create(Capacity capacity) -> DynamicStorage {
-        auto result = DynamicStorage{};
-        result.pointer = new ElementStorage[capacity];
-        result.capacity = capacity;
-        return result;
-    }
-
-    ElementStorage* pointer{};
-    Capacity capacity{};
-};
-
-} // namespace details
 
 /// replacement for std::vector with different API
 /// * focus on SliceOf
@@ -47,84 +14,92 @@ template<class T> struct DynamicArrayOf final {
     using Count = size_t;
     using Index = size_t;
 
-    using Reference = Element&;
-    using ConstReference = const Element&;
     using Iterator = Element*;
     using ConstIterator = const Element*;
     using Slice = SliceOf<Element>;
     using ConstSlice = SliceOf<const Element>;
 
+private:
+    using Utils = AllocatedArrayUtils<T>;
+
+    T* m_pointer;
+    Count m_count;
+    Count m_capacity;
+
+public:
     DynamicArrayOf() = default;
-    ~DynamicArrayOf() noexcept(std::is_nothrow_destructible_v<Element>) { destructSlice(amend()); }
+    ~DynamicArrayOf() noexcept(std::is_nothrow_destructible_v<Element>) {
+        if (m_pointer) {
+            Utils::destruct(amend());
+            Utils::deallocate(Slice{m_pointer, m_capacity});
+        }
+    }
 
     DynamicArrayOf(ConstSlice slice) { append(slice); }
 
-    template<class... Ts> requires(sizeof...(Ts) > 1) && requires(Ts... args) { (T(args), ...); }
+    template<class... Ts> requires(sizeof...(Ts) > 0) && requires(Ts... args) { (T(args), ...); }
     DynamicArrayOf(Ts&&... args) noexcept(std::is_nothrow_copy_constructible_v<Element>)
-            : m_storage(Storage::create(sizeof...(Ts)))
-            , m_count(0) {
-        (copyConstructSlice(m_storage.pointer + m_count++, sliceOfSingle<const T>(args)), ...);
+            : m_pointer(Utils::allocate(sizeof...(Ts)))
+            , m_count(0)
+            , m_capacity(sizeof...(Ts)) {
+        (Utils::copyConstruct(m_pointer + m_count++, sliceOfSingle<const T>(args)), ...);
     }
 
     DynamicArrayOf(const DynamicArrayOf& o) noexcept(std::is_nothrow_copy_constructible_v<Element>)
-            : m_storage(Storage::create(o.m_count))
+            : m_pointer(Utils::allocate(o.m_count))
             , m_count(o.m_count) {
-        copyConstructSlice(m_storage.pointer, o);
+        Utils::copyConstruct(m_pointer, o);
     }
     DynamicArrayOf& operator=(const DynamicArrayOf& o) noexcept(std::is_nothrow_copy_assignable_v<Element>) {
-        if (m_storage.capacity < o.m_count) {
+        if (m_capacity < o.m_count) {
             *this = DynamicArrayOf(o);
         }
         else {
             auto countDiff = m_count - o.m_count;
             if (countDiff > 0) {
-                copyAssignSlice(amendBegin(), o);
-                destructSlice(Slice{amendBegin() + o.m_count, countDiff});
+                Utils::copyAssign(amendBegin(), o);
+                Utils::destruct(Slice{amendBegin() + o.m_count, countDiff});
             }
             else {
-                copyAssignSlice(amendBegin(), ConstSlice{o.begin(), m_count});
-                copyConstructSlice(storageEnd(), ConstSlice{o.begin() + m_count, -countDiff});
+                Utils::copyAssign(amendBegin(), ConstSlice{o.begin(), m_count});
+                Utils::copyConstruct(storageEnd(), ConstSlice{o.begin() + m_count, -countDiff});
             }
             m_count = o.m_count;
         }
         return *this;
     }
 
-    DynamicArrayOf(DynamicArrayOf&& o) noexcept : m_storage(std::move(o.m_storage)), m_count(o.m_count) {
-        o.m_count = 0;
+    DynamicArrayOf(DynamicArrayOf&& o) noexcept : m_pointer(o.m_pointer), m_count(o.m_count), m_capacity(o.m_capacity) {
+        o.m_pointer = nullptr;
     }
     DynamicArrayOf& operator=(DynamicArrayOf&& o) noexcept {
-        destructSlice(amend());
-        m_storage = std::move(o.m_storage);
+        Utils::destruct(amend());
+        Utils::deallocate(Slice{m_pointer, m_capacity});
+        m_pointer = o.m_pointer;
         m_count = o.m_count;
-        o.m_count = 0;
+        m_capacity = o.m_capacity;
+        o.m_pointer = nullptr;
         return *this;
     }
 
     [[nodiscard]] constexpr auto isEmpty() const noexcept -> bool { return m_count == 0; }
     [[nodiscard]] auto count() const -> Count { return m_count; }
-    [[nodiscard]] auto totalCapacity() const -> Count { return m_storage.capacity; }
-    [[nodiscard]] auto unusedCapacity() const -> Count { return m_storage.capacity - m_count; }
+    [[nodiscard]] auto totalCapacity() const -> Count { return m_capacity; }
+    [[nodiscard]] auto unusedCapacity() const -> Count { return m_capacity - m_count; }
 
     [[nodiscard]] auto front() const -> const T& { return *begin(); }
     [[nodiscard]] auto back() const -> const T& { return *(begin() + m_count - 1); }
 
     [[nodiscard]] auto begin() const noexcept -> ConstIterator {
-        return std::launder(reinterpret_cast<const T*>(m_storage.pointer));
+        return std::launder(reinterpret_cast<const T*>(m_pointer));
     }
-    // NOTE: end() is not laundered!
-    [[nodiscard]] auto end() const noexcept -> ConstIterator {
-        return reinterpret_cast<const T*>(m_storage.pointer + m_count);
-    }
-    [[nodiscard]] auto operator[](Index index) const noexcept -> ConstReference {
-        return *std::launder(reinterpret_cast<const T*>(m_storage.pointer + index));
+    [[nodiscard]] auto end() const noexcept -> ConstIterator { return begin() + m_count; }
+    [[nodiscard]] auto operator[](Index index) const noexcept -> const Element& {
+        return *std::launder(reinterpret_cast<const T*>(m_pointer + index));
     }
     [[nodiscard]] operator ConstSlice() const noexcept { return ConstSlice{begin(), m_count}; }
 
-    [[nodiscard]] auto amendBegin() & noexcept -> Iterator {
-        return std::launder(reinterpret_cast<T*>(m_storage.pointer));
-    }
-    // NOTE: end() is not laundered!
+    [[nodiscard]] auto amendBegin() & noexcept -> Iterator { return std::launder(reinterpret_cast<T*>(m_pointer)); }
     [[nodiscard]] auto amendEnd() & noexcept -> Iterator { return amendBegin() + m_count; }
 
     [[nodiscard]] auto amend() -> Slice { return Slice{amendBegin(), m_count}; }
@@ -139,20 +114,20 @@ template<class T> struct DynamicArrayOf final {
     /// append a single element constructed in place with the given arguments
     template<class... Ts> void emplace_back(Ts&&... args) {
         ensureUnusedCapacity(1);
-        new (m_storage.pointer + m_count) Element((Ts &&) args...);
+        new (m_pointer + m_count) Element((Ts &&) args...);
         m_count++;
     }
 
     /// appends possibly multiple elements at the end
     void append(ConstSlice elems) {
         ensureUnusedCapacity(elems.count());
-        copyConstructSlice(storageEnd(), elems);
+        Utils::copyConstruct(storageEnd(), elems);
         m_count += elems.count();
     }
 
     /// removes the last element
     void pop() noexcept(std::is_nothrow_destructible_v<Element>) {
-        destructSlice(Slice{amendBegin() + m_count - 1, 1});
+        Utils::destruct(Slice{amendBegin() + m_count - 1, 1});
         m_count--;
     }
 
@@ -176,113 +151,51 @@ template<class T> struct DynamicArrayOf final {
         auto countDiff = insertCount - removeCount;
         if (unusedCapacity() < countDiff) { // not enough storage => arrange everything in new storage
             auto newStorage = grownStorage(countDiff);
-            moveConstructSlice(newStorage.pointer, Slice{amendBegin(), static_cast<size_t>(offset)});
-            copyConstructSlice(newStorage.pointer + offset, insertSlice);
-            moveConstructSlice(newStorage.pointer + offset + insertCount, remainSlice);
-            destructSlice(amend());
-            m_storage = std::move(newStorage);
+            Utils::moveConstruct(newStorage.begin(), Slice{amendBegin(), static_cast<size_t>(offset)});
+            Utils::copyConstruct(newStorage.begin() + offset, insertSlice);
+            Utils::moveConstruct(newStorage.begin() + offset + insertCount, remainSlice);
+            Utils::destruct(amend());
+            m_pointer = newStorage.begin();
+            m_capacity = newStorage.count();
         }
         else if (countDiff <= 0) { // shrinking
-            copyAssignSlice(it, insertSlice);
-            forwardMoveConstructSlice(m_storage.pointer + offset + insertCount, remainSlice);
-            destructSlice(Slice{amendEnd() + countDiff, -countDiff});
+            Utils::copyAssign(it, insertSlice);
+            Utils::moveConstructForward(m_pointer + offset + insertCount, remainSlice);
+            Utils::destruct(Slice{amendEnd() + countDiff, -countDiff});
         }
         else if (offset + insertCount <= m_count) { // parts of remainSlice is moved beyond end()
-            moveConstructSlice(storageEnd(), remainSlice.slice(remainCount - countDiff, countDiff));
-            reverseMoveAssignSlice(it + insertCount, remainSlice.slice(0, remainCount - countDiff));
-            copyAssignSlice(it, insertSlice);
+            Utils::moveConstruct(storageEnd(), remainSlice.slice(remainCount - countDiff, countDiff));
+            Utils::moveAssignReverse(it + insertCount, remainSlice.slice(0, remainCount - countDiff));
+            Utils::copyAssign(it, insertSlice);
         }
         else { // remainSlice is moved beyond end()
-            moveConstructSlice(m_storage.pointer + offset + insertCount, remainSlice);
+            Utils::moveConstruct(m_pointer + offset + insertCount, remainSlice);
             auto assignElems = m_count - offset;
-            copyAssignSlice(it, insertSlice.slice(0, assignElems));
-            copyConstructSlice(storageEnd(), insertSlice.slice(assignElems, insertCount - assignElems));
+            Utils::copyAssign(it, insertSlice.slice(0, assignElems));
+            Utils::copyConstruct(storageEnd(), insertSlice.slice(assignElems, insertCount - assignElems));
         }
         m_count += countDiff;
     }
 
 private:
-    struct ElementStorage final {
-        alignas(T) unsigned char data[sizeof(T)];
-    };
-    using Storage = details::DynamicStorage<ElementStorage>;
-    using StorageSlice = SliceOf<ElementStorage>;
-    using StorageIterator = ElementStorage*;
+    [[nodiscard]] auto byteSize() const -> size_t { return m_count * sizeof(T); }
+    [[nodiscard]] auto storageEnd() -> Iterator { return m_pointer + m_count; }
 
-    [[nodiscard]] auto byteSize() const -> size_t { return m_count * sizeof(ElementStorage); }
-    [[nodiscard]] auto storageEnd() -> StorageIterator { return m_storage.pointer + m_count; }
-
-    static void destructSlice(Slice slice) {
-        for (auto& elem : slice) elem.~Element();
-    }
-    static void copyAssignSlice(Iterator to, ConstSlice fromSlice) {
-        if constexpr (std::is_trivially_copy_assignable_v<Element>) {
-            memcpy(to, fromSlice.begin(), fromSlice.count() * sizeof(ElementStorage));
-        }
-        else {
-            for (const auto& e : fromSlice) *to++ = e;
-        }
-    }
-    static void moveAssignSlice(Iterator to, Slice fromSlice) {
-        if constexpr (std::is_trivially_move_assignable_v<Element>) {
-            memcpy(to, fromSlice.begin(), fromSlice.count() * sizeof(ElementStorage));
-        }
-        else {
-            for (const auto& e : fromSlice) *to++ = std::move(e);
-        }
-    }
-    static void reverseMoveAssignSlice(Iterator to, Slice fromSlice) {
-        if constexpr (std::is_trivially_move_assignable_v<Element>) {
-            memmove(to, fromSlice.begin(), fromSlice.count() * sizeof(ElementStorage));
-        }
-        else {
-            auto rTo = to + fromSlice.count();
-            auto rFrom = fromSlice.end();
-            auto rFromEnd = fromSlice.begin();
-            while (rFrom != rFromEnd) *(--rTo) = std::move(*(--rFrom));
-        }
-    }
-    static void copyConstructSlice(StorageIterator to, ConstSlice fromSlice) {
-        if constexpr (std::is_trivially_copy_constructible_v<Element>) {
-            memcpy(to, fromSlice.begin(), fromSlice.count() * sizeof(ElementStorage));
-        }
-        else {
-            for (auto& from : fromSlice) new (to++) Element(from);
-        }
-    }
-    static void moveConstructSlice(StorageIterator to, Slice fromSlice) {
-        if constexpr (std::is_trivially_move_constructible_v<Element>) {
-            memcpy(to, fromSlice.begin(), fromSlice.count() * sizeof(ElementStorage));
-        }
-        else {
-            for (auto& from : fromSlice) new (to++) Element(std::move(from));
-        }
-    }
-    static void forwardMoveConstructSlice(StorageIterator to, Slice fromSlice) {
-        if constexpr (std::is_trivially_move_constructible_v<Element>) {
-            memmove(to, fromSlice.begin(), fromSlice.count() * sizeof(ElementStorage));
-        }
-        else {
-            for (auto& from : fromSlice) new (to++) Element(std::move(from));
-        }
-    }
-    [[nodiscard]] auto grownStorage(int growBy) const -> Storage {
-        auto cur = totalCapacity();
+    [[nodiscard]] auto grownStorage(int growBy) const -> Slice {
+        auto cur = m_capacity;
         auto res = (cur << 1) - (cur >> 1) + (cur >> 4); // * 1.563
         if (res < 5) res = 5;
-        if (res < totalCapacity() + growBy) res = totalCapacity() + growBy;
-        return Storage::create(res);
+        if (res < m_capacity + growBy) res = m_capacity + growBy;
+        auto ptr = Utils::allocate(res);
+        return Slice{ptr, res};
     }
     void growBy(int by) {
         auto newStorage = grownStorage(by);
-        moveConstructSlice(newStorage.pointer, amend());
-        destructSlice(amend());
-        m_storage = std::move(newStorage);
+        Utils::moveConstruct(newStorage.begin(), amend());
+        Utils::destruct(amend());
+        m_pointer = newStorage.begin();
+        m_capacity = newStorage.count();
     }
-
-private:
-    Storage m_storage;
-    Count m_count;
 };
 
 /// simplified deduction guide
