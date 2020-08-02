@@ -1,3 +1,4 @@
+#pragma once
 #include "DynamicArrayOf.h"
 
 #include <ostream>

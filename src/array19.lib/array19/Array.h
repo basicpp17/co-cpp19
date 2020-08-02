@@ -32,6 +32,6 @@ template<class T, size_t C> struct Array {
 /// * not checking that all types are the same
 /// usage:
 ///     Array{1, 2, 3};
-template<class T, class... Ts> Array(T, Ts...)->Array<T, 1 + sizeof...(Ts)>;
+template<class T, class... Ts> Array(T, Ts...) -> Array<T, 1 + sizeof...(Ts)>;
 
 } // namespace array19
