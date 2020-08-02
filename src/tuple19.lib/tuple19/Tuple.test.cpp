@@ -3,13 +3,13 @@
 #include "meta19/Index.h"
 #include "meta19/isSame.h"
 
-#include <cstddef>
 #include <gtest/gtest.h>
+#include <stddef.h> // size_t
 
 using namespace tuple19;
 
 namespace {
-template<typename Type> constexpr std::size_t alignment(std::size_t offset = 0, std::size_t current = 0) {
+template<typename Type> constexpr size_t alignment(size_t offset = 0, size_t current = 0) {
     return current >= offset ? current : alignment<Type>(offset, current + alignof(Type));
 }
 } // namespace

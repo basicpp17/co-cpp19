@@ -1,5 +1,5 @@
 #pragma once
-#include <cstddef> // size_t
+#include <stddef.h> // size_t
 
 namespace array19 {
 
