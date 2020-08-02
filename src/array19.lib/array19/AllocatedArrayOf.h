@@ -1,5 +1,6 @@
 #pragma once
 #include "AllocatedArrayUtils.h"
+#include "SliceOf.single.h"
 
 #include <new> // new allocators
 #include <type_traits> // is_nothrow_*

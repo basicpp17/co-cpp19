@@ -40,7 +40,8 @@ struct NonTrivial {
 private:
     int v;
 };
-auto operator<<(std::ostream& out, const NonTrivial& c) -> std::ostream& { return out << c.value(); }
+
+[[maybe_unused]] auto operator<<(std::ostream& out, const NonTrivial& c) -> std::ostream& { return out << c.value(); }
 
 } // namespace
 
