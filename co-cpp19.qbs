@@ -55,6 +55,9 @@ Project {
         name: "_Extra Files_"
         files: [
             ".clang-format",
+            ".clang-tidy",
+            ".editorconfig",
+            ".gitignore",
             "Readme.md",
         ]
     }
