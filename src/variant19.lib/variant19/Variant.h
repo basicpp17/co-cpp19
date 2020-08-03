@@ -106,6 +106,12 @@ template<class... Ts> struct Variant {
     enum { npos = sizeof...(Ts) }; // invalid state after exception - only destruction checks!
 
 private:
+    static constexpr bool isNothrowCopyConstructible() {
+        return (true && ... && std::is_nothrow_copy_constructible_v<Ts>);
+    }
+    static constexpr bool isNothrowCopyAssignable() {
+        return (true && ... && std::is_nothrow_copy_constructible_v<Ts>);
+    }
     template<class> struct IndexedVariant;
 
     template<size_t... Is> struct IndexedVariant<std::index_sequence<Is...>> {
@@ -118,20 +124,20 @@ private:
         WhichValue which{npos};
         alignas(Ts...) std::byte storage[storage_size];
 
-        constexpr IndexedVariant() {
+        constexpr IndexedVariant() noexcept(std::is_nothrow_default_constructible_v<First>) {
             constructAs<First>();
             which = 0; // only initialize once constuction was successful
         }
-        ~IndexedVariant() {
+        ~IndexedVariant() noexcept {
             if (which == npos) return;
             destruct();
         }
 
-        constexpr IndexedVariant(const IndexedVariant& o) {
+        constexpr IndexedVariant(const IndexedVariant& o) noexcept(isNothrowCopyConstructible()) {
             (((Is == o.which ? (constructAs<Ts>(*o.asPtr<Ts>()), 0) : 0), ...));
             which = o.which;
         }
-        constexpr auto operator=(const IndexedVariant& o) -> IndexedVariant& {
+        constexpr auto operator=(const IndexedVariant& o) noexcept(isNothrowCopyAssignable()) -> IndexedVariant& {
             if (which == o.which) {
                 (((Is == o.which ? (*amendAsPtr<Ts>() = *o.asPtr<Ts>(), 0) : 0), ...));
             }
@@ -144,11 +150,11 @@ private:
             return *this;
         }
 
-        constexpr IndexedVariant(IndexedVariant&& o) {
+        constexpr IndexedVariant(IndexedVariant&& o) noexcept {
             (((Is == o.which ? (constructAs<Ts>(std::move(*o.amendAsPtr<Ts>())), 0) : 0), ...));
             which = o.which; // o.which is needed for destruction!
         }
-        constexpr auto operator=(IndexedVariant&& o) -> IndexedVariant& {
+        constexpr auto operator=(IndexedVariant&& o) noexcept -> IndexedVariant& {
             if (which == o.which) {
                 (((Is == o.which ? (*amendAsPtr<Ts>() = std::move(*o.amendAsPtr<Ts>()), 0) : 0), ...));
             }

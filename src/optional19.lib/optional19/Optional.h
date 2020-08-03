@@ -39,7 +39,7 @@ template<class T> struct OptionalStorage<T, false> {
     bool m_valid{};
 
     OptionalStorage() = default;
-    ~OptionalStorage() {
+    ~OptionalStorage() noexcept {
         if (m_valid) {
             auto p = std::launder(reinterpret_cast<T*>(m_storage));
             p->~T();
@@ -49,13 +49,13 @@ template<class T> struct OptionalStorage<T, false> {
         new (this->m_storage) T(std::move(v));
         this->m_valid = true;
     }
-    OptionalStorage(const OptionalStorage& o) {
+    OptionalStorage(const OptionalStorage& o) noexcept(std::is_nothrow_copy_constructible_v<T>) {
         if (o.m_valid) {
             new (this->m_storage) T(o.value());
             this->m_valid = true;
         }
     }
-    OptionalStorage& operator=(const OptionalStorage& o) {
+    OptionalStorage& operator=(const OptionalStorage& o) noexcept(std::is_nothrow_copy_assignable_v<T>) {
         if (o.m_valid) {
             if (this->m_valid)
                 amend() = o.value();
@@ -70,13 +70,13 @@ template<class T> struct OptionalStorage<T, false> {
         }
         return *this;
     }
-    OptionalStorage(OptionalStorage&& o) {
+    OptionalStorage(OptionalStorage&& o) noexcept {
         if (o.m_valid) {
             new (this->m_storage) T(std::move(o.amend()));
             this->m_valid = true;
         }
     }
-    OptionalStorage& operator=(OptionalStorage&& o) {
+    OptionalStorage& operator=(OptionalStorage&& o) noexcept {
         if (o.m_valid) {
             if (this->m_valid)
                 amend() = std::move(o.amend());

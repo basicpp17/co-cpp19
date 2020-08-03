@@ -28,7 +28,7 @@ private:
 
 public:
     DynamicArrayOf() = default;
-    ~DynamicArrayOf() noexcept(std::is_nothrow_destructible_v<Element>) {
+    ~DynamicArrayOf() noexcept {
         if (m_pointer) {
             Utils::destruct(amend());
             Utils::deallocate(Slice{m_pointer, m_capacity});

@@ -86,6 +86,13 @@ template<class... Ts> struct Partial {
     enum : size_t { count = sizeof...(Ts), max_align = sliceMaximum(sliceOfCArray(alignof_ts)) };
 
 private:
+    static constexpr bool isNothrowCopyConstructible() {
+        return (true && ... && std::is_nothrow_copy_constructible_v<Ts>);
+    }
+    static constexpr bool isNothrowCopyAssignable() {
+        return (true && ... && std::is_nothrow_copy_constructible_v<Ts>);
+    }
+
     Bits m_bits{};
     uint8_t* m_pointer{};
 
@@ -108,12 +115,12 @@ public:
     }
 
     // copy
-    Partial(const Partial& o) {
+    Partial(const Partial& o) noexcept(isNothrowCopyConstructible()) {
         auto hasValue = [&](auto i) { return o.m_bits[i]; };
         auto factory = [&]<class T>(Type<T>*, void* ptr) { new (ptr) T(o.of<T>()); };
         *this = fromFactory(hasValue, factory);
     }
-    auto operator=(const Partial& o) -> Partial& {
+    auto operator=(const Partial& o) noexcept(isNothrowCopyAssignable()) -> Partial& {
         auto hasValue = [&](auto i) { return o.m_bits[i]; };
         auto factory = [&]<class T>(Type<T>*, void* ptr) { new (ptr) T(o.of<T>()); };
         *this = fromFactory(hasValue, factory);
