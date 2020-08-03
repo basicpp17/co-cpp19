@@ -14,6 +14,11 @@ template<class T> struct SliceOf {
     using Count = size_t;
     using Index = size_t;
 
+private:
+    Element* m_data{};
+    Count m_count{};
+
+public:
     constexpr SliceOf() = default;
     constexpr explicit SliceOf(Element* data, Count count) noexcept : m_data(data), m_count(count) {}
 
@@ -28,10 +33,6 @@ template<class T> struct SliceOf {
     [[nodiscard]] constexpr auto operator[](Index index) const noexcept -> Element& { return *(m_data + index); }
 
     [[nodiscard]] constexpr operator SliceOf<const T>() const noexcept { return SliceOf<const T>{m_data, m_count}; }
-
-private:
-    Element* m_data{};
-    Count m_count{};
 };
 
 template<class T> SliceOf(T*, size_t) -> SliceOf<T>;

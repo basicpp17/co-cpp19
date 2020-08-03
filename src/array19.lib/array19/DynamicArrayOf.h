@@ -155,6 +155,7 @@ public:
             Utils::copyConstruct(newStorage.begin() + offset, insertSlice);
             Utils::moveConstruct(newStorage.begin() + offset + insertCount, remainSlice);
             Utils::destruct(amend());
+            Utils::deallocate(Slice{m_pointer, m_capacity});
             m_pointer = newStorage.begin();
             m_capacity = newStorage.count();
         }
@@ -193,6 +194,7 @@ private:
         auto newStorage = grownStorage(by);
         Utils::moveConstruct(newStorage.begin(), amend());
         Utils::destruct(amend());
+        Utils::deallocate(Slice{m_pointer, m_capacity});
         m_pointer = newStorage.begin();
         m_capacity = newStorage.count();
     }
