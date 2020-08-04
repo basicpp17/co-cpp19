@@ -72,7 +72,7 @@ public:
         if (m_count == m_capacity) {
             auto newStorage = grownStorage(1);
             auto nPtr = newStorage.begin();
-            auto fCount = it - m_pointer;
+            auto fCount = static_cast<size_t>(it - m_pointer);
             if (0 != fCount) {
                 memcpy(nPtr, m_pointer, fCount);
                 nPtr += fCount;
