@@ -22,9 +22,9 @@ template<class T> struct DynamicArrayOf final {
 private:
     using Utils = AllocatedArrayUtils<T>;
 
-    T* m_pointer;
-    Count m_count;
-    Count m_capacity;
+    T* m_pointer{};
+    Count m_count{};
+    Count m_capacity{};
 
 public:
     DynamicArrayOf() = default;
@@ -47,7 +47,8 @@ public:
 
     DynamicArrayOf(const DynamicArrayOf& o) noexcept(std::is_nothrow_copy_constructible_v<Element>)
             : m_pointer(Utils::allocate(o.m_count))
-            , m_count(o.m_count) {
+            , m_count(o.m_count)
+            , m_capacity(o.m_capacity) {
         Utils::copyConstruct(m_pointer, o);
     }
     DynamicArrayOf& operator=(const DynamicArrayOf& o) noexcept(std::is_nothrow_copy_assignable_v<Element>) {
@@ -69,7 +70,10 @@ public:
         return *this;
     }
 
-    DynamicArrayOf(DynamicArrayOf&& o) noexcept : m_pointer(o.m_pointer), m_count(o.m_count), m_capacity(o.m_capacity) {
+    DynamicArrayOf(DynamicArrayOf&& o) noexcept //
+            : m_pointer(o.m_pointer)
+            , m_count(o.m_count)
+            , m_capacity(o.m_capacity) {
         o.m_pointer = nullptr;
     }
     DynamicArrayOf& operator=(DynamicArrayOf&& o) noexcept {
