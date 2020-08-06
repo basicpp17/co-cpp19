@@ -231,8 +231,11 @@ public:
         indexed.which = I;
     }
 
+    /// Which describing the currently constructed type
     constexpr auto which() const -> Which { return Which{indexed.which}; }
 
+    /// Extract specified type
+    /// precondition: which() == type<T> otherwise undefined behavior
     template<class T> constexpr auto as(Type<T>* = {}) const -> const T& {
         static_assert((std::is_same_v<T, Ts> || ...), "type not part of variant");
         return *indexed.template asPtr<std::remove_reference_t<T>>();
@@ -242,6 +245,7 @@ public:
         return *indexed.template amendAsPtr<T>();
     }
 
+    /// Invoke lambda with the currently instanciated type
     template<class F> constexpr auto visit(F&& f) const -> decltype(auto) {
         return indexed.visitImpl(std::forward<F>(f));
     }
@@ -249,6 +253,7 @@ public:
         return indexed.amendVisitImpl(std::forward<F>(f));
     }
 
+    /// Convinience function to overload all given lambdas
     template<class... Fs>
     requires(sizeof...(Fs) > 0) constexpr auto visitOverloaded(Fs&&... fs) const -> decltype(auto) {
         return indexed.visitImpl(Overloaded{(Fs &&) fs...});
@@ -256,6 +261,25 @@ public:
 
     template<class... Fs> requires(sizeof...(Fs) > 0) constexpr auto amendOverloaded(Fs&&... fs) -> decltype(auto) {
         return indexed.amendVisitImpl(Overloaded{(Fs &&) fs...});
+    }
+
+    /// inplace change of indexed type inside variant
+    template<size_t I, class... Args> void emplaceAt(Index<I>*, Args&&... args) {
+        static_assert(I < npos, "index not part of variant");
+        indexed.destruct();
+        indexed.which = npos;
+        using T = TypeAtMap<I, Map>;
+        indexed.template constructAs<T>(std::forward<Args>(args)...);
+        indexed.which = I;
+    }
+
+    /// inplace change of type inside variant
+    template<class T, class... Args> void emplaceAs(Type<T>*, Args&&... args) {
+        static_assert((std::is_same_v<T, Ts> || ...), "type not part of variant");
+        indexed.destruct();
+        indexed.which = npos;
+        indexed.template constructAs<T>(std::forward<Args>(args)...);
+        indexed.which = index_of_map<T, Map>;
     }
 };
 
