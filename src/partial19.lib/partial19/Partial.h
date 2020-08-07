@@ -7,7 +7,6 @@
 #include "meta19/RemoveReference.h"
 #include "meta19/TypeAt.h"
 #include "meta19/TypePack.h"
-#include "meta19/TypePack.traits.h"
 #include "meta19/isSame.h"
 
 #include <new> // std::launder, operator new[], operator delete[]
@@ -29,8 +28,6 @@ using meta19::Type;
 using meta19::type;
 using meta19::TypeAtMap;
 using meta19::TypePack;
-using meta19::all_no_throw_copy_assignable;
-using meta19::all_no_throw_copy_contructible;
 
 namespace details {
 
@@ -111,12 +108,12 @@ public:
     }
 
     // copy
-    Partial(const Partial& o) noexcept(all_no_throw_copy_contructible<Ts...>) {
+    Partial(const Partial& o) {
         auto hasValue = [&](auto i) { return o.m_bits[i]; };
         auto factory = [&]<class T>(Type<T>*, void* ptr) { new (ptr) T(o.of<T>()); };
         *this = fromFactory(hasValue, factory);
     }
-    auto operator=(const Partial& o) noexcept(all_no_throw_copy_assignable<Ts...>) -> Partial& {
+    auto operator=(const Partial& o) -> Partial& {
         auto hasValue = [&](auto i) { return o.m_bits[i]; };
         auto factory = [&]<class T>(Type<T>*, void* ptr) { new (ptr) T(o.of<T>()); };
         *this = fromFactory(hasValue, factory);

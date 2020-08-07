@@ -37,21 +37,18 @@ public:
 
     DynamicArrayOf(ConstSlice slice) { append(slice); }
 
-    template<class... Ts> requires(sizeof...(Ts) > 0) && requires(Ts... args) { (T(args), ...); }
-    DynamicArrayOf(Ts&&... args) noexcept(std::is_nothrow_copy_constructible_v<Element>)
-            : m_pointer(Utils::allocate(sizeof...(Ts)))
-            , m_count(0)
-            , m_capacity(sizeof...(Ts)) {
+    template<class... Ts> requires(sizeof...(Ts) > 0) && requires(Ts&&... args) { (T((Ts &&) args), ...); }
+    DynamicArrayOf(Ts&&... args) : m_pointer(Utils::allocate(sizeof...(Ts))), m_count(0), m_capacity(sizeof...(Ts)) {
         (Utils::copyConstruct(m_pointer + m_count++, sliceOfSingle<const T>(args)), ...);
     }
 
-    DynamicArrayOf(const DynamicArrayOf& o) noexcept(std::is_nothrow_copy_constructible_v<Element>)
+    DynamicArrayOf(const DynamicArrayOf& o)
             : m_pointer(Utils::allocate(o.m_count))
             , m_count(o.m_count)
             , m_capacity(o.m_capacity) {
         Utils::copyConstruct(m_pointer, o);
     }
-    DynamicArrayOf& operator=(const DynamicArrayOf& o) noexcept(std::is_nothrow_copy_assignable_v<Element>) {
+    DynamicArrayOf& operator=(const DynamicArrayOf& o) {
         if (m_capacity < o.m_count) {
             *this = DynamicArrayOf(o);
         }
@@ -130,7 +127,7 @@ public:
     }
 
     /// removes the last element
-    void pop() noexcept(std::is_nothrow_destructible_v<Element>) {
+    void pop() {
         Utils::destruct(Slice{amendBegin() + m_count - 1, 1});
         m_count--;
     }

@@ -4,7 +4,6 @@
 #include "meta19/Type.h"
 #include "meta19/TypeAt.h"
 #include "meta19/TypePack.Front.h"
-#include "meta19/TypePack.traits.h"
 #include "meta19/Unreachable.h"
 #include "meta19/index_pack.h"
 
@@ -14,8 +13,6 @@
 
 namespace variant19 {
 
-using meta19::all_no_throw_copy_assignable;
-using meta19::all_no_throw_copy_contructible;
 using meta19::Index;
 using meta19::index_of_map;
 using meta19::index_pack;
@@ -121,7 +118,7 @@ private:
         WhichValue which{npos};
         alignas(Ts...) std::byte storage[storage_size];
 
-        constexpr IndexedVariant() noexcept(std::is_nothrow_default_constructible_v<First>) {
+        constexpr IndexedVariant() {
             constructAs<First>();
             which = 0; // only initialize once constuction was successful
         }
@@ -130,12 +127,11 @@ private:
             destruct();
         }
 
-        constexpr IndexedVariant(const IndexedVariant& o) noexcept(all_no_throw_copy_contructible<Ts...>) {
+        constexpr IndexedVariant(const IndexedVariant& o) {
             (((Is == o.which ? (constructAs<Ts>(*o.asPtr<Ts>()), 0) : 0), ...));
             which = o.which;
         }
-        constexpr auto operator=(const IndexedVariant& o) noexcept(all_no_throw_copy_assignable<Ts...>)
-            -> IndexedVariant& {
+        constexpr auto operator=(const IndexedVariant& o) -> IndexedVariant& {
             if (which == o.which) {
                 (((Is == o.which ? (*amendAsPtr<Ts>() = *o.asPtr<Ts>(), 0) : 0), ...));
             }
