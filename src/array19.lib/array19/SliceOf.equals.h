@@ -1,13 +1,12 @@
 #pragma once
 #include "SliceOf.h"
-#include "Zip.h"
 
 namespace array19 {
 
 template<class T> constexpr bool operator==(const SliceOf<T>& a, const SliceOf<T>& b) {
     if (a.count() != b.count()) return false;
-    for (auto [av, bv] : Zip(a, b)) {
-        if (!(av == bv)) return false;
+    for (size_t i = 0u; i < a.count() && i < b.count(); i++) {
+        if (!(a[i] == b[i])) return false;
     }
     return true;
 }

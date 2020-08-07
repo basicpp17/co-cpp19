@@ -14,7 +14,7 @@
 
 #define ENUM19(NAME, UNDERLYING, ...)                                                                                  \
     enum class NAME : UNDERLYING { __VA_ARGS__ };                                                                      \
-    constexpr auto metaEnumFor(enum19::ADL*, NAME*) {                                                                  \
+    static constexpr auto metaEnumFor(enum19::ADL*, NAME*) {                                                           \
         using Enum19_ValueWrapper = ::enum19::details::ValueWrapper<UNDERLYING>;                                       \
         constexpr Enum19_ValueWrapper __VA_ARGS__;                                                                     \
         return ::enum19::details::buildMetaEnumFor<NAME>(#NAME, #__VA_ARGS__, __VA_ARGS__);                            \
@@ -40,6 +40,8 @@ template<class Enum> struct MetaEnumMember {
     size_t index;
     StringView name;
     Enum value;
+
+    constexpr MetaEnumMember(size_t index, StringView name, Enum value) : index(index), name(name), value(value) {}
 };
 
 template<class Enum, size_t member_count> struct MetaEnum {
