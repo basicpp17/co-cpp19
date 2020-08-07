@@ -14,7 +14,7 @@ template<class T, size_t C> struct Array {
 
     T m[count];
 
-    constexpr bool operator==(const Array&) const = default;
+    bool operator==(const Array&) const = default;
 
     [[nodiscard]] constexpr auto isEmpty() const noexcept -> bool { return count == 0; }
     [[nodiscard]] constexpr auto begin() const noexcept -> const T* { return m; }
