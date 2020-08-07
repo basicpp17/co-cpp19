@@ -14,7 +14,7 @@
 
 #define ENUM19(NAME, UNDERLYING, ...)                                                                                  \
     enum class NAME : UNDERLYING { __VA_ARGS__ };                                                                      \
-    static constexpr auto metaEnumFor(enum19::ADL*, NAME*) {                                                           \
+    constexpr auto metaEnumFor(enum19::ADL*, NAME*) {                                                                  \
         using Enum19_ValueWrapper = ::enum19::details::ValueWrapper<UNDERLYING>;                                       \
         constexpr Enum19_ValueWrapper __VA_ARGS__;                                                                     \
         return ::enum19::details::buildMetaEnumFor<NAME>(#NAME, #__VA_ARGS__, __VA_ARGS__);                            \
