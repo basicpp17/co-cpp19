@@ -2,12 +2,14 @@
 #include "meta19/Index.h"
 #include "meta19/RemoveReference.h"
 #include "meta19/Type.h"
+#include "meta19/TypePack.traits.h"
 
 #include <type_traits>
 #include <utility>
 
 namespace tuple19 {
 
+using meta19::all_no_throw_copy_contructible;
 using meta19::Index;
 using meta19::nullptr_to;
 using meta19::StoredOf;
@@ -34,15 +36,12 @@ template<class T, size_t I> constexpr auto indexOf(TupleEntry<I, T>*) -> size_t 
 
 template<class... Ts> struct Tuple {
 private:
-    static constexpr bool isNothrowCopyConstructible() {
-        return (true && ... && std::is_nothrow_copy_constructible_v<Ts>);
-    }
     template<class Is> struct IndexedTuple;
 
     template<size_t... Is> struct IndexedTuple<std::index_sequence<Is...>> : details::TupleEntry<Is, Ts>... {
 
         constexpr IndexedTuple() = default;
-        constexpr IndexedTuple(const Ts&... ts) noexcept(isNothrowCopyConstructible())
+        constexpr IndexedTuple(const Ts&... ts) noexcept(all_no_throw_copy_contructible<Ts...>)
                 : details::TupleEntry<Is, Ts>({ts})... {}
         constexpr IndexedTuple(Ts&&... ts) noexcept : details::TupleEntry<Is, Ts>({std::move(ts)})... {}
 
@@ -64,7 +63,7 @@ private:
 
 public:
     constexpr Tuple() = default;
-    constexpr Tuple(const Ts&... ts) noexcept(isNothrowCopyConstructible()) : indexed(ts...) {}
+    constexpr Tuple(const Ts&... ts) noexcept(all_no_throw_copy_contructible<Ts...>) : indexed(ts...) {}
     constexpr Tuple(Ts&&... ts) noexcept : indexed(std::move(ts)...) {}
 
     bool operator==(const Tuple&) const = default;

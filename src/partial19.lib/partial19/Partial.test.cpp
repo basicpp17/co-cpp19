@@ -18,6 +18,8 @@ TEST(Partial, empty) {
     ASSERT_FALSE(p0.which()[2]);
 }
 
+void callMe(Partial<char, int, float>) {}
+
 TEST(Partial, construction) {
     using P = Partial<char, int, float>;
     auto p1 = P::fromArgs('c', 2.3f);
@@ -30,6 +32,8 @@ TEST(Partial, construction) {
     EXPECT_EQ(p1, p3);
     EXPECT_EQ(p1, p2);
     EXPECT_EQ(p2, p3);
+
+    callMe(p2);
 }
 
 TEST(Partial, assignment) {

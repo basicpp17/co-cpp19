@@ -7,6 +7,7 @@
 #include "meta19/RemoveReference.h"
 #include "meta19/TypeAt.h"
 #include "meta19/TypePack.h"
+#include "meta19/TypePack.traits.h"
 #include "meta19/isSame.h"
 
 #include <new> // std::launder, operator new[], operator delete[]
@@ -28,6 +29,8 @@ using meta19::Type;
 using meta19::type;
 using meta19::TypeAtMap;
 using meta19::TypePack;
+using meta19::all_no_throw_copy_assignable;
+using meta19::all_no_throw_copy_contructible;
 
 namespace details {
 
@@ -86,13 +89,6 @@ template<class... Ts> struct Partial {
     enum : size_t { count = sizeof...(Ts), max_align = sliceMaximum(sliceOfCArray(alignof_ts)) };
 
 private:
-    static constexpr bool isNothrowCopyConstructible() {
-        return (true && ... && std::is_nothrow_copy_constructible_v<Ts>);
-    }
-    static constexpr bool isNothrowCopyAssignable() {
-        return (true && ... && std::is_nothrow_copy_constructible_v<Ts>);
-    }
-
     Bits m_bits{};
     uint8_t* m_pointer{};
 
@@ -115,12 +111,12 @@ public:
     }
 
     // copy
-    Partial(const Partial& o) noexcept(isNothrowCopyConstructible()) {
+    Partial(const Partial& o) noexcept(all_no_throw_copy_contructible<Ts...>) {
         auto hasValue = [&](auto i) { return o.m_bits[i]; };
         auto factory = [&]<class T>(Type<T>*, void* ptr) { new (ptr) T(o.of<T>()); };
         *this = fromFactory(hasValue, factory);
     }
-    auto operator=(const Partial& o) noexcept(isNothrowCopyAssignable()) -> Partial& {
+    auto operator=(const Partial& o) noexcept(all_no_throw_copy_assignable<Ts...>) -> Partial& {
         auto hasValue = [&](auto i) { return o.m_bits[i]; };
         auto factory = [&]<class T>(Type<T>*, void* ptr) { new (ptr) T(o.of<T>()); };
         *this = fromFactory(hasValue, factory);

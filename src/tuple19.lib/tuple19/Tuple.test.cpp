@@ -43,10 +43,6 @@ TEST(Tuple, access) {
     t.amendOf<double>() = 4.2;
     EXPECT_EQ((t.of(type<int>)), 23);
     EXPECT_EQ((t.at(_index<2>)), 4.2);
-
-    //    EXPECT_EQ(get<char>(t), '\0');
-    //    EXPECT_EQ(get<int>(t), 23);
-    //    EXPECT_EQ(get<double>(t), 4.2);
 }
 
 TEST(Tuple, copy_move) {

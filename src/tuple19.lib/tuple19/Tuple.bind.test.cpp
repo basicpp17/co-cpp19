@@ -6,6 +6,18 @@
 
 using namespace tuple19;
 
+TEST(TupleBind, get) {
+    using meta19::_index;
+    using meta19::type;
+
+    using T = Tuple<char, int, double>;
+    auto t = T{'x', 23, 4.2};
+
+    EXPECT_EQ(get<char>(t), 'x');
+    EXPECT_EQ(get<int>(t), 23);
+    EXPECT_EQ(get<double>(t), 4.2);
+}
+
 TEST(TupleBind, copy) {
     auto tpl = Tuple{12, 'a'};
     auto [num, chr] = tpl;

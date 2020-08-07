@@ -4,6 +4,7 @@
 #include "meta19/Type.h"
 #include "meta19/TypeAt.h"
 #include "meta19/TypePack.Front.h"
+#include "meta19/TypePack.traits.h"
 #include "meta19/Unreachable.h"
 #include "meta19/index_pack.h"
 
@@ -13,6 +14,8 @@
 
 namespace variant19 {
 
+using meta19::all_no_throw_copy_assignable;
+using meta19::all_no_throw_copy_contructible;
 using meta19::Index;
 using meta19::index_of_map;
 using meta19::index_pack;
@@ -106,12 +109,6 @@ template<class... Ts> struct Variant {
     enum { npos = sizeof...(Ts) }; // invalid state after exception - only destruction checks!
 
 private:
-    static constexpr bool isNothrowCopyConstructible() {
-        return (true && ... && std::is_nothrow_copy_constructible_v<Ts>);
-    }
-    static constexpr bool isNothrowCopyAssignable() {
-        return (true && ... && std::is_nothrow_copy_constructible_v<Ts>);
-    }
     template<class> struct IndexedVariant;
 
     template<size_t... Is> struct IndexedVariant<std::index_sequence<Is...>> {
@@ -133,11 +130,12 @@ private:
             destruct();
         }
 
-        constexpr IndexedVariant(const IndexedVariant& o) noexcept(isNothrowCopyConstructible()) {
+        constexpr IndexedVariant(const IndexedVariant& o) noexcept(all_no_throw_copy_contructible<Ts...>) {
             (((Is == o.which ? (constructAs<Ts>(*o.asPtr<Ts>()), 0) : 0), ...));
             which = o.which;
         }
-        constexpr auto operator=(const IndexedVariant& o) noexcept(isNothrowCopyAssignable()) -> IndexedVariant& {
+        constexpr auto operator=(const IndexedVariant& o) noexcept(all_no_throw_copy_assignable<Ts...>)
+            -> IndexedVariant& {
             if (which == o.which) {
                 (((Is == o.which ? (*amendAsPtr<Ts>() = *o.asPtr<Ts>(), 0) : 0), ...));
             }
