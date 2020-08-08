@@ -149,9 +149,9 @@ public:
         // old: [ ..(offset)..,[it] ..(removeCount).., ..(remainCount)... ]
         // new: [ ..(offset)..,[it] ..(insertCount).., ..(remainCount)... ]
 
-        auto countDiff = insertCount - removeCount;
-        if (unusedCapacity() < countDiff) { // not enough storage => arrange everything in new storage
-            auto newStorage = grownStorage(countDiff);
+        auto newCount = (m_count - removeCount) + insertCount;
+        if (m_capacity < newCount) { // not enough storage => arrange everything in new storage
+            auto newStorage = grownStorage(insertCount - removeCount);
             Utils::moveConstruct(newStorage.begin(), Slice{amendBegin(), static_cast<size_t>(offset)});
             Utils::copyConstruct(newStorage.begin() + offset, insertSlice);
             Utils::moveConstruct(newStorage.begin() + offset + insertCount, remainSlice);
@@ -160,14 +160,16 @@ public:
             m_pointer = newStorage.begin();
             m_capacity = newStorage.count();
         }
-        else if (countDiff <= 0) { // shrinking
+        else if (m_count >= newCount) { // shrinking
+            auto shrinkCount = m_count - newCount;
             Utils::copyAssign(it, insertSlice);
             Utils::moveConstructForward(m_pointer + offset + insertCount, remainSlice);
-            Utils::destruct(Slice{amendEnd() + countDiff, -countDiff});
+            Utils::destruct(Slice{amendEnd() - shrinkCount, shrinkCount});
         }
         else if (offset + insertCount <= m_count) { // parts of remainSlice is moved beyond end()
-            Utils::moveConstruct(storageEnd(), remainSlice.slice(remainCount - countDiff, countDiff));
-            Utils::moveAssignReverse(it + insertCount, remainSlice.slice(0, remainCount - countDiff));
+            auto growCount = newCount - m_count;
+            Utils::moveConstruct(storageEnd(), remainSlice.slice(remainCount - growCount, growCount));
+            Utils::moveAssignReverse(it + insertCount, remainSlice.slice(0, remainCount - growCount));
             Utils::copyAssign(it, insertSlice);
         }
         else { // remainSlice is moved beyond end()
@@ -176,7 +178,7 @@ public:
             Utils::copyAssign(it, insertSlice.slice(0, assignElems));
             Utils::copyConstruct(storageEnd(), insertSlice.slice(assignElems, insertCount - assignElems));
         }
-        m_count += countDiff;
+        m_count = newCount;
     }
 
 private:
