@@ -115,7 +115,7 @@ public:
     /// append a single element constructed in place with the given arguments
     template<class... Ts> void emplace_back(Ts&&... args) {
         ensureUnusedCapacity(1);
-        new (m_pointer + m_count) Element((Ts &&) args...);
+        new (m_pointer + m_count) Element{(Ts &&) args...};
         m_count++;
     }
 

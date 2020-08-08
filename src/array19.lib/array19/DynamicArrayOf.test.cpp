@@ -113,3 +113,25 @@ TEST(DynamicArrayOf, NontrivialExample) {
     v2.append(sliceOfCArray({NonTrivial{12}, NonTrivial{99}, NonTrivial{64}}));
     ASSERT_EQ(v, v2);
 }
+
+namespace {
+
+struct Vec3 {
+    double x, y, z;
+
+    bool operator==(const Vec3&) const = default;
+    [[maybe_unused]] friend auto operator<<(std::ostream& o, const Vec3& v) -> std::ostream& {
+        return o << "x:" << v.x << ", y:" << v.y << ", z:" << v.z;
+    }
+};
+
+} // namespace
+
+TEST(DynamicArrayOf, EmplaceStruct) {
+
+    auto v = DynamicArrayOf<Vec3>{};
+    v.emplace_back(1.1, 2.2, 3.3);
+
+    auto v2 = DynamicArrayOf{Vec3{1.1, 2.2, 3.3}};
+    EXPECT_EQ(v, v2);
+}
