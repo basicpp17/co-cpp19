@@ -1,6 +1,6 @@
-#include "Array.slice.h"
 #include "SliceOf.carray.h"
 #include "SliceOf.h"
+#include "SliceOf.store.h"
 
 using namespace array19;
 
@@ -24,7 +24,7 @@ void mutable_SliceOf_test() {
         int a[] = {1, 2, 3};
         auto s = amendSliceOfCArray(a);
         s[1] = 5;
-        return arrayFrom(s, static_cast<std::make_index_sequence<3>*>(nullptr));
+        return storeSlice<3>(s);
     }();
 
     static_assert(sa[1] == 5);

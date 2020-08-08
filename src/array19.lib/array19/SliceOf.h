@@ -35,6 +35,8 @@ public:
     [[nodiscard]] constexpr operator SliceOf<const T>() const noexcept { return SliceOf<const T>{m_data, m_count}; }
 };
 
+template<class T> struct SliceOf<T&&>; // use MoveSliceOf<T> for that
+
 template<class T> SliceOf(T*, size_t) -> SliceOf<T>;
 
 } // namespace array19

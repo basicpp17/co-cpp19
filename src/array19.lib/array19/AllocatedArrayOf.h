@@ -1,5 +1,6 @@
 #pragma once
 #include "AllocatedArrayUtils.h"
+#include "MoveSliceOf.h"
 #include "SliceOf.single.h"
 
 #include <new> // new allocators
@@ -23,6 +24,7 @@ template<class T> struct AllocatedArrayOf final {
     using ConstIterator = const Element*;
     using Slice = SliceOf<Element>;
     using ConstSlice = SliceOf<const Element>;
+    using MoveSlice = MoveSliceOf<Element>;
 
 private:
     using Utils = AllocatedArrayUtils<T>;
@@ -38,25 +40,24 @@ public:
         }
     }
 
-    AllocatedArrayOf(ConstSlice slice) noexcept(std::is_nothrow_copy_constructible_v<Element>)
-            : m_pointer(Utils::allocate(slice.count()))
-            , m_count(0) {
+    AllocatedArrayOf(ConstSlice slice) : m_pointer(Utils::allocate(slice.count())), m_count(0) {
         Utils::copyConstruct(m_pointer, slice);
         m_count = slice.count();
     }
 
-    template<class... Ts> requires(sizeof...(Ts) > 0) && requires(Ts... args) { (T(args), ...); }
-    AllocatedArrayOf(Ts&&... args) noexcept(std::is_nothrow_copy_constructible_v<Element>)
-            : m_pointer(Utils::allocate(sizeof...(Ts)))
-            , m_count(0) {
-        (Utils::copyConstruct(m_pointer + m_count++, sliceOfSingle<const T>(args)), ...);
+    AllocatedArrayOf(MoveSlice slice) : m_pointer(Utils::allocate(slice.count())), m_count(0) {
+        Utils::moveConstruct(m_pointer, slice);
+        m_count = slice.count();
     }
 
-    AllocatedArrayOf(const AllocatedArrayOf& o) noexcept(std::is_nothrow_copy_constructible_v<Element>)
-            : AllocatedArrayOf(static_cast<ConstSlice>(o)) {}
+    template<class... Ts> requires(sizeof...(Ts) > 0) && requires(Ts&&... args) { (T{(Ts &&) args}, ...); }
+    AllocatedArrayOf(Ts&&... args) : m_pointer(Utils::allocate(sizeof...(Ts))), m_count(0) {
+        (new (m_pointer + m_count++) T{(Ts &&) args}, ...);
+    }
 
-    AllocatedArrayOf& operator=(const AllocatedArrayOf& o) noexcept(
-        std::is_nothrow_copy_constructible_v<Element>&& std::is_nothrow_copy_assignable_v<Element>) {
+    AllocatedArrayOf(const AllocatedArrayOf& o) : AllocatedArrayOf(static_cast<ConstSlice>(o)) {}
+
+    AllocatedArrayOf& operator=(const AllocatedArrayOf& o) {
         if (o.m_count != m_count) {
             Utils::destruct(amend());
             Utils::deallocate(amend());
@@ -88,8 +89,7 @@ public:
         return *this;
     }
 
-    [[nodiscard]] static auto createCount(Count count) noexcept(std::is_nothrow_default_constructible_v<T>)
-        -> AllocatedArrayOf {
+    [[nodiscard]] static auto createCount(Count count) -> AllocatedArrayOf {
 
         auto result = AllocatedArrayOf{};
         if (count > 0) {

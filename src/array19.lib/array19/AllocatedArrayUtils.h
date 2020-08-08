@@ -1,4 +1,5 @@
 #pragma once
+#include "MoveSliceOf.h"
 #include "SliceOf.h"
 
 #include <new> // ::operator new, ::operator delete
@@ -19,6 +20,7 @@ template<class T> struct AllocatedArrayUtils {
 
     using Slice = SliceOf<T>;
     using ConstSlice = SliceOf<const T>;
+    using MoveSlice = MoveSliceOf<T>;
 
     /// returns uninitialized storage for \param count elements with proper alignment
     /// note:
@@ -79,27 +81,9 @@ template<class T> struct AllocatedArrayUtils {
     /// * toPointer has to point to least fromSlice.count() elements
     /// * assumes toPointer and fromSlice do not overlap
     /// * we assume move is always noexcept!
-    static void moveConstruct(T* toPointer, Slice fromSlice) noexcept {
+    static void moveConstruct(T* toPointer, MoveSlice fromSlice) noexcept {
         if constexpr (std::is_trivially_move_constructible_v<T>) {
             memcpy(toPointer, fromSlice.begin(), fromSlice.count() * sizeof(T));
-        }
-        else {
-            for (auto& from : fromSlice) new (toPointer++) T(std::move(from));
-        }
-    }
-
-    /// move constructs elements of \param fromSlice into \param to Pointer
-    /// note:
-    /// * toPointer has to point to least fromSlice.count() elements
-    /// * toPointer has to be before fromSlice.begin() if ranges overlap
-    /// * we assume move is always noexcept!
-    ///
-    /// example:
-    ///         [ e e e e e e e ]
-    /// toPointer ^   ^ fromSlice.begin()
-    static void moveConstructForward(T* toPointer, Slice fromSlice) noexcept {
-        if constexpr (std::is_trivially_move_constructible_v<T>) {
-            memmove(toPointer, fromSlice.begin(), fromSlice.count() * sizeof(T));
         }
         else {
             for (auto& from : fromSlice) new (toPointer++) T(std::move(from));
@@ -115,7 +99,7 @@ template<class T> struct AllocatedArrayUtils {
             memcpy(toPointer, fromSlice.begin(), fromSlice.count() * sizeof(T));
         }
         else {
-            for (const auto& e : fromSlice) *toPointer++ = e;
+            for (const auto& from : fromSlice) *toPointer++ = from;
         }
     }
 
@@ -124,12 +108,30 @@ template<class T> struct AllocatedArrayUtils {
     /// * toPointer has to point to least fromSlice.count() elements
     /// * assumes toPointer and fromSlice do not overlap
     /// * we assume move is always noexcept!
-    static void moveAssign(T* toPointer, Slice fromSlice) noexcept {
+    static void moveAssign(T* toPointer, MoveSlice fromSlice) noexcept {
         if constexpr (std::is_trivially_move_assignable_v<T>) {
             memcpy(toPointer, fromSlice.begin(), fromSlice.count() * sizeof(T));
         }
         else {
-            for (const auto& e : fromSlice) *toPointer++ = std::move(e);
+            for (const auto& from : fromSlice) *toPointer++ = std::move(from);
+        }
+    }
+
+    /// move assigns elements of \param fromSlice into \param to Pointer
+    /// note:
+    /// * toPointer has to point to least fromSlice.count() elements
+    /// * toPointer has to be before fromSlice.begin() if ranges overlap
+    /// * we assume move is always noexcept!
+    ///
+    /// example:
+    ///         [ e e e e e e e ]
+    /// toPointer ^   ^ fromSlice.begin()
+    static void moveAssignForward(T* toPointer, MoveSlice fromSlice) noexcept {
+        if constexpr (std::is_trivially_move_constructible_v<T>) {
+            memmove(toPointer, fromSlice.begin(), fromSlice.count() * sizeof(T));
+        }
+        else {
+            for (auto& from : fromSlice) *toPointer++ = std::move(from);
         }
     }
 
@@ -142,7 +144,7 @@ template<class T> struct AllocatedArrayUtils {
     /// example:
     ///                 [ e e e e e e e ]
     /// fromSlice.begin() ^     ^ toPointer
-    static void moveAssignReverse(T* toPointer, Slice fromSlice) noexcept {
+    static void moveAssignReverse(T* toPointer, MoveSlice fromSlice) noexcept {
         if constexpr (std::is_trivially_move_assignable_v<T>) {
             memmove(toPointer, fromSlice.begin(), fromSlice.count() * sizeof(T));
         }

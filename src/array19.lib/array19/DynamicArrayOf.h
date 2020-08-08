@@ -1,5 +1,6 @@
 #pragma once
 #include "AllocatedArrayUtils.h"
+#include "MoveSliceOf.h"
 #include "SliceOf.single.h"
 
 #include <new> // launder
@@ -18,6 +19,7 @@ template<class T> struct DynamicArrayOf final {
     using ConstIterator = const Element*;
     using Slice = SliceOf<Element>;
     using ConstSlice = SliceOf<const Element>;
+    using MoveSlice = MoveSliceOf<Element>;
 
 private:
     using Utils = AllocatedArrayUtils<T>;
@@ -35,11 +37,19 @@ public:
         }
     }
 
-    DynamicArrayOf(ConstSlice slice) { append(slice); }
+    DynamicArrayOf(ConstSlice slice) : m_pointer(Utils::allocate(slice.count())), m_capacity(slice.count()) {
+        Utils::copyConstruct(m_pointer, slice);
+        m_count = slice.count();
+    }
 
-    template<class... Ts> requires(sizeof...(Ts) > 0) && requires(Ts&&... args) { (T((Ts &&) args), ...); }
-    DynamicArrayOf(Ts&&... args) : m_pointer(Utils::allocate(sizeof...(Ts))), m_count(0), m_capacity(sizeof...(Ts)) {
-        (new (m_pointer + m_count++) T((Ts &&) args), ...);
+    DynamicArrayOf(MoveSlice slice) : m_pointer(Utils::allocate(slice.count())), m_capacity(slice.count()) {
+        Utils::moveConstruct(m_pointer, slice);
+        m_count = slice.count();
+    }
+
+    template<class... Ts> requires(sizeof...(Ts) > 0) && requires(Ts&&... args) { (T{(Ts &&) args}, ...); }
+    DynamicArrayOf(Ts&&... args) : m_pointer(Utils::allocate(sizeof...(Ts))), m_capacity(sizeof...(Ts)) {
+        (new (m_pointer + m_count++) T{(Ts &&) args}, ...);
     }
 
     DynamicArrayOf(const DynamicArrayOf& o)
@@ -49,7 +59,7 @@ public:
         Utils::copyConstruct(m_pointer, o);
     }
     DynamicArrayOf& operator=(const DynamicArrayOf& o) {
-        if (m_capacity < o.m_count) {
+        if (!m_pointer || m_capacity < o.m_count) {
             *this = DynamicArrayOf(o);
         }
         else {
@@ -74,8 +84,10 @@ public:
         o.m_pointer = nullptr;
     }
     DynamicArrayOf& operator=(DynamicArrayOf&& o) noexcept {
-        Utils::destruct(amend());
-        Utils::deallocate(Slice{m_pointer, m_capacity});
+        if (m_pointer) {
+            Utils::destruct(amend());
+            Utils::deallocate(Slice{m_pointer, m_capacity});
+        }
         m_pointer = o.m_pointer;
         m_count = o.m_count;
         m_capacity = o.m_capacity;
@@ -104,6 +116,7 @@ public:
     [[nodiscard]] auto amendEnd() & noexcept -> Iterator { return amendBegin() + m_count; }
 
     [[nodiscard]] auto amend() -> Slice { return Slice{amendBegin(), m_count}; }
+    [[nodiscard]] auto move() -> MoveSlice { return MoveSlice{amendBegin(), m_count}; }
 
     void ensureCapacity(Count count) {
         if (totalCapacity() < count) growBy(count - totalCapacity());
@@ -126,6 +139,13 @@ public:
         m_count += elems.count();
     }
 
+    /// appends possibly multiple elements at the end
+    void appendMoved(MoveSlice elems) {
+        ensureUnusedCapacity(elems.count());
+        Utils::moveConstruct(storageEnd(), elems);
+        m_count += elems.count();
+    }
+
     /// removes the last element
     void pop() {
         Utils::destruct(Slice{amendBegin() + m_count - 1, 1});
@@ -145,14 +165,14 @@ public:
         auto offset = it - amendBegin();
         auto insertCount = insertSlice.count();
         auto remainCount = m_count - offset - removeCount;
-        auto remainSlice = Slice{it + removeCount, remainCount};
+        auto remainSlice = MoveSlice{it + removeCount, remainCount};
         // old: [ ..(offset)..,[it] ..(removeCount).., ..(remainCount)... ]
         // new: [ ..(offset)..,[it] ..(insertCount).., ..(remainCount)... ]
 
         auto newCount = (m_count - removeCount) + insertCount;
         if (m_capacity < newCount) { // not enough storage => arrange everything in new storage
             auto newStorage = grownStorage(insertCount - removeCount);
-            Utils::moveConstruct(newStorage.begin(), Slice{amendBegin(), static_cast<size_t>(offset)});
+            Utils::moveConstruct(newStorage.begin(), MoveSlice{amendBegin(), static_cast<size_t>(offset)});
             Utils::copyConstruct(newStorage.begin() + offset, insertSlice);
             Utils::moveConstruct(newStorage.begin() + offset + insertCount, remainSlice);
             Utils::destruct(amend());
@@ -163,7 +183,7 @@ public:
         else if (m_count >= newCount) { // shrinking
             auto shrinkCount = m_count - newCount;
             Utils::copyAssign(it, insertSlice);
-            Utils::moveConstructForward(m_pointer + offset + insertCount, remainSlice);
+            Utils::moveAssignForward(m_pointer + offset + insertCount, remainSlice);
             Utils::destruct(Slice{amendEnd() - shrinkCount, shrinkCount});
         }
         else if (offset + insertCount <= m_count) { // parts of remainSlice is moved beyond end()
@@ -195,7 +215,7 @@ private:
     }
     void growBy(int by) {
         auto newStorage = grownStorage(by);
-        Utils::moveConstruct(newStorage.begin(), amend());
+        Utils::moveConstruct(newStorage.begin(), move());
         Utils::destruct(amend());
         Utils::deallocate(Slice{m_pointer, m_capacity});
         m_pointer = newStorage.begin();

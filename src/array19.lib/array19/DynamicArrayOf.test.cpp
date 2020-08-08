@@ -86,7 +86,6 @@ private:
 } // namespace
 
 TEST(DynamicArrayOf, NontrivialExample) {
-
     auto v = DynamicArrayOf<NonTrivial>{};
 
     EXPECT_TRUE(v.isEmpty());
@@ -131,7 +130,6 @@ struct Vec3 {
 } // namespace
 
 TEST(DynamicArrayOf, EmplaceStruct) {
-
     auto v = DynamicArrayOf<Vec3>{};
     v.emplace_back(1.1, 2.2, 3.3);
 
@@ -233,6 +231,22 @@ TEST(DynamicArrayOf, RecordedCopyAndMove) {
 105.dtor
 106.dtor
 )") << "destruction of copy destroys copied elements";
+
+    {
+        Recorder::store = std::stringstream{};
+
+        auto v = T{Array{Recorder{1}, 2, 3}.move()};
+        EXPECT_EQ(Recorder::store.str(), R"(1.ctor
+2.ctor
+3.ctor
+1.ctor(&&)
+2.ctor(&&)
+3.ctor(&&)
+1003.dtor
+1002.dtor
+1001.dtor
+)") << "construct static array, move to dynamic array, destroy static array";
+    }
 }
 
 TEST(DynamicArrayOf, RecordedSpliceGrowOverCapacity) {
@@ -293,7 +307,7 @@ TEST(DynamicArrayOf, RecordedSpliceShrink) {
     v.splice(v.amendBegin() + 1, 3, insert);
     EXPECT_EQ(Recorder::store.str(), R"(2.op=(const& 112)
 3.op=(const& 113)
-5.ctor(&&)
+4.op=(&& 5)
 1005.dtor
 )");
 
@@ -361,4 +375,46 @@ TEST(DynamicArrayOf, RecordedSpliceInsertBeforeEnd) {
 1003.op=(const& 113)
 )");
     EXPECT_EQ(v, (T{1, 112, 113, 3, 4}));
+}
+
+TEST(DynamicArrayOf, RecordedSpliceRemoveFirst) {
+    using T = DynamicArrayOf<Recorder>;
+
+    Recorder::store = std::stringstream{};
+    auto v = T{};
+    v.emplace_back(1);
+    v.emplace_back(2);
+    v.emplace_back(3);
+    EXPECT_EQ(Recorder::store.str(), R"(1.ctor
+2.ctor
+3.ctor
+)") << "3 array elements constructed";
+
+    Recorder::store = std::stringstream{};
+    v.splice(v.amendBegin(), 1, {});
+    EXPECT_EQ(Recorder::store.str(), R"(1.op=(&& 2)
+1002.op=(&& 3)
+1003.dtor
+)");
+    EXPECT_EQ(v, (T{2, 3}));
+}
+
+TEST(DynamicArrayOf, RecordedSpliceRemoveLast) {
+    using T = DynamicArrayOf<Recorder>;
+
+    Recorder::store = std::stringstream{};
+    auto v = T{};
+    v.emplace_back(1);
+    v.emplace_back(2);
+    v.emplace_back(3);
+    EXPECT_EQ(Recorder::store.str(), R"(1.ctor
+2.ctor
+3.ctor
+)") << "3 array elements constructed";
+
+    Recorder::store = std::stringstream{};
+    v.splice(v.amendBegin() + 2, 1, {});
+    EXPECT_EQ(Recorder::store.str(), R"(3.dtor
+)");
+    EXPECT_EQ(v, (T{1, 2}));
 }

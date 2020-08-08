@@ -1,4 +1,5 @@
 #pragma once
+#include "MoveSliceOf.h"
 #include "SliceOf.h"
 
 #include <stddef.h> // size_t
@@ -20,7 +21,8 @@ template<class T, size_t C> struct Array {
     [[nodiscard]] constexpr auto begin() const noexcept -> const T* { return m; }
     [[nodiscard]] constexpr auto end() const noexcept -> const T* { return m + C; }
     [[nodiscard]] constexpr auto operator[](size_t i) const noexcept -> const T& { return m[i]; }
-    constexpr operator SliceOf<const T>() const noexcept { return SliceOf{m, C}; }
+    [[nodiscard]] constexpr operator SliceOf<const T>() const& noexcept { return SliceOf{m, C}; }
+    [[nodiscard]] constexpr auto move() noexcept -> MoveSliceOf<T> { return MoveSliceOf{m, C}; }
 
     // hint: use `amendSliceOfArray()` if you need to iterate and mutate
     [[nodiscard]] constexpr auto amendBegin() noexcept -> T* { return m; }
