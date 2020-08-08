@@ -39,7 +39,7 @@ public:
 
     template<class... Ts> requires(sizeof...(Ts) > 0) && requires(Ts&&... args) { (T((Ts &&) args), ...); }
     DynamicArrayOf(Ts&&... args) : m_pointer(Utils::allocate(sizeof...(Ts))), m_count(0), m_capacity(sizeof...(Ts)) {
-        (Utils::copyConstruct(m_pointer + m_count++, sliceOfSingle<const T>(args)), ...);
+        (new (m_pointer + m_count++) T((Ts &&) args), ...);
     }
 
     DynamicArrayOf(const DynamicArrayOf& o)
