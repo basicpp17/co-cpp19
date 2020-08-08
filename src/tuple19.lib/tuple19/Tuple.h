@@ -112,6 +112,12 @@ template<> struct Tuple<> {
 
     template<class> static constexpr bool has_type = false;
 
+    template<size_t I> void at(Index<I>* = {}) const&;
+    template<class O> void of(Type<O>* = {}) const&;
+
+    template<size_t I> void amendAt(Index<I>* = {});
+    template<class O> void amendOf(Type<O>* = {});
+
     template<class F> void visitAll(F&&) const& {}
     template<class F> void amendAll(F&&) & {}
 };
