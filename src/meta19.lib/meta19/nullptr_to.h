@@ -2,6 +2,6 @@
 
 namespace meta19 {
 
-template<class T> inline constexpr T* nullptr_to = nullptr;
+template<class T> static constexpr T* nullptr_to [[maybe_unused]] = nullptr;
 
 } // namespace meta19
