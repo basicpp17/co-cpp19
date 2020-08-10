@@ -10,6 +10,7 @@ Application {
     Depends { name: "googletest" }
 
     files: [
+        "Enum.ostream.test.cpp",
         "Enum.test.cpp",
     ]
 }

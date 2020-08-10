@@ -7,8 +7,10 @@
 namespace enum19 {
 
 template<class Enum> auto enumNameOstream(std::ostream& out, const Enum& e) -> std::ostream& {
-    auto underlying = static_cast<std::underlying_type_t<Enum>>(e);
-    return out << valueName(e) << " (" << underlying << ")";
+    using Underlying = std::underlying_type_t<Enum>;
+    auto underlying = static_cast<Underlying>(e);
+    using Numeric = std::conditional_t<std::is_signed_v<Underlying>, int64_t, uint64_t>;
+    return out << valueName(e) << " (" << static_cast<Numeric>(underlying) << ")";
 }
 
 /// This wrapper enables ADL for ostream operator
