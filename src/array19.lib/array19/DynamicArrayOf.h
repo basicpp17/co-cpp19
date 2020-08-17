@@ -31,10 +31,7 @@ private:
 public:
     DynamicArrayOf() = default;
     ~DynamicArrayOf() noexcept {
-        if (m_pointer) {
-            Utils::destruct(amend());
-            Utils::deallocate(Slice{m_pointer, m_capacity});
-        }
+        if (m_pointer) clear();
     }
 
     DynamicArrayOf(ConstSlice slice) : m_pointer(Utils::allocate(slice.count())), m_capacity(slice.count()) {
@@ -125,6 +122,10 @@ public:
         if (unusedCapacity() < count) growBy(count);
     }
 
+    void clear() {
+        Utils::destruct(amend());
+        Utils::deallocate(Slice{m_pointer, m_capacity});
+    }
     /// append a single element constructed in place with the given arguments
     template<class... Ts> void emplace_back(Ts&&... args) {
         ensureUnusedCapacity(1);
