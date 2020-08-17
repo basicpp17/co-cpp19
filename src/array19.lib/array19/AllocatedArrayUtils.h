@@ -113,7 +113,7 @@ template<class T> struct AllocatedArrayUtils {
             memcpy(toPointer, fromSlice.begin(), fromSlice.count() * sizeof(T));
         }
         else {
-            for (const auto& from : fromSlice) *toPointer++ = std::move(from);
+            for (auto& from : fromSlice) *toPointer++ = std::move(from);
         }
     }
 
