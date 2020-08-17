@@ -126,11 +126,13 @@ public:
         Utils::destruct(amend());
         Utils::deallocate(Slice{m_pointer, m_capacity});
     }
+
     /// append a single element constructed in place with the given arguments
-    template<class... Ts> void emplace_back(Ts&&... args) {
+    template<class... Ts> auto emplace_back(Ts&&... args) -> T& {
         ensureUnusedCapacity(1);
-        new (m_pointer + m_count) Element{(Ts &&) args...};
+        auto ptr = new (m_pointer + m_count) Element{(Ts &&) args...};
         m_count++;
+        return *ptr;
     }
 
     /// appends possibly multiple elements at the end
