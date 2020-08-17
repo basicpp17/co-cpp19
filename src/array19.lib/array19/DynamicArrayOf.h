@@ -31,7 +31,10 @@ private:
 public:
     DynamicArrayOf() = default;
     ~DynamicArrayOf() noexcept {
-        if (m_pointer) clear();
+        if (m_pointer) {
+            Utils::destruct(amend());
+            Utils::deallocate(Slice{m_pointer, m_capacity});
+        }
     }
 
     DynamicArrayOf(ConstSlice slice) : m_pointer(Utils::allocate(slice.count())), m_capacity(slice.count()) {
@@ -124,7 +127,7 @@ public:
 
     void clear() {
         Utils::destruct(amend());
-        Utils::deallocate(Slice{m_pointer, m_capacity});
+        m_count = 0;
     }
 
     /// append a single element constructed in place with the given arguments
