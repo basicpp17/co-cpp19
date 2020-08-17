@@ -19,6 +19,7 @@ Product {
         "DynamicArrayOf.h",
         "DynamicArrayOf.ostream.h",
         "MoveSliceOf.h",
+        "MoveSliceOf.single.h",
         "SliceOf.carray.h",
         "SliceOf.equals.h",
         "SliceOf.h",
