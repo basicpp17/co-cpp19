@@ -162,8 +162,6 @@ public:
     /// extensions:
     /// * insert of elements at once
     /// * combined remove and insert
-    /// known limits:
-    /// * no in place or move construction (not needed so far)
     void splice(Iterator it, Count removeCount, ConstSlice insertSlice) {
         auto offset = it - amendBegin();
         auto insertCount = insertSlice.count();
@@ -202,6 +200,58 @@ public:
             Utils::copyConstruct(storageEnd(), insertSlice.slice(assignElems, insertCount - assignElems));
         }
         m_count = newCount;
+    }
+
+    /// Same as splice but moves inserted elements into the array
+    void spliceMoved(Iterator it, Count removeCount, MoveSlice insertSlice) {
+        auto offset = it - amendBegin();
+        auto insertCount = insertSlice.count();
+        auto remainCount = m_count - offset - removeCount;
+        auto remainSlice = MoveSlice{it + removeCount, remainCount};
+        // old: [ ..(offset)..,[it] ..(removeCount).., ..(remainCount)... ]
+        // new: [ ..(offset)..,[it] ..(insertCount).., ..(remainCount)... ]
+
+        auto newCount = (m_count - removeCount) + insertCount;
+        if (m_capacity < newCount) { // not enough storage => arrange everything in new storage
+            auto newStorage = grownStorage(insertCount - removeCount);
+            Utils::moveConstruct(newStorage.begin(), MoveSlice{amendBegin(), static_cast<size_t>(offset)});
+            Utils::moveConstruct(newStorage.begin() + offset, insertSlice);
+            Utils::moveConstruct(newStorage.begin() + offset + insertCount, remainSlice);
+            Utils::destruct(amend());
+            Utils::deallocate(Slice{m_pointer, m_capacity});
+            m_pointer = newStorage.begin();
+            m_capacity = newStorage.count();
+        }
+        else if (m_count >= newCount) { // shrinking
+            auto shrinkCount = m_count - newCount;
+            Utils::moveAssign(it, insertSlice);
+            Utils::moveAssignForward(m_pointer + offset + insertCount, remainSlice);
+            Utils::destruct(Slice{amendEnd() - shrinkCount, shrinkCount});
+        }
+        else if (offset + insertCount <= m_count) { // parts of remainSlice is moved beyond end()
+            auto growCount = newCount - m_count;
+            Utils::moveConstruct(storageEnd(), remainSlice.slice(remainCount - growCount, growCount));
+            Utils::moveAssignReverse(it + insertCount, remainSlice.slice(0, remainCount - growCount));
+            Utils::moveAssign(it, insertSlice);
+        }
+        else { // remainSlice is moved beyond end()
+            Utils::moveConstruct(m_pointer + offset + insertCount, remainSlice);
+            auto assignElems = m_count - offset;
+            Utils::moveAssign(it, insertSlice.slice(0, assignElems));
+            Utils::moveConstruct(storageEnd(), insertSlice.slice(assignElems, insertCount - assignElems));
+        }
+        m_count = newCount;
+    }
+
+    /// Same as splice but moves inserted elements into the array
+    void remove(Iterator it, Count removeCount) {
+        auto offset = it - amendBegin();
+        auto remainCount = m_count - offset - removeCount;
+        auto remainSlice = MoveSlice{it + removeCount, remainCount};
+
+        Utils::moveAssignForward(m_pointer + offset, remainSlice);
+        Utils::destruct(Slice{amendEnd() - removeCount, removeCount});
+        m_count = m_count - removeCount;
     }
 
 private:
