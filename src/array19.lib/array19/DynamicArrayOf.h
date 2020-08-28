@@ -63,14 +63,13 @@ public:
             *this = DynamicArrayOf(o);
         }
         else {
-            auto countDiff = m_count - o.m_count;
-            if (countDiff > 0) {
+            if (m_count > o.m_count) {
                 Utils::copyAssign(amendBegin(), o);
-                Utils::destruct(Slice{amendBegin() + o.m_count, countDiff});
+                Utils::destruct(Slice{amendBegin() + o.m_count, m_count - o.m_count});
             }
             else {
                 Utils::copyAssign(amendBegin(), ConstSlice{o.begin(), m_count});
-                Utils::copyConstruct(storageEnd(), ConstSlice{o.begin() + m_count, -countDiff});
+                Utils::copyConstruct(storageEnd(), ConstSlice{o.begin() + m_count, o.m_count - m_count});
             }
             m_count = o.m_count;
         }
