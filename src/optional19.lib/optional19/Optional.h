@@ -127,12 +127,8 @@ struct Optional
     constexpr explicit operator bool() const { return this->m_valid; }
 
     /// @return predicate(value()) if optional is set else return false
-    template<class F> constexpr auto operator&&(F&& f) const -> bool {
-        if constexpr (std::is_invocable_r_v<bool, F, T>)
-            return this->m_valid && f(value());
-        else {
-            return this->m_valid && f;
-        }
+    template<class F> requires(std::is_invocable_r_v<bool, F, T>) constexpr auto operator&&(F&& f) const -> bool {
+        return static_cast<bool>(*this) && f(value());
     }
 
     template<class F> constexpr auto operator||(F&& f) const -> T {

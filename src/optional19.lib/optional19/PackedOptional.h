@@ -25,12 +25,8 @@ public:
     constexpr explicit operator bool() const { return isValid(m_data); }
 
     /// @return predicate(value()) if optional is set else return false
-    template<class F> constexpr auto operator&&(F&& f) const -> bool {
-        if constexpr (std::is_invocable_r_v<bool, F, T>)
-            return *this ? f(value()) : false;
-        else {
-            return *this ? f : false;
-        }
+    template<class F> requires(std::is_invocable_r_v<bool, F, T>) constexpr auto operator&&(F&& f) const -> bool {
+        return static_cast<bool>(*this) && f(value());
     }
 
     template<class F> constexpr auto operator||(F&& f) const -> T {
