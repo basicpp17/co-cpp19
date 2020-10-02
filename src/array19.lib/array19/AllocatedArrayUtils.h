@@ -69,7 +69,9 @@ template<class T> struct AllocatedArrayUtils {
     /// * assumes toPointer and fromSlice do not overlap
     static void copyConstruct(T* toPointer, ConstSlice fromSlice) noexcept(std::is_nothrow_copy_constructible_v<T>) {
         if constexpr (std::is_trivially_copy_constructible_v<T>) {
-            memcpy(toPointer, fromSlice.begin(), fromSlice.count() * sizeof(T));
+            if (!fromSlice.isEmpty()) {
+                memcpy(toPointer, fromSlice.begin(), fromSlice.count() * sizeof(T));
+            }
         }
         else {
             for (auto& from : fromSlice) new (toPointer++) T(from);
@@ -83,7 +85,9 @@ template<class T> struct AllocatedArrayUtils {
     /// * we assume move is always noexcept!
     static void moveConstruct(T* toPointer, MoveSlice fromSlice) noexcept {
         if constexpr (std::is_trivially_move_constructible_v<T>) {
-            memcpy(toPointer, fromSlice.begin(), fromSlice.count() * sizeof(T));
+            if (!fromSlice.isEmpty()) {
+                memcpy(toPointer, fromSlice.begin(), fromSlice.count() * sizeof(T));
+            }
         }
         else {
             for (auto& from : fromSlice) new (toPointer++) T(std::move(from));
@@ -96,7 +100,9 @@ template<class T> struct AllocatedArrayUtils {
     /// * assumes toPointer and fromSlice do not overlap
     static void copyAssign(T* toPointer, ConstSlice fromSlice) noexcept(std::is_nothrow_copy_assignable_v<T>) {
         if constexpr (std::is_trivially_copy_assignable_v<T>) {
-            memcpy(toPointer, fromSlice.begin(), fromSlice.count() * sizeof(T));
+            if (!fromSlice.isEmpty()) {
+                memcpy(toPointer, fromSlice.begin(), fromSlice.count() * sizeof(T));
+            }
         }
         else {
             for (const auto& from : fromSlice) *toPointer++ = from;
@@ -110,7 +116,9 @@ template<class T> struct AllocatedArrayUtils {
     /// * we assume move is always noexcept!
     static void moveAssign(T* toPointer, MoveSlice fromSlice) noexcept {
         if constexpr (std::is_trivially_move_assignable_v<T>) {
-            memcpy(toPointer, fromSlice.begin(), fromSlice.count() * sizeof(T));
+            if (!fromSlice.isEmpty()) {
+                memcpy(toPointer, fromSlice.begin(), fromSlice.count() * sizeof(T));
+            }
         }
         else {
             for (auto& from : fromSlice) *toPointer++ = std::move(from);
@@ -128,7 +136,9 @@ template<class T> struct AllocatedArrayUtils {
     /// toPointer ^   ^ fromSlice.begin()
     static void moveAssignForward(T* toPointer, MoveSlice fromSlice) noexcept {
         if constexpr (std::is_trivially_move_constructible_v<T>) {
-            memmove(toPointer, fromSlice.begin(), fromSlice.count() * sizeof(T));
+            if (!fromSlice.isEmpty()) {
+                memmove(toPointer, fromSlice.begin(), fromSlice.count() * sizeof(T));
+            }
         }
         else {
             for (auto& from : fromSlice) *toPointer++ = std::move(from);
@@ -146,7 +156,9 @@ template<class T> struct AllocatedArrayUtils {
     /// fromSlice.begin() ^     ^ toPointer
     static void moveAssignReverse(T* toPointer, MoveSlice fromSlice) noexcept {
         if constexpr (std::is_trivially_move_assignable_v<T>) {
-            memmove(toPointer, fromSlice.begin(), fromSlice.count() * sizeof(T));
+            if (!fromSlice.isEmpty()) {
+                memmove(toPointer, fromSlice.begin(), fromSlice.count() * sizeof(T));
+            }
         }
         else {
             auto rTo = toPointer + fromSlice.count();

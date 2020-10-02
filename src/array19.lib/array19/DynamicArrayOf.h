@@ -55,7 +55,7 @@ public:
     DynamicArrayOf(const DynamicArrayOf& o)
             : m_pointer(Utils::allocate(o.m_count))
             , m_count(o.m_count)
-            , m_capacity(o.m_capacity) {
+            , m_capacity(o.m_count) {
         Utils::copyConstruct(m_pointer, o);
     }
     DynamicArrayOf& operator=(const DynamicArrayOf& o) {
