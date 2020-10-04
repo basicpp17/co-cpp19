@@ -16,7 +16,7 @@ TEST(Rope, example) {
     constexpr auto stored = storeLiteral("stored");
 
     constexpr auto rope = Rope{viewLiteral("Hello"), ' ', stored, ' ', world};
-    constexpr auto N = ropeCount(rope);
+    constexpr auto N = ropeLengthOf(rope);
     constexpr auto store = ropeStore<N>(rope);
     static_assert(viewStore(store) == viewLiteral("Hello stored World"));
     EXPECT_EQ(store, storeLiteral("Hello stored World"));

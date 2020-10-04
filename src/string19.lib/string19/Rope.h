@@ -7,6 +7,10 @@ namespace string19 {
 using meta19::StoredOf;
 using tuple19::Tuple;
 
+/// static combination of nested parts that can be combined to a string at compile time
+/// usage:
+/// * code generation of templated types
+/// see: Rope.store.h for usage example
 template<class... Ts> struct Rope;
 
 template<class... Ts> requires(sizeof...(Ts) > 0) struct Rope<Ts...> {

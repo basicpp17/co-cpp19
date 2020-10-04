@@ -1,12 +1,22 @@
 
 Product {
-    Depends { name: "tuple19" }
     Depends { name: "fmt"; required: false }
+    Depends { name: "tuple19" }
+    Depends { name: "variant19" }
 
     Export {
         Depends { name: "cpp" }
         cpp.includePaths: [".."]
         Depends { name: "tuple19" }
+        Depends { name: "variant19" }
+    }
+
+    Group {
+        name: "DynamicRope"
+        files: [
+            "DynamicRopeOf.h",
+            "Rope.DynamicString.h",
+        ]
     }
 
     Group {

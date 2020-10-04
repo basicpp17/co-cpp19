@@ -14,7 +14,7 @@ using namespace string19;
 
 TEST(Rope, joinEmpty) {
     constexpr auto rope = Separator{','}.join();
-    constexpr auto N = ropeCount(rope);
+    constexpr auto N = ropeLengthOf(rope);
     constexpr auto store = ropeStore<N>(rope);
     static_assert(viewStore(store) == viewLiteral(""));
     EXPECT_EQ(store, storeLiteral(""));
@@ -22,7 +22,7 @@ TEST(Rope, joinEmpty) {
 
 TEST(Rope, joinChar) {
     constexpr auto rope = Separator{','}.join('1', '2', '3');
-    constexpr auto N = ropeCount(rope);
+    constexpr auto N = ropeLengthOf(rope);
     constexpr auto store = ropeStore<N>(rope);
     static_assert(viewStore(store) == viewLiteral("1,2,3"));
     EXPECT_EQ(store, storeLiteral("1,2,3"));
@@ -30,7 +30,7 @@ TEST(Rope, joinChar) {
 
 TEST(Rope, joinView) {
     constexpr auto rope = Separator{viewLiteral(", ")}.join(viewLiteral("1"), '2', '3');
-    constexpr auto N = ropeCount(rope);
+    constexpr auto N = ropeLengthOf(rope);
     constexpr auto store = ropeStore<N>(rope);
     static_assert(viewStore(store) == viewLiteral("1, 2, 3"));
     EXPECT_EQ(store, storeLiteral("1, 2, 3"));
@@ -38,7 +38,7 @@ TEST(Rope, joinView) {
 
 TEST(Rope, joinDecimal) {
     constexpr auto rope = Separator{viewLiteral(", ")}.join(decimal<1>, decimal<-2>, decimal<3>);
-    constexpr auto N = ropeCount(rope);
+    constexpr auto N = ropeLengthOf(rope);
     constexpr auto store = ropeStore<N>(rope);
     static_assert(viewStore(store) == viewLiteral("1, -2, 3"));
     EXPECT_EQ(store, storeLiteral("1, -2, 3"));

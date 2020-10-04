@@ -13,7 +13,7 @@ using namespace string19;
 
 TEST(Rope_decimal, example) {
     constexpr auto rope = Rope{viewLiteral("dec: "), decimal<13>};
-    constexpr auto N = ropeCount(rope);
+    constexpr auto N = ropeLengthOf(rope);
     constexpr auto store = ropeStore<N>(rope);
 
     static_assert(viewStore(store) == viewLiteral("dec: 13"));
@@ -22,7 +22,7 @@ TEST(Rope_decimal, example) {
 
 TEST(Rope_decimal, negative) {
     constexpr auto rope = Rope{viewLiteral("dec: "), decimal<-13>};
-    constexpr auto N = ropeCount(rope);
+    constexpr auto N = ropeLengthOf(rope);
     constexpr auto store = ropeStore<N>(rope);
 
     static_assert(viewStore(store) == viewLiteral("dec: -13"));

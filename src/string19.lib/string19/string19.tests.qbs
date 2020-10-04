@@ -10,6 +10,7 @@ Application {
     Depends { name: "googletest" }
 
     files: [
+        "DynamicRopeOf.test.cpp",
         "Rope.decimal.test.cpp",
         "Rope.join.test.cpp",
         "Rope.test.cpp",

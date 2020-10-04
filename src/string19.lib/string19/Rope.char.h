@@ -3,7 +3,7 @@
 
 namespace string19 {
 
-constexpr auto ropeCount(ADL*, char) -> size_t { return 1; }
+constexpr auto ropeLengthOf(ADL*, char) -> size_t { return 1; }
 
 constexpr void ropeAppend(ADL*, char*& data, char c) { *data++ = c; }
 

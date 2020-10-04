@@ -18,7 +18,7 @@ using string19::viewStore;
 template<auto v>
 constexpr auto unknown_of = [] {
     constexpr auto rope = Rope{viewLiteral("[unknown("), decimal<v>, viewLiteral(")]")};
-    constexpr auto N = ropeCount(rope);
+    constexpr auto N = ropeLengthOf(rope);
     return ropeStore<N>(rope);
 }();
 
@@ -47,7 +47,7 @@ template<auto v>
 requires(std::is_enum_v<decltype(v)>) constexpr auto type_value_name = [] {
     using T = decltype(v);
     constexpr auto rope = Rope{meta_enum_for<T>.name, viewLiteral("::"), value_name<v>};
-    constexpr auto N = ropeCount(rope);
+    constexpr auto N = ropeLengthOf(rope);
     return ropeStore<N>(rope);
 }();
 
@@ -58,7 +58,7 @@ requires(std::is_enum_v<decltype(v)>) constexpr auto debug_value_name = [] {
     constexpr auto underlying = static_cast<std::underlying_type_t<T>>(v);
     if constexpr (is_member<v>) {
         constexpr auto rope = Rope{value_name<v>, viewLiteral(" ("), decimal<underlying>, ')'};
-        constexpr auto N = ropeCount(rope);
+        constexpr auto N = ropeLengthOf(rope);
         return ropeStore<N>(rope);
     }
     else {
