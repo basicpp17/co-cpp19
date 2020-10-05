@@ -132,7 +132,7 @@ public:
     /// append a single element constructed in place with the given arguments
     template<class... Ts> auto emplace_back(Ts&&... args) -> T& {
         ensureUnusedCapacity(1);
-        auto ptr = new (m_pointer + m_count) Element{(Ts &&) args...};
+        auto ptr = new (storageEnd()) Element{(Ts &&) args...};
         m_count++;
         return *ptr;
     }
@@ -149,6 +149,13 @@ public:
         ensureUnusedCapacity(elems.count());
         Utils::moveConstruct(storageEnd(), elems);
         m_count += elems.count();
+    }
+
+    /// appends count default constructed elements
+    void appendCount(size_t count) {
+        ensureUnusedCapacity(count);
+        Utils::defaultConstruct(Slice{storageEnd(), count});
+        m_count += count;
     }
 
     /// removes the last element
@@ -178,8 +185,8 @@ public:
             Utils::moveConstruct(newStorage.begin(), MoveSlice{amendBegin(), static_cast<size_t>(offset)});
             Utils::copyConstruct(newStorage.begin() + offset, insertSlice);
             Utils::moveConstruct(newStorage.begin() + offset + insertCount, remainSlice);
-            Utils::destruct(amend());
-            Utils::deallocate(Slice{m_pointer, m_capacity});
+                Utils::destruct(amend());
+                Utils::deallocate(Slice{m_pointer, m_capacity});
             m_pointer = newStorage.begin();
             m_capacity = newStorage.count();
         }
@@ -219,8 +226,8 @@ public:
             Utils::moveConstruct(newStorage.begin(), MoveSlice{amendBegin(), static_cast<size_t>(offset)});
             Utils::moveConstruct(newStorage.begin() + offset, insertSlice);
             Utils::moveConstruct(newStorage.begin() + offset + insertCount, remainSlice);
-            Utils::destruct(amend());
-            Utils::deallocate(Slice{m_pointer, m_capacity});
+                Utils::destruct(amend());
+                Utils::deallocate(Slice{m_pointer, m_capacity});
             m_pointer = newStorage.begin();
             m_capacity = newStorage.count();
         }
@@ -271,8 +278,8 @@ private:
     void growBy(int by) {
         auto newStorage = grownStorage(by);
         Utils::moveConstruct(newStorage.begin(), move());
-        Utils::destruct(amend());
-        Utils::deallocate(Slice{m_pointer, m_capacity});
+            Utils::destruct(amend());
+            Utils::deallocate(Slice{m_pointer, m_capacity});
         m_pointer = newStorage.begin();
         m_capacity = newStorage.count();
     }
