@@ -12,7 +12,7 @@ template<class T> constexpr auto ropeCount(const T& v) -> size_t { return ropeCo
 ///    constexpr auto rope = Rope{};
 ///    constexpr auto N = ropeCount(rope);
 ///    constexpr auto store = ropeStore<N>(rope);
-template<size_t N, class... Ts> constexpr auto ropeStore(const Rope<Ts...>& r) -> const StringStore<N> {
+template<size_t N, class... Ts> constexpr auto ropeStore(const Rope<Ts...>& r) -> StringStore<N> {
     auto result = StringStore<N>{};
     auto* data = result.data;
     ropeAppend(adl, data, r);
