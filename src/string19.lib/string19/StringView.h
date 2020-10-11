@@ -13,7 +13,7 @@ struct StringView {
     unsigned count{};
     ExtraZero extraZero{};
 
-    constexpr char operator[](size_t i) const noexcept { return data[i]; }
+    constexpr auto operator[](size_t i) const noexcept -> char { return data[i]; }
 };
 
 } // namespace string19
