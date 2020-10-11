@@ -2,6 +2,8 @@
 #include "ADL.h"
 #include "DynamicString.h"
 #include "array19/DynamicArrayOf.h"
+#include "array19/MoveSliceOf.h"
+#include "array19/SliceOf.h"
 #include "variant19/Variant.h"
 
 #include <type_traits>
@@ -9,6 +11,8 @@
 namespace string19 {
 
 using array19::DynamicArrayOf;
+using array19::MoveSliceOf;
+using array19::SliceOf;
 using variant19::Variant;
 
 template<class A, class B> constexpr bool ropeCombine(ADL*, A&&, B&&) { return false; }
@@ -16,19 +20,22 @@ template<class A, class B> constexpr bool ropeCombine(ADL*, A&&, B&&) { return f
 /// representation of a string of different parts
 /// purpose:
 /// * allows to efficiently build large strings
-template<class... Ts> struct DynamicRopeOf {
+template<class... Ts> requires(sizeof...(Ts) > 0) struct DynamicRopeOf {
     using Entry = Variant<Ts...>;
     using Container = DynamicArrayOf<Entry>;
 
 private:
-    template<class... Ps> friend struct DynamicRopeOf;
     Container m{};
 
 public:
     DynamicRopeOf() = default;
 
+    /// true if no elements are stored
+    /// note: elements might be empty! (check length() == 0)
+    [[nodiscard]] auto isEmpty() const -> bool { return m.isEmpty(); }
+
     /// computes the total length of all Rope parts
-    auto length() const -> size_t {
+    [[nodiscard]] auto length() const -> size_t {
         auto result = size_t{};
         for (auto& entry : m) {
             entry.visit([&](const auto& v) { result += ropeLengthOf(adl, v); });
@@ -37,7 +44,7 @@ public:
     }
 
     /// builds a dynamic string that contains all parts
-    auto build() const -> DynamicString {
+    [[nodiscard]] auto build() const -> DynamicString {
         auto result = DynamicString{};
         result.resize(length());
         auto it = result.data();
@@ -47,13 +54,17 @@ public:
         return result;
     }
 
+    [[nodiscard]] auto slice() const -> SliceOf<const Entry> { return m; }
+    [[nodiscard]] auto moveSlice() && -> MoveSliceOf<Entry> { return m.move(); }
+
     /// add parts of other Rope by moving all parts
     /// note: it might be more efficient to add rope as part
     template<class... Ps>
     requires((!std::is_same_v<DynamicRopeOf<Ps...>, Ts> && ...)) auto operator+=(DynamicRopeOf<Ps...>&& r)
         -> DynamicRopeOf& {
-        m.ensureUnusedCapacity(r.m.count());
-        for (auto& pEntry : r.m) {
+        auto s = std::move(r).moveSlice();
+        m.ensureUnusedCapacity(s.count());
+        for (auto& pEntry : s) {
             pEntry.visit([&](auto& v) { m.emplace_back(std::move(v)); });
         }
         return *this;

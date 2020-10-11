@@ -14,7 +14,9 @@ Product {
     Group {
         name: "DynamicRope"
         files: [
+            "DynamicRopeOf.equals.h",
             "DynamicRopeOf.h",
+            "DynamicRopeOf.ostream.h",
             "Rope.DynamicString.h",
         ]
     }

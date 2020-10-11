@@ -1,8 +1,12 @@
+#include "DynamicRopeOf.equals.h"
 #include "DynamicRopeOf.h"
+#include "DynamicRopeOf.ostream.h"
 #include "Rope.DynamicString.h"
 #include "Rope.StringView.h"
 #include "Rope.char.h"
+#include "StringView.equals.h"
 #include "StringView.literal.h"
+#include "StringView.ostream.h"
 
 #include <gtest/gtest.h>
 
@@ -22,6 +26,9 @@ TEST(DynamicRopeOf, example) {
     r += basic();
     r += DynamicString("World");
     r += '!';
-
     EXPECT_EQ(r.build(), DynamicString("Hello World!"));
+
+    auto r2 = r;
+    // r2 += '!';
+    EXPECT_EQ(r, r2);
 }
