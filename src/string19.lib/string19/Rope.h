@@ -12,9 +12,9 @@ template<class... Ts> struct Rope;
 template<class... Ts> requires(sizeof...(Ts) > 0) struct Rope<Ts...> {
     Tuple<Ts...> parts;
     constexpr Rope() = default;
-    constexpr Rope(const Ts&... ts) : parts(ts...) {}
-    constexpr Rope(Ts&&... ts) : parts(std::move(ts)...) {}
-    constexpr bool operator==(const Rope&) const = default;
+    constexpr explicit Rope(const Ts&... ts) : parts(ts...) {}
+    constexpr explicit Rope(Ts&&... ts) : parts(std::move(ts)...) {}
+    constexpr auto operator==(const Rope&) const -> bool = default;
 };
 
 template<> struct Rope<> {};
