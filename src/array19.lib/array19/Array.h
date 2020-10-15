@@ -17,7 +17,7 @@ template<class T, size_t C> struct Array {
 
     bool operator==(const Array&) const = default;
 
-    [[nodiscard]] constexpr auto isEmpty() const noexcept -> bool { return count == 0; }
+    [[nodiscard]] constexpr auto isEmpty() const noexcept -> bool { return false; }
     [[nodiscard]] constexpr auto begin() const noexcept -> const T* { return m; }
     [[nodiscard]] constexpr auto end() const noexcept -> const T* { return m + C; }
     [[nodiscard]] constexpr auto operator[](size_t i) const noexcept -> const T& { return m[i]; }
@@ -28,6 +28,24 @@ template<class T, size_t C> struct Array {
     [[nodiscard]] constexpr auto amendBegin() noexcept -> T* { return m; }
     [[nodiscard]] constexpr auto amendEnd() noexcept -> T* { return m + C; }
     [[nodiscard]] constexpr auto amend() noexcept -> SliceOf<T> { return SliceOf{m, C}; }
+};
+
+template<class T> struct Array<T, 0u> {
+    using Element = T;
+    static constexpr auto count = 0u;
+
+    bool operator==(const Array&) const = default;
+
+    [[nodiscard]] constexpr auto isEmpty() const noexcept -> bool { return true; }
+    [[nodiscard]] constexpr auto begin() const noexcept -> const T* { return nullptr; }
+    [[nodiscard]] constexpr auto end() const noexcept -> const T* { return nullptr; }
+    [[nodiscard]] constexpr operator SliceOf<const T>() const& noexcept { return SliceOf{begin(), 0u}; }
+    [[nodiscard]] constexpr auto move() noexcept -> MoveSliceOf<T> { return MoveSliceOf{amendBegin(), 0u}; }
+
+    // hint: use `amendSliceOfArray()` if you need to iterate and mutate
+    [[nodiscard]] constexpr auto amendBegin() noexcept -> T* { return nullptr; }
+    [[nodiscard]] constexpr auto amendEnd() noexcept -> T* { return nullptr; }
+    [[nodiscard]] constexpr auto amend() noexcept -> SliceOf<T> { return SliceOf{amendBegin(), 0u}; }
 };
 
 /// simplified deduction guide
