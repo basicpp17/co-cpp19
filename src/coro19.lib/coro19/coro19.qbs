@@ -36,7 +36,7 @@ StaticLibrary {
             cpp.cxxFlags: base.concat("-Xclang", "-fcoroutines-ts") // enable coroutine-ts
         }
         Properties {
-            condition: qbs.toolchain.contains('clang')
+            condition: qbs.toolchain.contains('clang') && cpp.compilerVersionMajor < 11
             cpp.cxxFlags: base.concat("-fcoroutines-ts") // enable coroutine-ts
         }
     }

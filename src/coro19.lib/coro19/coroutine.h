@@ -14,9 +14,8 @@
  * @copyright CC BY 4.0
  */
 #pragma once
-#include <type_traits>
-
-#if !defined(USE_EXPERIMENTAL_COROUTINE)
+#ifndef _COROUTINE_
+#    define _COROUTINE_
 
 // suppress <experimental/resumable>
 #    define _EXPERIMENTAL_RESUMABLE_
@@ -102,7 +101,7 @@ template<typename _PromiseT> struct coroutine_handle : public coroutine_handle<v
         return *this;
     }
     // 17.12.3.2, export/import
-    static /*constexpr*/ coroutine_handle from_address(void* _Addr) {
+    static /*constexpr*/ coroutine_handle from_address(void* _Addr) noexcept {
         coroutine_handle _Result{};
         _Result._Ptr = reinterpret_cast<portable_coro_prefix*>(_Addr);
         return _Result;
@@ -302,17 +301,4 @@ using std::suspend_always;
 using std::suspend_never;
 } // namespace coro19
 
-#elif __has_include(<experimental/coroutine>)
-#    include <experimental/coroutine>
-
-namespace coro19 {
-using std::experimental::coroutine_handle;
-using std::experimental::suspend_always;
-using std::experimental::suspend_never;
-} // namespace coro19
-
-#else
-#    pragma message("Warning: Lacking Coroutine Support!")
-#    define co_yield (void)
-#    define co_return (void)
-#endif // <experimental/coroutine>
+#endif // _COROUTINE_
