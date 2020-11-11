@@ -1,9 +1,10 @@
+import qbs.Utilities
 
 StaticLibrary {
     Depends { name: "cpp" }
     Depends { name: "array19" }
     Properties {
-        condition: qbs.toolchain.contains('msvc') && !qbs.toolchain.contains('clang-cl')
+        condition: qbs.toolchain.contains('msvc') && !qbs.toolchain.contains('clang-cl') && (Utilities.versionCompare(cpp.compilerVersion, '19.28.29333') < 0)
         cpp.cxxFlags: base.concat("/await") // enable coroutine-ts
     }
     Properties {
@@ -28,7 +29,7 @@ StaticLibrary {
         Depends { name: "array19" }
 
         Properties {
-            condition: qbs.toolchain.contains('msvc') && !qbs.toolchain.contains('clang-cl')
+            condition: qbs.toolchain.contains('msvc') && !qbs.toolchain.contains('clang-cl') && (Utilities.versionCompare(cpp.compilerVersion, '19.28.29333') < 0)
             cpp.cxxFlags: base.concat("/await") // enable coroutine-ts
         }
         Properties {

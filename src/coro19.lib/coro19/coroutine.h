@@ -14,9 +14,14 @@
  * @copyright CC BY 4.0
  */
 #pragma once
-#ifndef _COROUTINE_
-#    define _COROUTINE_
 
+// requires C++ 17 __has_include
+#if __has_include(<yvals_core.h>)
+#    include <yvals_core.h>
+#endif
+#ifdef __cpp_lib_coroutine
+#    include <coroutine>
+#else
 // suppress <experimental/resumable>
 #    define _EXPERIMENTAL_RESUMABLE_
 
@@ -25,10 +30,6 @@
 #        define _RESUMABLE_FUNCTIONS_SUPPORTED
 #    endif
 
-// requires C++ 17 __has_include
-#    if __has_include(<yvals_core.h>)
-#        include <yvals_core.h>
-#    endif
 #    if _STL_COMPILER_PREPROCESSOR
 #        include <memory>
 #        include <new>
@@ -38,10 +39,6 @@
 #    include <exception> // std::current_exception
 #    include <functional> // std::hash
 #    include <type_traits>
-
-#    if defined(__cpp_coroutines)
-// ...
-#    endif
 
 struct portable_coro_prefix;
 
@@ -295,10 +292,12 @@ template<typename _PromiseT> struct hash<coroutine_handle<_PromiseT>> {
 
 } // namespace std
 
+#endif
+
 namespace coro19 {
+
 using std::coroutine_handle;
 using std::suspend_always;
 using std::suspend_never;
-} // namespace coro19
 
-#endif // _COROUTINE_
+} // namespace coro19
