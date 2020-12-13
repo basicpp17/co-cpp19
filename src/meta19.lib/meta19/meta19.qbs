@@ -47,7 +47,6 @@ Product {
             "TypePack.Front.h",
             "TypePack.count.h",
             "TypePack.h",
-            "TypePack.traits.h",
             "TypePackTemplate.Change.h",
             "TypePackTemplate.Join.h",
             "TypePackTemplate.contains.h",
