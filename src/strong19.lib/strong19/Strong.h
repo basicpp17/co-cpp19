@@ -10,7 +10,7 @@
 namespace strong19 {
 
 /// true if T was defined as a strong type
-template<class T> constexpr inline auto is_strong = isStrong(nullptr_to<ADL>, nullptr_to<T>);
+template<class T> concept is_strong = isStrong(nullptr_to<ADL>, nullptr_to<T>);
 
 /// view to the name of the strong type T (is_strong<T> == true)
 template<class T> constexpr inline auto strong_name = strongName(nullptr_to<T>);

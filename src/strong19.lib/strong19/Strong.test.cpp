@@ -51,4 +51,6 @@ TEST(Strong, tags) {
     static_assert(std::is_same_v<StrongTags<Velocity>, TypePack<MeterTag>>);
     static_assert(std::is_same_v<StrongValueType<Velocity>, double>);
     static_assert(has_strong_tags<Velocity, MeterTag>);
+    static_assert(has_strong_tags<Velocity, MeterTag>);
+    static_assert(!has_strong_tags<int, MeterTag>);
 }
