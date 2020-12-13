@@ -44,3 +44,29 @@ TEST(Optional, int) {
     optInt = 23;
     ASSERT_EQ(optInt, OptInt{23});
 }
+
+struct Point {
+    float x{}, y{};
+    constexpr bool operator==(const Point&) const = default;
+};
+auto operator<<(std::ostream& out, const Point& point) -> std::ostream& {
+    return out << "Point{x:" << point.x << ",y:" << point.y << "}";
+}
+
+TEST(Optional, Point) {
+    static_assert(!(std::is_trivially_default_constructible_v<Point> && std::is_trivially_destructible_v<Point>));
+
+    using OptPoint = Optional<Point>;
+    static_assert(sizeof(OptPoint) > sizeof(Point));
+    {
+        auto optPoint = OptPoint{};
+        ASSERT_FALSE(optPoint);
+        ASSERT_EQ(optPoint, OptPoint{});
+
+        ASSERT_EQ((optPoint || Point{3.f, 4.f}), (Point{3.f, 4.f}));
+
+        optPoint.emplace(3.f, 4.f);
+        ASSERT_TRUE(optPoint);
+        ASSERT_EQ(optPoint, (OptPoint{inplace, 3.f, 4.f}));
+    }
+}
