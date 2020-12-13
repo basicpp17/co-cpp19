@@ -6,11 +6,14 @@ namespace partial19 {
 /// Minimal constexpr enabled implemenation of std::bitset
 /// Only the mandatory methods are implemented
 template<size_t Count> struct Bitset {
+private:
     using T = unsigned;
     constexpr static auto Len = (Count + (sizeof(T) - 1)) / sizeof(T);
-    constexpr static auto count = Count;
 
     T m[Len] = {};
+
+public:
+    constexpr static auto count = Count;
 
     constexpr bool operator==(const Bitset& o) const = default;
 
