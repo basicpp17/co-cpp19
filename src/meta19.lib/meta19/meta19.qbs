@@ -55,7 +55,6 @@ Product {
     }
     files: [
         "Unreachable.h",
-        "isSame.h",
         "nullptr_to.h",
     ]
 }

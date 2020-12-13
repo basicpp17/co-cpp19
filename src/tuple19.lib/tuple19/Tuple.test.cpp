@@ -1,7 +1,6 @@
 #include "Tuple.h"
 #include "Tuple.ostream.h"
 #include "meta19/Index.h"
-#include "meta19/isSame.h"
 
 #include <gtest/gtest.h>
 #include <stddef.h> // size_t

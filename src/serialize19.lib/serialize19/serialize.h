@@ -1,6 +1,5 @@
 #pragma once
 #include "Archive.h"
-#include "meta19/isSame.h"
 
 #include <type_traits> // std::is_arithmetic_v, std::is_enum_v
 

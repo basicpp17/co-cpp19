@@ -1,13 +1,11 @@
 #include "Partial.equals.h"
 #include "Partial.h"
 #include "Partial.ostream.h"
-#include "meta19/isSame.h"
 
 #include <gtest/gtest.h>
 
 using namespace partial19;
 
-using meta19::isSame;
 using meta19::type;
 
 TEST(Partial, empty) {

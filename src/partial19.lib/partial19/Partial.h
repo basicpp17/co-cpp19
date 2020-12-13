@@ -7,7 +7,6 @@
 #include "meta19/RemoveReference.h"
 #include "meta19/TypeAt.h"
 #include "meta19/TypePack.h"
-#include "meta19/isSame.h"
 
 #include <new> // std::launder, operator new[], operator delete[]
 #include <stdint.h> // uint8_t
@@ -21,7 +20,6 @@ using meta19::_index;
 using meta19::Index;
 using meta19::index_of_map;
 using meta19::IndexTypeMap;
-using meta19::isSame;
 using meta19::nullptr_to;
 using meta19::StoredOf;
 using meta19::Type;
@@ -145,7 +143,7 @@ public:
         (bits.setAt(index_of_map<StoredOf<Vs>, Map>), ...);
         auto hasValue = [&](size_t i) { return bits[i]; };
         auto factory = [&]<class T>(Type<T>*, void* ptr) {
-            ((details::ConditionalPlacementNew<isSame(&type<T>, &type<StoredOf<Vs>>)>::apply((Vs &&) vs, ptr), 0), ...);
+            ((details::ConditionalPlacementNew<std::is_same_v<T, StoredOf<Vs>>>::apply((Vs &&) vs, ptr), 0), ...);
         };
         return fromFactory(hasValue, factory);
     }
