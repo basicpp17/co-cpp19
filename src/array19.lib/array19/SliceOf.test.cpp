@@ -2,6 +2,8 @@
 #include "SliceOf.h"
 #include "SliceOf.store.h"
 
+#include <gtest/gtest.h>
+
 using namespace array19;
 
 void constexpr_SliceOf_test() {
@@ -19,6 +21,18 @@ void constexpr_SliceOf_test() {
     static_assert(sum == 6);
 }
 
+TEST(SliceOf, Access) {
+    int a[3] = {1, 2, 3};
+    auto s = sliceOfCArray(a);
+
+    EXPECT_EQ(s.count(), 3);
+    EXPECT_EQ(s[1], 2);
+
+    auto sum = 0;
+    for (auto v : s) sum += v;
+    EXPECT_EQ(sum, 6);
+}
+
 void mutable_SliceOf_test() {
     constexpr auto sa = [] {
         int a[] = {1, 2, 3};
@@ -28,4 +42,13 @@ void mutable_SliceOf_test() {
     }();
 
     static_assert(sa[1] == 5);
+}
+
+TEST(SliceOf, Mutate) {
+    int a[] = {1, 2, 3};
+    auto s = amendSliceOfCArray(a);
+    s[1] = 5;
+    auto sa = storeSlice<3>(s);
+
+    EXPECT_EQ(sa[1], 5);
 }
