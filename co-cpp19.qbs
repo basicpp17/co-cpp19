@@ -61,6 +61,11 @@ Project {
             ".editorconfig",
             ".gitignore",
             "Readme.md",
+            "helpers/array19.natvis",
+            "helpers/optional19.natvis",
+            "helpers/partial19_natvis.sh",
+            "helpers/tuple19_natvis.sh",
+            "helpers/variant19_natvis.sh",
         ]
     }
 }
