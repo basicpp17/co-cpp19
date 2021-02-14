@@ -8,7 +8,8 @@ namespace partial19 {
 template<size_t Count> struct Bitset {
 private:
     using T = unsigned;
-    constexpr static auto Len = (Count + (sizeof(T) - 1)) / sizeof(T);
+    constexpr static auto BitsPerT = 8 * sizeof(T);
+    constexpr static auto Len = (Count + BitsPerT - 1) / BitsPerT;
 
     T m[Len] = {};
 
@@ -18,17 +19,15 @@ public:
     constexpr bool operator==(const Bitset& o) const = default;
 
     [[nodiscard]] constexpr bool operator[](size_t index) const noexcept {
-        return 0 != (m[index / sizeof(T)] & (1u << (index % sizeof(T))));
+        return 0 != (m[index / BitsPerT] & (1u << (index % BitsPerT)));
     }
 
     constexpr void reset() noexcept {
         for (auto& v : m) v = {};
     }
 
-    constexpr void setAt(size_t index) noexcept { m[index / sizeof(T)] |= (1u << (index % sizeof(T))); }
-    constexpr void resetAt(size_t index) noexcept {
-        m[index / sizeof(T)] &= ~static_cast<T>(1u << (index % sizeof(T)));
-    }
+    constexpr void setAt(size_t index) noexcept { m[index / BitsPerT] |= (1u << (index % BitsPerT)); }
+    constexpr void resetAt(size_t index) noexcept { m[index / BitsPerT] &= ~static_cast<T>(1u << (index % BitsPerT)); }
 };
 
 } // namespace partial19
