@@ -62,6 +62,7 @@ Project {
             ".gitignore",
             "Readme.md",
             "helpers/array19.natvis",
+            "helpers/gdbhelpers.py",
             "helpers/optional19.natvis",
             "helpers/partial19_natvis.sh",
             "helpers/tuple19_natvis.sh",
