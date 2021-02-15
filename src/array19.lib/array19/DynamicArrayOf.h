@@ -37,18 +37,18 @@ public:
         }
     }
 
-    DynamicArrayOf(ConstSlice slice) : m_pointer(Utils::allocate(slice.count())), m_capacity(slice.count()) {
+    explicit DynamicArrayOf(ConstSlice slice) : m_pointer(Utils::allocate(slice.count())), m_capacity(slice.count()) {
         Utils::copyConstruct(m_pointer, slice);
         m_count = slice.count();
     }
 
-    DynamicArrayOf(MoveSlice slice) : m_pointer(Utils::allocate(slice.count())), m_capacity(slice.count()) {
+    explicit DynamicArrayOf(MoveSlice slice) : m_pointer(Utils::allocate(slice.count())), m_capacity(slice.count()) {
         Utils::moveConstruct(m_pointer, slice);
         m_count = slice.count();
     }
 
     template<class... Ts> requires(sizeof...(Ts) > 0) && requires(Ts&&... args) { (T{(Ts &&) args}, ...); }
-    DynamicArrayOf(Ts&&... args) : m_pointer(Utils::allocate(sizeof...(Ts))), m_capacity(sizeof...(Ts)) {
+    explicit DynamicArrayOf(Ts&&... args) : m_pointer(Utils::allocate(sizeof...(Ts))), m_capacity(sizeof...(Ts)) {
         (new (m_pointer + m_count++) T{(Ts &&) args}, ...);
     }
 
@@ -185,8 +185,8 @@ public:
             Utils::moveConstruct(newStorage.begin(), MoveSlice{amendBegin(), static_cast<size_t>(offset)});
             Utils::copyConstruct(newStorage.begin() + offset, insertSlice);
             Utils::moveConstruct(newStorage.begin() + offset + insertCount, remainSlice);
-                Utils::destruct(amend());
-                Utils::deallocate(Slice{m_pointer, m_capacity});
+            Utils::destruct(amend());
+            Utils::deallocate(Slice{m_pointer, m_capacity});
             m_pointer = newStorage.begin();
             m_capacity = newStorage.count();
         }
@@ -226,8 +226,8 @@ public:
             Utils::moveConstruct(newStorage.begin(), MoveSlice{amendBegin(), static_cast<size_t>(offset)});
             Utils::moveConstruct(newStorage.begin() + offset, insertSlice);
             Utils::moveConstruct(newStorage.begin() + offset + insertCount, remainSlice);
-                Utils::destruct(amend());
-                Utils::deallocate(Slice{m_pointer, m_capacity});
+            Utils::destruct(amend());
+            Utils::deallocate(Slice{m_pointer, m_capacity});
             m_pointer = newStorage.begin();
             m_capacity = newStorage.count();
         }
@@ -278,8 +278,8 @@ private:
     void growBy(int by) {
         auto newStorage = grownStorage(by);
         Utils::moveConstruct(newStorage.begin(), move());
-            Utils::destruct(amend());
-            Utils::deallocate(Slice{m_pointer, m_capacity});
+        Utils::destruct(amend());
+        Utils::deallocate(Slice{m_pointer, m_capacity});
         m_pointer = newStorage.begin();
         m_capacity = newStorage.count();
     }
@@ -289,6 +289,10 @@ private:
 /// usage:
 ///     DynamicArrayOf{1,2,3}
 template<class T, class... Ts> DynamicArrayOf(T&&, Ts&&...) -> DynamicArrayOf<T>;
+
+/// deduce T from slices
+template<class T> DynamicArrayOf(SliceOf<const T>) -> DynamicArrayOf<T>;
+template<class T> DynamicArrayOf(MoveSliceOf<T>) -> DynamicArrayOf<T>;
 
 /// deduce SliceOf from DynamicArray
 /// usage:
