@@ -33,8 +33,10 @@ Project {
 
             Properties {
                 condition: qbs.toolchain.contains('msvc')
+                // for testing use:
+                // * qbs build cpp.cxxFlags:/fsanitize=address
                 cpp.cxxFlags: base.concat(
-                    "/permissive-", "/Zc:__cplusplus", // best C++ compatibility
+                    "/permissive-", "/Zc:__cplusplus", "/Zc:externConstexpr", "/Zc:inline", "/Zc:preprocessor", "/Zc:throwingNew", // best C++ compatibility
                     "/diagnostics:caret", // better errors
                     "/wd4068", // ignore unknown pragmas
                     "/D_ENABLE_EXTENDED_ALIGNED_STORAGE" // use real alignments
