@@ -25,7 +25,7 @@ TEST(SliceOf, Access) {
     int a[3] = {1, 2, 3};
     auto s = sliceOfCArray(a);
 
-    EXPECT_EQ(s.count(), 3);
+    EXPECT_EQ(s.count(), 3u);
     EXPECT_EQ(s[1], 2);
 
     auto sum = 0;

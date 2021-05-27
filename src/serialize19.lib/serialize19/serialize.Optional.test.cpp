@@ -31,7 +31,7 @@ TEST(serialize, Optional_empty) {
 
     auto buffer = dynamicWrite(input);
 
-    ASSERT_EQ(buffer.size(), 1); // contains just a bool
+    ASSERT_EQ(buffer.size(), 1u); // contains just a bool
 
     auto reader = ReadArchive{buffer.slice()};
     auto output = T{};

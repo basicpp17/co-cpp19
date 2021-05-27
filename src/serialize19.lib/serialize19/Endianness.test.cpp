@@ -23,15 +23,15 @@ TEST(EndianFlipFor, u16) {
 TEST(EndianFlipFor, u32) {
     auto input = uint32_t{0x01020304};
     auto output = endianFlipFor<uint32_t>(input);
-    EXPECT_EQ(output, 0x04030201);
+    EXPECT_EQ(output, 0x04030201u);
 }
 TEST(EndianFlipFor, i32) {
     auto input = int32_t{0x01020384};
     auto output = endianFlipFor<int32_t>(input);
-    EXPECT_EQ(output, 0x84030201);
+    EXPECT_EQ(output, static_cast<int32_t>(0x84030201));
 }
 TEST(EndianFlipFor, u64) {
     auto input = uint64_t{0x0102030405060708};
     auto output = endianFlipFor<uint64_t>(input);
-    EXPECT_EQ(output, 0x0807060504030201);
+    EXPECT_EQ(output, 0x0807060504030201ull);
 }

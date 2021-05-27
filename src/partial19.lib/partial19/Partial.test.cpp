@@ -129,7 +129,7 @@ TEST(Partial, visitInitialized) {
         ++count;
         EXPECT_TRUE((std::is_same_v<V, char> || std::is_same_v<V, float>));
     });
-    EXPECT_EQ(count, 2);
+    EXPECT_EQ(count, 2u);
 }
 
 TEST(Partial, visitWithIndex) {
@@ -142,5 +142,5 @@ TEST(Partial, visitWithIndex) {
         EXPECT_TRUE(I == 0 || I == 2);
         EXPECT_TRUE((std::is_same_v<V, char> || std::is_same_v<V, float>));
     });
-    EXPECT_EQ(count, 2);
+    EXPECT_EQ(count, 2u);
 }

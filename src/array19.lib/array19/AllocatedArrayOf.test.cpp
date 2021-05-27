@@ -49,11 +49,11 @@ TEST(AllocatedArrayOf, NontrivialExample) {
     auto v = AllocatedArrayOf<NonTrivial>{};
 
     EXPECT_TRUE(v.isEmpty());
-    ASSERT_EQ(v.count(), 0);
+    ASSERT_EQ(v.count(), 0u);
 
     v = AllocatedArrayOf{NonTrivial{}, NonTrivial{2}};
 
-    ASSERT_EQ(v.count(), 2);
+    ASSERT_EQ(v.count(), 2u);
 
     auto v2 = v;
     ASSERT_EQ(v, v2);

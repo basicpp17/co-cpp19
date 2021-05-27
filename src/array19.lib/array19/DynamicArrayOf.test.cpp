@@ -15,24 +15,24 @@ TEST(DynamicArrayOf, intExample) {
     auto v = DynamicArrayOf<int>{};
 
     EXPECT_TRUE(v.isEmpty());
-    EXPECT_EQ(v.totalCapacity(), 0);
-    EXPECT_EQ(v.unusedCapacity(), 0);
-    ASSERT_EQ(v.count(), 0);
+    EXPECT_EQ(v.totalCapacity(), 0u);
+    EXPECT_EQ(v.unusedCapacity(), 0u);
+    ASSERT_EQ(v.count(), 0u);
 
     v.ensureUnusedCapacity(1);
 
-    EXPECT_GE(v.totalCapacity(), 1);
-    EXPECT_GE(v.unusedCapacity(), 1);
-    ASSERT_EQ(v.count(), 0);
+    EXPECT_GE(v.totalCapacity(), 1u);
+    EXPECT_GE(v.unusedCapacity(), 1u);
+    ASSERT_EQ(v.count(), 0u);
 
     v.append(sliceOfCArray({12, 23}));
 
-    ASSERT_EQ(v.count(), 2);
-    EXPECT_GE(v.totalCapacity(), 2);
+    ASSERT_EQ(v.count(), 2u);
+    EXPECT_GE(v.totalCapacity(), 2u);
 
     v.append(sliceOfCArray({42, 64}));
 
-    ASSERT_EQ(v.count(), 4);
+    ASSERT_EQ(v.count(), 4u);
 
     v.splice(v.amendBegin() + 1, 2, sliceOfCArray({99}));
 
@@ -89,24 +89,24 @@ TEST(DynamicArrayOf, NontrivialExample) {
     auto v = DynamicArrayOf<NonTrivial>{};
 
     EXPECT_TRUE(v.isEmpty());
-    EXPECT_EQ(v.totalCapacity(), 0);
-    EXPECT_EQ(v.unusedCapacity(), 0);
-    ASSERT_EQ(v.count(), 0);
+    EXPECT_EQ(v.totalCapacity(), 0u);
+    EXPECT_EQ(v.unusedCapacity(), 0u);
+    ASSERT_EQ(v.count(), 0u);
 
-    v.ensureUnusedCapacity(1);
+    v.ensureUnusedCapacity(1u);
 
-    EXPECT_GE(v.totalCapacity(), 1);
-    EXPECT_GE(v.unusedCapacity(), 1);
-    ASSERT_EQ(v.count(), 0);
+    EXPECT_GE(v.totalCapacity(), 1u);
+    EXPECT_GE(v.unusedCapacity(), 1u);
+    ASSERT_EQ(v.count(), 0u);
 
     v.append(sliceOfCArray({NonTrivial{12}, NonTrivial{23}}));
 
-    ASSERT_EQ(v.count(), 2);
-    EXPECT_GE(v.totalCapacity(), 2);
+    ASSERT_EQ(v.count(), 2u);
+    EXPECT_GE(v.totalCapacity(), 2u);
 
     v.append(sliceOfCArray({NonTrivial{42}, NonTrivial{64}}));
 
-    ASSERT_EQ(v.count(), 4);
+    ASSERT_EQ(v.count(), 4u);
 
     v.splice(v.amendBegin() + 1, 2, sliceOfCArray({NonTrivial{99}}));
 
@@ -171,7 +171,7 @@ TEST(DynamicArrayOf, RecordedCopyAndMove) {
 
         auto v = T{};
         v.ensureCapacity(5);
-        ASSERT_EQ(v.unusedCapacity(), 5); // 5 is currently the minimum
+        ASSERT_EQ(v.unusedCapacity(), 5u); // 5 is currently the minimum
 
         EXPECT_EQ(Recorder::store.str(), "") << "No elements are constructed yet";
 
@@ -190,9 +190,9 @@ TEST(DynamicArrayOf, RecordedCopyAndMove) {
 )") << "5 elements constructed";
 
         Recorder::store = std::stringstream{};
-        ASSERT_EQ(v.unusedCapacity(), 0) << "all capacity used";
+        ASSERT_EQ(v.unusedCapacity(), 0u) << "all capacity used";
         v.emplace_back(6);
-        ASSERT_NE(v.unusedCapacity(), 0) << "capacity grows by more than one";
+        ASSERT_NE(v.unusedCapacity(), 0u) << "capacity grows by more than one";
 
         EXPECT_EQ(Recorder::store.str(), R"(1.ctor(&&)
 2.ctor(&&)
@@ -268,7 +268,7 @@ TEST(DynamicArrayOf, RecordedSpliceGrowOverCapacity) {
 )") << "2 array elements constructed";
 
     Recorder::store = std::stringstream{};
-    ASSERT_EQ(v.unusedCapacity(), 0) << "all capacity used";
+    ASSERT_EQ(v.unusedCapacity(), 0u) << "all capacity used";
     v.splice(v.amendBegin() + 1, 1, insert);
     EXPECT_EQ(Recorder::store.str(), R"(1.ctor(&&)
 112.ctor(const&)

@@ -19,10 +19,10 @@ TEST(SignalWith, ReferenceLambda) {
         EXPECT_FALSE(c.isForSignal(&s2));
 
         s.emit(13);
-        EXPECT_EQ(r, 13);
+        EXPECT_EQ(r, 13u);
     }
     s.emit(17);
-    EXPECT_EQ(r, 13);
+    EXPECT_EQ(r, 13u);
 }
 
 TEST(SignalWith, RvalueLambda) {
@@ -36,10 +36,10 @@ TEST(SignalWith, RvalueLambda) {
         auto c = s.subscribe([&](int v) { r += v; });
 
         s.emit(13);
-        EXPECT_EQ(r, 13);
+        EXPECT_EQ(r, 13u);
     }
     s.emit(17);
-    EXPECT_EQ(r, 13);
+    EXPECT_EQ(r, 13u);
 }
 
 TEST(SignalWith, RemoveSignal) {
@@ -52,7 +52,7 @@ TEST(SignalWith, RemoveSignal) {
     auto c = s->subscribe([&](int v) { r += v; });
 
     s->emit(13);
-    EXPECT_EQ(r, 13);
+    EXPECT_EQ(r, 13u);
 
     delete s;
 }
