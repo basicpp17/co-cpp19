@@ -51,7 +51,7 @@ StaticLibrary {
 
     Export {
         Depends { name: "cpp" }
-        cpp.systemIncludePaths: [
+        cpp.includePaths: [
             FileInfo.joinPaths(googletestProbe.basePath, "googlemock/include"),
             FileInfo.joinPaths(googletestProbe.basePath, "googletest/include")
         ]
