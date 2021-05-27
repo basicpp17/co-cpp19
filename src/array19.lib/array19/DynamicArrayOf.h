@@ -121,7 +121,7 @@ public:
         if (totalCapacity() < count) growBy(count - totalCapacity());
     }
     void ensureUnusedCapacity(Count count) {
-        if (unusedCapacity() < count) growBy(count);
+        if (unusedCapacity() < count) growBy(count - unusedCapacity());
     }
 
     void clear() {
@@ -267,7 +267,7 @@ private:
     [[nodiscard]] auto byteSize() const -> size_t { return m_count * sizeof(T); }
     [[nodiscard]] auto storageEnd() -> Iterator { return m_pointer + m_count; }
 
-    [[nodiscard]] auto grownStorage(int growBy) const -> Slice {
+    [[nodiscard]] auto grownStorage(size_t growBy) const -> Slice {
         auto cur = m_capacity;
         auto res = (cur << 1) - (cur >> 1) + (cur >> 4); // * 1.563
         if (res < 5) res = 5;
@@ -275,7 +275,7 @@ private:
         auto ptr = Utils::allocate(res);
         return Slice{ptr, res};
     }
-    void growBy(int by) {
+    void growBy(size_t by) {
         auto newStorage = grownStorage(by);
         Utils::moveConstruct(newStorage.begin(), move());
         Utils::destruct(amend());
