@@ -58,7 +58,10 @@ public:
     AllocatedArrayOf(const AllocatedArrayOf& o) : AllocatedArrayOf(static_cast<ConstSlice>(o)) {}
 
     AllocatedArrayOf& operator=(const AllocatedArrayOf& o) {
-        if (o.m_count != m_count) {
+        if (!m_pointer) {
+            *this = AllocatedArrayOf(o);
+        }
+        else if (o.m_count != m_count) {
             Utils::destruct(amend());
             Utils::deallocate(amend());
             if (0 == o.m_count) {
@@ -78,14 +81,16 @@ public:
     AllocatedArrayOf(AllocatedArrayOf&& o) noexcept //
             : m_pointer(o.m_pointer)
             , m_count(o.m_count) {
-        o.m_pointer = {};
+        o.m_pointer = nullptr;
     }
     AllocatedArrayOf& operator=(AllocatedArrayOf&& o) noexcept {
-        Utils::destruct(amend());
-        Utils::deallocate(amend());
+        if (m_pointer) {
+            Utils::destruct(amend());
+            Utils::deallocate(amend());
+        }
         m_pointer = o.m_pointer;
         m_count = o.m_count;
-        o.m_pointer = {};
+        o.m_pointer = nullptr;
         return *this;
     }
 

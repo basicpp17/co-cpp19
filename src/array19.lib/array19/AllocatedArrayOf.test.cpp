@@ -32,12 +32,13 @@ struct NonTrivial {
     NonTrivial& operator=(const NonTrivial& o) { return v = o.v, *this; }
     NonTrivial(NonTrivial&& o) noexcept : v(o.v) {}
     NonTrivial& operator=(NonTrivial&& o) noexcept { return v = o.v, *this; }
-    ~NonTrivial() noexcept {}
+    ~NonTrivial() noexcept { c = false; }
     bool operator==(const NonTrivial&) const = default;
 
     int value() const { return v; }
 
 private:
+    bool c{true};
     int v;
 };
 
@@ -57,4 +58,29 @@ TEST(AllocatedArrayOf, NontrivialExample) {
 
     auto v2 = v;
     ASSERT_EQ(v, v2);
+}
+
+TEST(AllocatedArrayOf, MoveAssignAfterMove) {
+    using E = NonTrivial;
+    using AA = AllocatedArrayOf<E>;
+    auto v = AA{E{1}};
+
+    auto v2 = std::move(v);
+    ASSERT_EQ(v2, (AA{E{1}}));
+
+    v = AA{E{2}, E{3}};
+    ASSERT_EQ(v, (AA{E{2}, E{3}}));
+}
+
+TEST(AllocatedArrayOf, CopyAssignAfterMove) {
+    using E = NonTrivial;
+    using AA = AllocatedArrayOf<E>;
+    auto v = AA{E{1}};
+
+    auto v2 = std::move(v);
+    ASSERT_EQ(v2, (AA{E{1}}));
+
+    auto v3 = AA{E{2}, E{3}};
+    v = v3;
+    ASSERT_EQ(v, (AA{E{2}, E{3}}));
 }
