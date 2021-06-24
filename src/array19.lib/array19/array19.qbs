@@ -18,6 +18,7 @@ Product {
         "DynamicArrayOf.equals.h",
         "DynamicArrayOf.h",
         "DynamicArrayOf.ostream.h",
+        "DynamicSortedSet.h",
         "MoveSliceOf.h",
         "MoveSliceOf.single.h",
         "SliceOf.carray.h",

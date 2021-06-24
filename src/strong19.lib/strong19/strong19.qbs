@@ -2,6 +2,7 @@
 Product {
     Depends { name: "string19" }
     Depends { name: "fmt"; required: false }
+    Depends { name: "array19"; required: false }
 
     Export {
         Depends { name: "cpp" }
@@ -19,6 +20,7 @@ Product {
     files: [
         "ADL.h",
         "Macro.h",
+        "SortedStrongSet.h",
         "Strong.extras.ostream.h",
         "Strong.fmt.h",
         "Strong.h",
