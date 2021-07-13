@@ -39,6 +39,7 @@ Product {
     Group {
         name: "serialize co-cpp19"
         files: [
+            "serialize.AllocatedArrayOf.h",
             "serialize.Array.h",
             "serialize.BufferSlice.h",
             "serialize.DynamicArrayOf.h",

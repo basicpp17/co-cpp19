@@ -40,18 +40,18 @@ public:
         }
     }
 
-    AllocatedArrayOf(ConstSlice slice) : m_pointer(Utils::allocate(slice.count())), m_count(0) {
+    explicit AllocatedArrayOf(ConstSlice slice) : m_pointer(Utils::allocate(slice.count())), m_count(0) {
         Utils::copyConstruct(m_pointer, slice);
         m_count = slice.count();
     }
 
-    AllocatedArrayOf(MoveSlice slice) : m_pointer(Utils::allocate(slice.count())), m_count(0) {
+    explicit AllocatedArrayOf(MoveSlice slice) : m_pointer(Utils::allocate(slice.count())), m_count(0) {
         Utils::moveConstruct(m_pointer, slice);
         m_count = slice.count();
     }
 
     template<class... Ts> requires(sizeof...(Ts) > 0) && requires(Ts&&... args) { (T{(Ts &&) args}, ...); }
-    AllocatedArrayOf(Ts&&... args) : m_pointer(Utils::allocate(sizeof...(Ts))), m_count(0) {
+    explicit AllocatedArrayOf(Ts&&... args) : m_pointer(Utils::allocate(sizeof...(Ts))), m_count(0) {
         (new (m_pointer + m_count++) T{(Ts &&) args}, ...);
     }
 
