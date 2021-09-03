@@ -13,22 +13,24 @@ template<Archive A, class... Ts> void serialize(A& a, variant19::Variant<Ts...>&
     auto whichValue = static_cast<typename Which::Value>(variant.which());
     serialize(a, whichValue);
 
-    constexpr static auto handleT = []<class Value>(auto& a, auto& variant, Value*) {
-        if constexpr (A::mode == ArchiveMode::Read) {
-            auto value = Value{};
-            serialize(a, value);
-            variant = value;
-        }
-        else {
-            auto& value = variant.as(type<Value>);
-            serialize(a, value);
-        }
-    };
-
-    [whichValue]<class... Vs, size_t... Is>(auto& a, variant19::Variant<Vs...>& variant, std::index_sequence<Is...>*) {
-        ((whichValue == Is ? (handleT(a, variant, nullptr_to<Vs>), 0) : 0), ...); //
+    [&, whichValue ]<class... Vs, size_t... Is>(variant19::Variant<Vs...>*, std::index_sequence<Is...>*) {
+        ((whichValue == Is ? (
+                                 [&]<class Value>(Value*) {
+                                     if constexpr (A::mode == ArchiveMode::Read) {
+                                         auto value = Value{};
+                                         serialize(a, value);
+                                         variant = value;
+                                     }
+                                     else {
+                                         auto& value = variant.as(type<Value>);
+                                         serialize(a, value);
+                                     }
+                                 }(nullptr_to<Vs>),
+                                 0)
+                           : 0),
+         ...);
     }
-    (a, variant, nullptr_to<std::make_index_sequence<sizeof...(Ts)>>);
+    (&variant, nullptr_to<std::make_index_sequence<sizeof...(Ts)>>);
 }
 
 } // namespace serialize19
