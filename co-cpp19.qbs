@@ -61,7 +61,7 @@ Project {
             ".clang-format",
             ".clang-tidy",
             ".editorconfig",
-            ".github/workflows/test_runner.yml",
+            ".github/workflows/qbs_tests.yml",
             ".gitignore",
             "Readme.md",
             "helpers/array19.natvis",

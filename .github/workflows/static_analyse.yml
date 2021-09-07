@@ -1,0 +1,28 @@
+name: Static Analyse
+
+on: push
+
+jobs:
+  Clang-Static-Analyse:
+    name: "Linux-Clang-Static-Analyse"
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Ninja
+        uses: seanmiddleditch/gha-setup-ninja@master
+
+      - name: Install clang 12
+        run: |
+          sudo apt-get update 
+          sudo apt-get install clang-12 llvm-12
+          
+      - name: Config 
+        run: |
+          cmake -S . --preset Clang-Static-Analyser
+
+      - name: Build
+        run: | 
+          cmake --build --preset Clang-Static-Analyser

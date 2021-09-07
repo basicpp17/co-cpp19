@@ -1,0 +1,60 @@
+name: CMake-Tests
+
+on: push
+
+jobs:
+  windows-msvc:
+    name: "Windows MSVC"
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      
+      - name: Install Tools Ninja and mvsc
+        uses: ilammy/msvc-dev-cmd@v1
+      - uses: seanmiddleditch/gha-setup-ninja@master
+      
+      - name: Config 
+        run: cmake -S . --preset Windows-MSVC
+
+      - name: Build
+        run: | 
+          cmake --build --preset Windows-MSVC-Debug
+          cmake --build --preset Windows-MSVC-Release
+
+      - name: Test
+        run: |
+          ctest --preset Test-Windows-MSVC-Debug
+          ctest --preset Test-Windows-MSVC-Release
+
+
+  Linux-Clang:
+    name: "Linux-Clang"
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Ninja
+        uses: seanmiddleditch/gha-setup-ninja@master
+
+      - name: Install clang 12
+        run: |
+          sudo apt-get update 
+          sudo apt-get install clang-12 llvm-12
+          
+      - name: Config 
+        run: |
+          cmake -S . --preset Linux-Clang
+
+      - name: Build
+        run: | 
+          cmake --build --preset Linux-Clang-Debug
+          cmake --build --preset Linux-Clang-Release
+
+      - name: Test
+        run: |
+          ctest --preset Test-Linux-Clang-Debug
+          ctest --preset Test-Linux-Clang-Release
