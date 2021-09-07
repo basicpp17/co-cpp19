@@ -9,3 +9,4 @@ thirdparty/*/
 .vagrant/
 .vscode/
 .vs/
+CMakeUserPresets.json

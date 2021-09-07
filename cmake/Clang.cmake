@@ -1,0 +1,5 @@
+message(INFO "CMAKE COMPILER: ${CMAKE_CXX_COMPILER_ID}")
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsized-deallocation")
+endif()
+message(INFO "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
