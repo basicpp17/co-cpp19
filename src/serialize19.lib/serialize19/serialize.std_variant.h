@@ -1,6 +1,7 @@
 #pragma once
 #include "serialize.h"
 
+#include <stddef.h> // size_t
 #include <meta19/nullptr_to.h>
 #include <variant>
 

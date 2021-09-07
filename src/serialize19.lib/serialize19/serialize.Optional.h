@@ -2,6 +2,8 @@
 #include "optional19/Optional.h"
 #include "serialize.h"
 
+#include <utility>
+
 namespace serialize19 {
 
 template<Archive A, class T> void serialize(A& a, optional19::Optional<T>& optional) {

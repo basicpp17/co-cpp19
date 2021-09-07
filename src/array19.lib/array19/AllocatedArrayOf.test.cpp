@@ -6,6 +6,7 @@
 #include "SliceOf.ostream.h"
 
 #include <gtest/gtest.h>
+#include <utility>
 
 using namespace array19;
 

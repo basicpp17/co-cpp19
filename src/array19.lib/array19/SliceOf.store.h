@@ -2,6 +2,7 @@
 #include "Array.h"
 #include "SliceOf.h"
 
+#include <stddef.h> // size_t
 #include <utility>
 
 namespace array19 {

@@ -4,7 +4,8 @@
 #include "SizeAppender.h"
 #include "serialize.h"
 
-#include <stdint.h>
+#include <stddef.h> // size_t
+#include <cstdint>
 
 namespace serialize19 {
 

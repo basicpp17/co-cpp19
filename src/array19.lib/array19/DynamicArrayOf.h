@@ -3,6 +3,7 @@
 #include "MoveSliceOf.h"
 #include "SliceOf.single.h"
 
+#include <stddef.h> // size_t
 #include <new> // launder
 
 namespace array19 {

@@ -3,6 +3,7 @@
 
 #include <array19/DynamicArrayOf.h>
 #include <array19/MoveSliceOf.single.h>
+#include <utility>
 
 namespace signal19 {
 

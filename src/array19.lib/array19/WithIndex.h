@@ -1,6 +1,8 @@
 #pragma once
 #include "adlRange.h"
 
+#include <stddef.h> // size_t
+
 namespace array19 {
 
 /// Iterate a container with indices

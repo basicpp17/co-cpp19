@@ -6,6 +6,7 @@
 #include "string19/StringView.literal.h"
 #include "visitEnumMemberNames.h"
 
+#include <stddef.h> // size_t
 #include <type_traits> // std::underlyng_type_t
 
 #ifndef ENUM19_EXTRAS

@@ -1,9 +1,10 @@
 #pragma once
 #include "meta19/nullptr_to.h"
 
+#include <cstdint> // uint8_t
 #include <new> // std::launder
-#include <stdint.h> // uint8_t
 #include <type_traits> // std::is_trivially_destructable_v
+#include <utility>
 
 namespace optional19 {
 

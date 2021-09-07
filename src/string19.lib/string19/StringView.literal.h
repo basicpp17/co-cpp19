@@ -1,6 +1,8 @@
 #pragma once
 #include "StringView.h"
 
+#include <stddef.h> // size_t
+
 namespace string19 {
 
 template<size_t N> using ConstCharArray = const char[N];

@@ -2,9 +2,11 @@
 #include "MoveSliceOf.h"
 #include "SliceOf.h"
 
+#include <stddef.h> // size_t
 #include <new> // ::operator new, ::operator delete
 #include <string.h> // memcpy
 #include <type_traits>
+#include <utility>
 
 namespace array19 {
 

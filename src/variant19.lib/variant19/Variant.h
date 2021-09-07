@@ -7,6 +7,7 @@
 #include "meta19/Unreachable.h"
 #include "meta19/index_pack.h"
 
+#include <stddef.h> // size_t
 #include <memory>
 #include <new>
 #include <utility> // std::launder

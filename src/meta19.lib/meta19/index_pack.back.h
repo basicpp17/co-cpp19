@@ -1,5 +1,5 @@
 #pragma once
-#include <stddef.h>
+#include <stddef.h> // size_t
 
 namespace meta19 {
 

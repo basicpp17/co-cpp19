@@ -2,6 +2,8 @@
 #include "OrderedSliceOf.h"
 #include "array19/AllocatedArrayUtils.h"
 
+#include <stddef.h> // size_t
+
 namespace lookup19 {
 
 using array19::AllocatedArrayUtils;

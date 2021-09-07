@@ -2,6 +2,8 @@
 #include "array19/Array.h"
 #include "string19/StringView.h"
 
+#include <stddef.h> // size_t
+
 namespace enum19::details {
 
 using array19::Array;

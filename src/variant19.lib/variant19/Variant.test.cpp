@@ -5,6 +5,7 @@
 #include "meta19/Type.h"
 
 #include <gtest/gtest.h>
+#include <utility>
 
 using namespace variant19;
 using meta19::_index;

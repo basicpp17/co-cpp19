@@ -1,6 +1,8 @@
 #pragma once
 #include "BufferSlice.h"
 
+#include <stddef.h> // size_t
+
 namespace serialize19 {
 
 /// UniqueBuffer is allocated on construction and carries the ownership of the memory
