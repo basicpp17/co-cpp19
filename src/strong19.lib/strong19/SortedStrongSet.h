@@ -4,6 +4,7 @@
 #include "array19/SliceOf.single.h"
 
 #include <algorithm>
+#include <stddef.h> // size_t
 
 namespace strong19 {
 

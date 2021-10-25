@@ -2,6 +2,7 @@
 #include "Index.h"
 #include "nullptr_to.h"
 
+#include <stddef.h> // size_t
 #include <utility> // std::index_sequence
 
 namespace meta19 {

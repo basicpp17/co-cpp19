@@ -2,7 +2,8 @@
 #include "array19/DynamicArrayOf.h"
 #include "serialize.h"
 
-#include <stdint.h> // uint32_t
+#include <cstdint> // uint32_t
+#include <utility>
 
 namespace serialize19 {
 

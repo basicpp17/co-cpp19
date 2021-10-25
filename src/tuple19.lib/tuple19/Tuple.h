@@ -3,6 +3,7 @@
 #include "meta19/RemoveReference.h"
 #include "meta19/Type.h"
 
+#include <stddef.h> // size_t
 #include <type_traits>
 #include <utility>
 

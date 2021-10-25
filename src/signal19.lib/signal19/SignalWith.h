@@ -3,6 +3,7 @@
 #include "array19/DynamicArrayOf.h"
 
 #include <algorithm>
+#include <utility>
 
 namespace signal19 {
 

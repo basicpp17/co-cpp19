@@ -2,7 +2,9 @@
 #include "Partial.h"
 #include "Partial.ostream.h"
 
+#include <stddef.h> // size_t
 #include <gtest/gtest.h>
+#include <utility>
 
 using namespace partial19;
 

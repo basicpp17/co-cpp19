@@ -2,6 +2,9 @@
 #include "Tuple.h"
 #include "meta19/Index.h"
 
+#include <stddef.h> // size_t
+#include <utility>
+
 namespace tuple19 {
 
 using meta19::_index;

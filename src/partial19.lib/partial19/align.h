@@ -1,5 +1,5 @@
 #pragma once
-#include <inttypes.h> // uint8_t
+#include <cinttypes> // uint8_t
 #include <stddef.h> // size_t
 
 namespace partial19 {

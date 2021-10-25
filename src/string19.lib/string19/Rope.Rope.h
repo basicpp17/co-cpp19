@@ -2,6 +2,8 @@
 #include "ADL.h"
 #include "Rope.h"
 
+#include <stddef.h> // size_t
+
 namespace string19 {
 
 template<class... Ts> constexpr auto ropeCount(ADL*, const Rope<Ts...>& rope) -> size_t {

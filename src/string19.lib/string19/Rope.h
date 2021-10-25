@@ -2,6 +2,8 @@
 #include "meta19/RemoveReference.h"
 #include "tuple19/Tuple.h"
 
+#include <utility>
+
 namespace string19 {
 
 using meta19::StoredOf;

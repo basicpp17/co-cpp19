@@ -4,6 +4,8 @@
 #include "meta19/Type.h"
 #include "serialize.h"
 
+#include <stddef.h> // size_t
+
 namespace serialize19 {
 
 using meta19::type;

@@ -2,6 +2,7 @@
 #include "serialize.h"
 
 #include <array>
+#include <stddef.h> // size_t
 
 namespace serialize19 {
 

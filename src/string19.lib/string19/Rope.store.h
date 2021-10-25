@@ -3,6 +3,8 @@
 #include "Rope.Rope.h"
 #include "StringStore.h"
 
+#include <stddef.h> // size_t
+
 namespace string19 {
 
 template<class T> constexpr auto ropeCount(const T& v) -> size_t { return ropeCount(adl, v); }

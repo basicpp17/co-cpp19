@@ -7,6 +7,7 @@
 
 #include <gtest/gtest.h>
 #include <sstream>
+#include <utility>
 
 using namespace array19;
 

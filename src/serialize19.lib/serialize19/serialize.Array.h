@@ -2,6 +2,8 @@
 #include "array19/Array.h"
 #include "serialize.h"
 
+#include <stddef.h> // size_t
+
 namespace serialize19 {
 
 using array19::Array;

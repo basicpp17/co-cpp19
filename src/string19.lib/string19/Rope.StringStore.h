@@ -2,6 +2,8 @@
 #include "ADL.h"
 #include "StringStore.h"
 
+#include <stddef.h> // size_t
+
 namespace string19 {
 
 template<size_t N> constexpr auto ropeCount(ADL*, const StringStore<N>&) -> size_t { return N; }

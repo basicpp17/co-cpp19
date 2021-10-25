@@ -2,6 +2,7 @@
 #include "serialize.h"
 
 #include <optional>
+#include <utility>
 
 namespace serialize19 {
 

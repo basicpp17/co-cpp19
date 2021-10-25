@@ -8,8 +8,9 @@
 #include "meta19/TypeAt.h"
 #include "meta19/TypePack.h"
 
+#include <stddef.h> // size_t
+#include <cstdint> // uint8_t
 #include <new> // std::launder, operator new[], operator delete[]
-#include <stdint.h> // uint8_t
 #include <type_traits>
 
 namespace partial19 {

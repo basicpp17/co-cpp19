@@ -1,6 +1,7 @@
 #pragma once
 #include "SliceOf.h"
 
+#include <stddef.h> // size_t
 namespace array19 {
 
 template<class T, size_t N> using CArray = T[N];

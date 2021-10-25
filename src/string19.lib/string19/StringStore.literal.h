@@ -1,6 +1,8 @@
 #pragma once
 #include "StringStore.h"
 
+#include <stddef.h> // size_t
+
 namespace string19 {
 
 template<size_t N> constexpr auto storeLiteral(const CharArray<N>& o) noexcept -> const StringStore<N - 1> {

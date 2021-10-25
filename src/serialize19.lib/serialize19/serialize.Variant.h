@@ -3,6 +3,8 @@
 #include "serialize.h"
 #include "variant19/Variant.h" // requires variant19
 
+#include <stddef.h> // size_t
+
 namespace serialize19 {
 
 template<Archive A, class... Ts> void serialize(A& a, variant19::Variant<Ts...>& variant) {

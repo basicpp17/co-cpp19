@@ -1,6 +1,8 @@
 #pragma once
 #include "array19/Array.h"
 
+#include <stddef.h> // size_t
+
 namespace meta19 {
 
 template<size_t... Is> inline constexpr auto pack_to_array = array19::Array{Is...};

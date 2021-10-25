@@ -1,6 +1,8 @@
 #pragma once
 #include "SliceOf.h"
 
+#include <stddef.h> // size_t
+
 namespace array19 {
 
 /// Same as SliceOf but this marks that elements want to be moved from

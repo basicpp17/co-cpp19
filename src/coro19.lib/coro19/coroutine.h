@@ -34,7 +34,7 @@
 #        include <memory>
 #        include <new>
 #    endif // _STL_COMPILER_PREPROCESSOR
-#    include <cstddef>
+#    include <stddef.h>
 #    include <cstdint>
 #    include <exception> // std::current_exception
 #    include <functional> // std::hash
