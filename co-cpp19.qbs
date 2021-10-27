@@ -43,12 +43,15 @@ Project {
                 )
             }
             Properties {
-                condition: qbs.toolchain.contains('clang')
+                condition: qbs.toolchain.contains('clang') || qbs.toolchain.contains('gcc')
                 cpp.cxxFlags: base.concat(
                     "--pedantic", // best C++ compatibility
                     "-ftemplate-backtrace-limit=0", // do not cut template backtraces
                     "-Wno-gnu-zero-variadic-macro-arguments" // accept this extensions for opaque strong types
                 )
+            }
+            Properties {
+                condition: qbs.toolchain.contains('clang')
                 cpp.cxxStandardLibrary: "libc++"
                 cpp.staticLibraries: ["c++", "c++abi"]
             }
@@ -61,8 +64,13 @@ Project {
             ".clang-format",
             ".clang-tidy",
             ".editorconfig",
+            ".github/workflows/cmake_tests.yml",
             ".github/workflows/qbs_tests.yml",
+            ".github/workflows/static_analyse.yml",
             ".gitignore",
+            "CMakeLists.txt",
+            "CMakePresets.json",
+            "LICENSE",
             "Readme.md",
             "helpers/array19.natvis",
             "helpers/gdbhelpers.py",

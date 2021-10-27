@@ -10,16 +10,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      
+
       - name: Install Tools Ninja and mvsc
         uses: ilammy/msvc-dev-cmd@v1
       - uses: seanmiddleditch/gha-setup-ninja@master
-      
-      - name: Config 
+
+      - name: Config
         run: cmake -S . --preset Windows-MSVC
 
       - name: Build
-        run: | 
+        run: |
           cmake --build --preset Windows-MSVC-Debug
           cmake --build --preset Windows-MSVC-Release
 
@@ -29,10 +29,10 @@ jobs:
           ctest --preset Test-Windows-MSVC-Release
 
 
-  Linux-Clang:
-    name: "Linux-Clang"
+  linux-clang:
+    name: "Linux Clang"
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -42,15 +42,15 @@ jobs:
 
       - name: Install clang 12
         run: |
-          sudo apt-get update 
+          sudo apt-get update
           sudo apt-get install clang-12 llvm-12
-          
-      - name: Config 
+
+      - name: Config
         run: |
           cmake -S . --preset Linux-Clang
 
       - name: Build
-        run: | 
+        run: |
           cmake --build --preset Linux-Clang-Debug
           cmake --build --preset Linux-Clang-Release
 
@@ -58,3 +58,34 @@ jobs:
         run: |
           ctest --preset Test-Linux-Clang-Debug
           ctest --preset Test-Linux-Clang-Release
+
+
+  linux-gcc:
+    name: "Linux GCC"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Ninja
+        uses: seanmiddleditch/gha-setup-ninja@master
+
+      - name: Install gcc 11
+        run: |
+          sudo apt-get update
+          sudo apt-get install gcc-11 g++-11 libstdc++-11-dev
+
+      - name: Config
+        run: |
+          cmake -S . --preset Linux-Gcc
+
+      - name: Build
+        run: |
+          cmake --build --preset Linux-Gcc-Debug
+          cmake --build --preset Linux-Gcc-Release
+
+      - name: Test
+        run: |
+          ctest --preset Test-Linux-Gcc-Debug
+          ctest --preset Test-Linux-Gcc-Release

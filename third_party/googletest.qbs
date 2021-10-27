@@ -41,11 +41,14 @@ StaticLibrary {
     cpp.defines: ["GTEST_LANG_CXX11"]
 
     Properties {
-        condition: qbs.toolchain.contains('clang')
+        condition: qbs.toolchain.contains('clang') || qbs.toolchain.contains('gcc')
         cpp.cxxFlags: base.concat(
                           "-Wno-unused-parameter",
                           "-Wno-missing-field-initializers"
                           )
+    }
+    Properties {
+        condition: qbs.toolchain.contains('clang')
         cpp.cxxStandardLibrary: "libc++"
     }
 
@@ -58,9 +61,9 @@ StaticLibrary {
         cpp.defines: ["GTEST_LANG_CXX11"]
 
         Properties {
-            condition: qbs.toolchain.contains('clang')
+            condition: qbs.toolchain.contains('clang') || qbs.toolchain.contains('gcc')
             cpp.cxxFlags: base.concat("-Wno-unused-parameter")
-            cpp.linkerFlags: base.concat("-lpthread")
+            cpp.dynamicLibraries: [ "pthread" ]
         }
 
         property bool useMain: true

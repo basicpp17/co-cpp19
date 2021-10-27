@@ -40,6 +40,16 @@
             }
         },
         {
+            "name": "Linux-Gcc",
+            "inherits": "Base-Configure",
+            "displayName": "Tests on Linux",
+            "description": "Used to configure the tests on Linux",
+            "cacheVariables": {
+                "CMAKE_CXX_COMPILER": "g++-11",
+                "CMAKE_CXX_FLAGS": "-fsized-deallocation -Wall -Wextra -Werror --pedantic -ftemplate-backtrace-limit=0 -Wno-maybe-uninitialized -Wno-stringop-overflow -Wno-array-bounds -Wno-restrict"
+            }
+        },
+        {
             "name": "Clang-Static-Analyser",
             "inherits": "Base-Configure",
             "displayName": "Clang Static Analyser on Linux",
@@ -80,6 +90,19 @@
             "configuration": "Release"
         },
         {
+            "name": "Linux-Gcc-Debug",
+            "displayName": "Tests on Linux in debug mode",
+            "description": "Used to build the tests on linux. The clang compiler is used. It build in debug mode.",
+            "configurePreset": "Linux-Gcc",
+            "configuration": "Debug"
+        },
+        {
+            "name": "Linux-Gcc-Release",
+            "displayName": "Tests on Linux in release mode",
+            "description": "Used to build the tests on linux. The Clang compiler is used. It build in release mode.",
+            "configurePreset": "Linux-Gcc",
+            "configuration": "Release"
+        },        {
             "name": "Clang-Static-Analyser",
             "displayName": "Analyse on linux",
             "description": "Used to build the tests on linux. The clang compiler is used. It is build with analyse",
@@ -131,6 +154,22 @@
             "displayName": "Tests on Linux",
             "description": "Used to test on Linux",
             "configurePreset": "Linux-Clang",
+            "configuration": "Release"
+        },
+        {
+            "name": "Test-Linux-Gcc-Debug",
+            "inherits": "Base-Test",
+            "displayName": "Tests on Linux",
+            "description": "Used to test on Linux",
+            "configurePreset": "Linux-Gcc",
+            "configuration": "Debug"
+        },
+        {
+            "name": "Test-Linux-Gcc-Release",
+            "inherits": "Base-Test",
+            "displayName": "Tests on Linux",
+            "description": "Used to test on Linux",
+            "configurePreset": "Linux-Gcc",
             "configuration": "Release"
         }
     ]

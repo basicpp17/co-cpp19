@@ -109,12 +109,12 @@ public:
     // copy
     Partial(const Partial& o) {
         auto hasValue = [&](auto i) { return o.m_bits[i]; };
-        auto factory = [&]<class T>(Type<T>*, void* ptr) { new (ptr) T(o.of<T>()); };
+        auto factory = [&]<class T>(Type<T>*, void* ptr) { new (ptr) T(o.template of<T>()); };
         *this = fromFactory(hasValue, factory);
     }
     auto operator=(const Partial& o) -> Partial& {
         auto hasValue = [&](auto i) { return o.m_bits[i]; };
-        auto factory = [&]<class T>(Type<T>*, void* ptr) { new (ptr) T(o.of<T>()); };
+        auto factory = [&]<class T>(Type<T>*, void* ptr) { new (ptr) T(o.template of<T>()); };
         *this = fromFactory(hasValue, factory);
         return *this;
     }
@@ -144,7 +144,7 @@ public:
         (bits.setAt(index_of_map<StoredOf<Vs>, Map>), ...);
         auto hasValue = [&](size_t i) { return bits[i]; };
         auto factory = [&]<class T>(Type<T>*, void* ptr) {
-            ((details::ConditionalPlacementNew<std::is_same_v<T, StoredOf<Vs>>>::apply((Vs &&) vs, ptr), 0), ...);
+            ((void)(details::ConditionalPlacementNew<std::is_same_v<T, StoredOf<Vs>>>::apply((Vs &&) vs, ptr), 0), ...);
         };
         return fromFactory(hasValue, factory);
     }
