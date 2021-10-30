@@ -9,9 +9,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - image: arbmind/qbs-clang10:qbs_v1.17.0
-          - image: arbmind/qbs-clang11:qbs_v1.17.0
-          - image: arbmind/qbs-clang12:qbs_v1.18.0
+          - image: arbmind/qbs-clang10:qbs_v1.20.1
+          - image: arbmind/qbs-clang11:qbs_v1.20.1
+          - image: arbmind/qbs-clang12:qbs_v1.20.1
+          - image: arbmind/qbs-gcc11:qbs_v1.20.1
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
