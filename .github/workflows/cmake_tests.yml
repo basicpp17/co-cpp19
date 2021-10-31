@@ -33,6 +33,13 @@ jobs:
     name: "Linux Clang"
     runs-on: ubuntu-latest
 
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - clang_major: 12
+          - clang_major: 13
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -40,10 +47,10 @@ jobs:
       - name: Install Ninja
         uses: seanmiddleditch/gha-setup-ninja@master
 
-      - name: Install clang 12
+      - name: Install clang ${{ matrix.clang_major }}
         run: |
           sudo apt-get update
-          sudo apt-get install clang-12 llvm-12
+          sudo apt-get install clang-${{ matrix.clang_major }} libc++1-${{ matrix.clang_major }} libc++-${{ matrix.clang_major }}-dev libc++abi-${{ matrix.clang_major }}-dev libc++abi1-${{ matrix.clang_major }}
 
       - name: Config
         run: |
@@ -64,6 +71,12 @@ jobs:
     name: "Linux GCC"
     runs-on: ubuntu-latest
 
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - gcc_major: 11
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -71,10 +84,10 @@ jobs:
       - name: Install Ninja
         uses: seanmiddleditch/gha-setup-ninja@master
 
-      - name: Install gcc 11
+      - name: Install gcc ${{ matrix.gcc_major }}
         run: |
           sudo apt-get update
-          sudo apt-get install gcc-11 g++-11 libstdc++-11-dev
+          sudo apt-get install gcc-${{ matrix.gcc_major }} g++-${{ matrix.gcc_major }} libstdc++-${{ matrix.gcc_major }}-dev
 
       - name: Config
         run: |
