@@ -107,16 +107,15 @@ public:
     }
 
     // copy
-    Partial(const Partial& o) {
-        auto hasValue = [&](auto i) { return o.m_bits[i]; };
-        auto factory = [&]<class T>(Type<T>*, void* ptr) { new (ptr) T(o.template of<T>()); };
-        *this = fromFactory(hasValue, factory);
+    Partial(const Partial& o)
+            : Partial(fromFactory(
+                  [&](auto i) { return o.m_bits[i]; },
+                  [&]<class T>(Type<T>*, void* ptr) { new (ptr) T(o.template of<T>()); })) {
     }
     auto operator=(const Partial& o) -> Partial& {
         auto hasValue = [&](auto i) { return o.m_bits[i]; };
         auto factory = [&]<class T>(Type<T>*, void* ptr) { new (ptr) T(o.template of<T>()); };
-        *this = fromFactory(hasValue, factory);
-        return *this;
+        return *this = fromFactory(hasValue, factory);
     }
 
     // Fastest way to construct Partial
