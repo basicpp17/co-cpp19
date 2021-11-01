@@ -5,7 +5,7 @@
 *.user
 *.user.*
 *.pyc
-thirdparty/*/
+third_party/*/
 .vagrant/
 .vscode/
 .vs/
