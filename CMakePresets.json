@@ -7,112 +7,106 @@
     },
     "configurePresets": [
         {
-            "name": "Base-Configure",
+            "name": "multi-config",
+            "hidden": true,
             "generator": "Ninja Multi-Config",
             "binaryDir": "${sourceDir}/build/${presetName}",
             "cacheVariables": {
-                "co-cpp19-enable-tests": {
-                    "type": "BOOL",
-                    "value": "ON"
-                },
+                "co-cpp19-enable-tests": true,
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "CMAKE_CTEST_ARGUMENTS": "--output-on-failure",
                 "CMAKE_CONFIGURATION_TYPES": "Debug;Release"
-            },
-            "hidden": true
-        },
-        {
-            "name": "Windows-MSVC",
-            "inherits": "Base-Configure",
-            "displayName": "Tests on Windows",
-            "description": "Used to configure the tests on Windows",
-            "cacheVariables": {
-                "CMAKE_CXX_COMPILER": "cl.exe",
-                "CMAKE_CXX_FLAGS": "/permissive- /Zc:__cplusplus /Zc:externConstexpr /Zc:inline /Zc:preprocessor /Zc:throwingNew /diagnostics:caret /wd4068 /D_ENABLE_EXTENDED_ALIGNED_STORAGE"
             }
         },
         {
-            "name": "Linux-Clang",
-            "inherits": "Base-Configure",
-            "displayName": "Tests on Linux",
-            "description": "Used to configure the tests on Linux",
+            "name": "msvc2019",
+            "inherits": "multi-config",
+            "displayName": "Visual Studio 2019",
+            "description": "Recommended configuration for windows builds",
             "cacheVariables": {
-                "CMAKE_CXX_COMPILER": "clang++-12",
-                "CMAKE_CXX_FLAGS": "-fsized-deallocation -Wall -Wextra -Werror --pedantic -ftemplate-backtrace-limit=0 -Wno-gnu-zero-variadic-macro-arguments"
+                "CMAKE_CXX_FLAGS": "/EHsc /permissive- /Zc:__cplusplus /Zc:externConstexpr /Zc:inline /Zc:preprocessor /Zc:throwingNew /diagnostics:caret /experimental:external /external:anglebrackets /external:W0 /wd4068 /D_ENABLE_EXTENDED_ALIGNED_STORAGE"
             }
         },
         {
-            "name": "Linux-Gcc",
-            "inherits": "Base-Configure",
-            "displayName": "Tests on Linux",
-            "description": "Used to configure the tests on Linux",
+            "name": "clang",
+            "inherits": "multi-config",
+            "displayName": "Clang",
+            "description": "Recommended configuration for Clang",
             "cacheVariables": {
-                "CMAKE_CXX_COMPILER": "g++-11",
+                "CMAKE_CXX_COMPILER": "clang++",
+                "CMAKE_CXX_EXTENSIONS": false,
+                "CMAKE_CXX_FLAGS": "-stdlib=libc++ -fsized-deallocation -Wall -Wextra -Werror --pedantic -ftemplate-backtrace-limit=0 -Wno-gnu-zero-variadic-macro-arguments"
+            }
+        },
+        {
+            "name": "clang-analyze",
+            "inherits": "multi-config",
+            "displayName": "Clang Static Analyser",
+            "description": "Configuration for Clang based static analyser",
+            "cacheVariables": {
+                "CMAKE_CXX_COMPILER": "clang++",
+                "CMAKE_CXX_EXTENSIONS": false,
+                "CMAKE_CXX_FLAGS": "--analyze -stdlib=libc++ -fsized-deallocation -Wno-unused-command-line-argument"
+            }
+        },
+        {
+            "name": "gcc",
+            "inherits": "multi-config",
+            "displayName": "G++",
+            "description": "Recommended configuration for GNU GCC",
+            "cacheVariables": {
                 "CMAKE_CXX_FLAGS": "-fsized-deallocation -Wall -Wextra -Werror --pedantic -ftemplate-backtrace-limit=0 -Wno-maybe-uninitialized -Wno-stringop-overflow -Wno-array-bounds -Wno-restrict"
-            }
-        },
-        {
-            "name": "Clang-Static-Analyser",
-            "inherits": "Base-Configure",
-            "displayName": "Clang Static Analyser on Linux",
-            "description": "Used to run clang static analyser",
-            "cacheVariables": {
-                "CMAKE_CXX_COMPILER": "clang++-12",
-                "CMAKE_CXX_FLAGS": "-fsized-deallocation --analyze"
             }
         }
     ],
     "buildPresets": [
         {
-            "name": "Windows-MSVC-Debug",
-            "displayName": "Tests on Windows in debug mode",
-            "description": "Used to build the tests on windows. The cl compiler is used. It build in debug mode.",
-            "configurePreset": "Windows-MSVC",
+            "name": "msvc2019-debug",
+            "displayName": "Visual Studio 2019 Debug Build",
+            "configurePreset": "msvc2019",
             "configuration": "Debug"
         },
         {
-            "name": "Windows-MSVC-Release",
-            "displayName": "Tests on Windows in release mode",
-            "description": "Used to build the tests on windows. The cl compiler is used. It build in release mode.",
-            "configurePreset": "Windows-MSVC",
+            "name": "msvc2019-release",
+            "displayName": "Visual Studio 2019 Release Build",
+            "configurePreset": "msvc2019",
             "configuration": "Release"
         },
         {
-            "name": "Linux-Clang-Debug",
-            "displayName": "Tests on Linux in debug mode",
-            "description": "Used to build the tests on linux. The clang compiler is used. It build in debug mode.",
-            "configurePreset": "Linux-Clang",
+            "name": "clang-debug",
+            "displayName": "Clang Debug Build",
+            "configurePreset": "clang",
             "configuration": "Debug"
         },
         {
-            "name": "Linux-Clang-Release",
-            "displayName": "Tests on Linux in release mode",
-            "description": "Used to build the tests on linux. The Clang compiler is used. It build in release mode.",
-            "configurePreset": "Linux-Clang",
+            "name": "clang-release",
+            "displayName": "Clang Release Build",
+            "configurePreset": "clang",
             "configuration": "Release"
         },
         {
-            "name": "Linux-Gcc-Debug",
-            "displayName": "Tests on Linux in debug mode",
-            "description": "Used to build the tests on linux. The clang compiler is used. It build in debug mode.",
-            "configurePreset": "Linux-Gcc",
+            "name": "gcc-debug",
+            "displayName": "G++ Debug Build",
+            "configurePreset": "gcc",
             "configuration": "Debug"
         },
         {
-            "name": "Linux-Gcc-Release",
-            "displayName": "Tests on Linux in release mode",
-            "description": "Used to build the tests on linux. The Clang compiler is used. It build in release mode.",
-            "configurePreset": "Linux-Gcc",
+            "name": "gcc-release",
+            "displayName": "G++ Release Build",
+            "configurePreset": "gcc",
             "configuration": "Release"
-        },        {
-            "name": "Clang-Static-Analyser",
-            "displayName": "Analyse on linux",
-            "description": "Used to build the tests on linux. The clang compiler is used. It is build with analyse",
-            "configurePreset": "Clang-Static-Analyser",
+        },
+        {
+            "name": "clang-analyze-debug",
+            "displayName": "Clang Analyse Debug Build",
+            "configurePreset": "clang-analyze",
             "configuration": "Debug"
         }
     ],
     "testPresets": [
         {
-            "name": "Base-Test",
+            "name": "test-base",
+            "hidden": true,
             "output": {
                 "outputOnFailure": true,
                 "debug": false
@@ -120,56 +114,48 @@
             "execution": {
                 "noTestsAction": "error",
                 "stopOnFailure": true
-            },
-            "hidden": true
+            }
         },
-
         {
-            "name": "Test-Windows-MSVC-Debug",
-            "inherits": "Base-Test",
-            "displayName": "Tests on Windows",
-            "description": "Used to test on Windows",
-            "configurePreset": "Windows-MSVC",
+            "name": "test-msvc2019-debug",
+            "inherits": "test-base",
+            "displayName": "Test Visual Studio 2019 Debug Build",
+            "configurePreset": "msvc2019",
             "configuration": "Debug"
         },
         {
-            "name": "Test-Windows-MSVC-Release",
-            "inherits": "Base-Test",
-            "displayName": "Tests on Windows",
-            "description": "Used to test on Windows",
-            "configurePreset": "Windows-MSVC",
+            "name": "test-msvc2019-release",
+            "inherits": "test-base",
+            "displayName": "Test Visual Studio 2019 Release Build",
+            "configurePreset": "msvc2019",
             "configuration": "Release"
         },
         {
-            "name": "Test-Linux-Clang-Debug",
-            "inherits": "Base-Test",
-            "displayName": "Tests on Linux",
-            "description": "Used to test on Linux",
-            "configurePreset": "Linux-Clang",
+            "name": "test-clang-debug",
+            "inherits": "test-base",
+            "displayName": "Test Clang Debug Build",
+            "configurePreset": "clang",
             "configuration": "Debug"
         },
         {
-            "name": "Test-Linux-Clang-Release",
-            "inherits": "Base-Test",
-            "displayName": "Tests on Linux",
-            "description": "Used to test on Linux",
-            "configurePreset": "Linux-Clang",
+            "name": "test-clang-release",
+            "inherits": "test-base",
+            "displayName": "Test Clang Release Build",
+            "configurePreset": "clang",
             "configuration": "Release"
         },
         {
-            "name": "Test-Linux-Gcc-Debug",
-            "inherits": "Base-Test",
-            "displayName": "Tests on Linux",
-            "description": "Used to test on Linux",
-            "configurePreset": "Linux-Gcc",
+            "name": "test-gcc-debug",
+            "inherits": "test-base",
+            "displayName": "Test GCC Debug Build",
+            "configurePreset": "gcc",
             "configuration": "Debug"
         },
         {
-            "name": "Test-Linux-Gcc-Release",
-            "inherits": "Base-Test",
-            "displayName": "Tests on Linux",
-            "description": "Used to test on Linux",
-            "configurePreset": "Linux-Gcc",
+            "name": "test-gcc-release",
+            "inherits": "test-base",
+            "displayName": "Test GCC Release Build",
+            "configurePreset": "gcc",
             "configuration": "Release"
         }
     ]

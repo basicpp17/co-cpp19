@@ -3,9 +3,15 @@ name: CMake-Tests
 on: push
 
 jobs:
-  windows-msvc:
-    name: "Windows MSVC"
-    runs-on: windows-latest
+  windows:
+    name: "Windows"
+    runs-on: windows-2019
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - preset: "msvc2019"
 
     steps:
       - name: Checkout
@@ -15,90 +21,39 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1
       - uses: seanmiddleditch/gha-setup-ninja@master
 
-      - name: Config
-        run: cmake -S . --preset Windows-MSVC
+      - name: Build and Test Debug
+        run: script/test_cmake.bat ${{ matrix.preset }} debug
 
-      - name: Build
-        run: |
-          cmake --build --preset Windows-MSVC-Debug
-          cmake --build --preset Windows-MSVC-Release
+      - name: Build and Test Release
+        run: script/test_cmake.bat ${{ matrix.preset }} release
 
-      - name: Test
-        run: |
-          ctest --preset Test-Windows-MSVC-Debug
-          ctest --preset Test-Windows-MSVC-Release
-
-
-  linux-clang:
-    name: "Linux Clang"
+  linux:
+    name: "Linux"
     runs-on: ubuntu-latest
 
     strategy:
       fail-fast: false
       matrix:
         include:
-          - clang_major: 12
-          - clang_major: 13
+          - image: "arbmind/cmake-clang12:latest"
+            preset: "clang"
+          - image: "arbmind/cmake-clang13:latest"
+            preset: "clang"
+          - image: "arbmind/cmake-gcc11:latest"
+            preset: "gcc"
 
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Install Ninja
-        uses: seanmiddleditch/gha-setup-ninja@master
+      - name: Build and Test Debug
+        run: >-
+          docker run --rm -v ${GITHUB_WORKSPACE}:/project -w /project
+          ${{ matrix.image }}
+          script/test_cmake.sh ${{ matrix.preset }} debug
 
-      - name: Install clang ${{ matrix.clang_major }}
-        run: |
-          sudo apt-get update
-          sudo apt-get install clang-${{ matrix.clang_major }} libc++1-${{ matrix.clang_major }} libc++-${{ matrix.clang_major }}-dev libc++abi-${{ matrix.clang_major }}-dev libc++abi1-${{ matrix.clang_major }}
-
-      - name: Config
-        run: |
-          cmake -S . --preset Linux-Clang
-
-      - name: Build
-        run: |
-          cmake --build --preset Linux-Clang-Debug
-          cmake --build --preset Linux-Clang-Release
-
-      - name: Test
-        run: |
-          ctest --preset Test-Linux-Clang-Debug
-          ctest --preset Test-Linux-Clang-Release
-
-
-  linux-gcc:
-    name: "Linux GCC"
-    runs-on: ubuntu-latest
-
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - gcc_major: 11
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Install Ninja
-        uses: seanmiddleditch/gha-setup-ninja@master
-
-      - name: Install gcc ${{ matrix.gcc_major }}
-        run: |
-          sudo apt-get update
-          sudo apt-get install gcc-${{ matrix.gcc_major }} g++-${{ matrix.gcc_major }} libstdc++-${{ matrix.gcc_major }}-dev
-
-      - name: Config
-        run: |
-          cmake -S . --preset Linux-Gcc
-
-      - name: Build
-        run: |
-          cmake --build --preset Linux-Gcc-Debug
-          cmake --build --preset Linux-Gcc-Release
-
-      - name: Test
-        run: |
-          ctest --preset Test-Linux-Gcc-Debug
-          ctest --preset Test-Linux-Gcc-Release
+      - name: Build and Test Release
+        run: >-
+          docker run --rm -v ${GITHUB_WORKSPACE}:/project -w /project
+          ${{ matrix.image }}
+          script/test_cmake.sh ${{ matrix.preset }} release

@@ -38,6 +38,7 @@ Project {
                 cpp.cxxFlags: base.concat(
                     "/permissive-", "/Zc:__cplusplus", "/Zc:externConstexpr", "/Zc:inline", "/Zc:preprocessor", "/Zc:throwingNew", // best C++ compatibility
                     "/diagnostics:caret", // better errors
+                    "/experimental:external", "/external:anglebrackets", "/external:W0", // remove diagnostics from external headers
                     "/wd4068", // ignore unknown pragmas
                     "/D_ENABLE_EXTENDED_ALIGNED_STORAGE" // use real alignments
                 )
