@@ -11,10 +11,10 @@ namespace array19 {
 /// usage:
 ///   for (auto [valueA, valueB] : Zip{a, b});
 template<class A, class B> struct Zip {
-    using AIt = decltype(adlBegin(*static_cast<A*>(nullptr)));
-    using BIt = decltype(adlBegin(*static_cast<B*>(nullptr)));
-    using ARes = decltype(**static_cast<AIt*>(nullptr));
-    using BRes = decltype(**static_cast<BIt*>(nullptr));
+    using AIt = decltype(adlBegin(std::declval<A&>()));
+    using BIt = decltype(adlBegin(std::declval<B&>()));
+    using ARes = decltype(*std::declval<const AIt&>());
+    using BRes = decltype(*std::declval<const BIt&>());
 
     struct result {
         ARes a;
