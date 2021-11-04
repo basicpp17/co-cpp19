@@ -1,3 +1,4 @@
+#pragma once
 #include "ADL.h"
 #include "meta19/nullptr_to.h"
 
