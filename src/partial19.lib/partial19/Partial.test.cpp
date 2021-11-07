@@ -2,8 +2,8 @@
 #include "Partial.h"
 #include "Partial.ostream.h"
 
-#include <stddef.h> // size_t
 #include <gtest/gtest.h>
+#include <stddef.h> // size_t
 #include <utility>
 
 using namespace partial19;
@@ -52,7 +52,8 @@ TEST(Partial, assignment) {
 }
 
 TEST(Partial, fromFactory) {
-    const auto p = Partial<char, int, float>::fromFactory(
+    using P = Partial<char, int, float>;
+    const auto p = P::fromFactory(
         [](size_t i) { return (0 == i % 2); },
         []<class T>(Type<T>*, void* ptr) {
             if constexpr (std::is_same_v<T, char>) {
@@ -73,54 +74,29 @@ TEST(Partial, fromFactory) {
     EXPECT_EQ(p.at<2>(), 3.14f);
 }
 
-// TEST(Partial, type) {
-//    auto p = Partial<char, int, float>{'\x23', 23};
-//    ASSERT_TRUE(p.which().of(type<char>));
-//    ASSERT_TRUE(p.which()[0]);
-//    EXPECT_EQ(0x23, p.of(type<char>));
-//    EXPECT_EQ(0x23, p[_index<0>]);
-//    ASSERT_TRUE(p.which().of(type<int>));
-//    ASSERT_TRUE(p.which()[1]);
-//    ASSERT_EQ(23, p.of(type<int>));
-//    EXPECT_EQ(23, p[_index<1>]);
+TEST(Partial, type) {
+    using P = Partial<char, int, float>;
+    auto p = P::fromArgs('\x23', 23);
+    ASSERT_TRUE(p.which().of(type<char>));
+    ASSERT_TRUE(p.which()[0]);
+    EXPECT_EQ(0x23, p.of(type<char>));
+    EXPECT_EQ(0x23, p.at(_index<0>));
+    ASSERT_TRUE(p.which().of(type<int>));
+    ASSERT_TRUE(p.which()[1]);
+    ASSERT_EQ(23, p.of(type<int>));
+    EXPECT_EQ(23, p.at(_index<1>));
+}
 
-//    // TODO CK: Does prevent valid compilation? Microsoft Visual C++ BUG?
-//    // auto m = Partial<int, int>{23, 32};
-//    // not allowed due to used TypePack
-//    // ASSERT_TRUE(m.which().of(type<int>));
-//    // ASSERT_EQ(23, m.of(type<int>));
-//}
+// note: this would only store one int, due to implementation design!
+// TEST(Partial, with_duplicated_types) {
+//     using P = Partial<int, int>;
+//     auto p = P::fromArgs(23, 32);
+//     ASSERT_TRUE(p.which().of(type<int>));
+//     ASSERT_EQ(32, p.of(type<int>)); // note: ambigious!
 
-// TEST(Partial, merge) {
-//    // Disjunct merge
-//    using P = Partial<char, int, float>;
-//    auto p0 = P{'\x23'};
-//    auto p1 = P{2.3f};
-//    auto p2 = p0.merge(p1);
-//    ASSERT_TRUE(p2.which().at<0>());
-//    ASSERT_FALSE(p2.which().at<1>());
-//    ASSERT_TRUE(p2.which().at<2>());
-
-//    EXPECT_EQ(p2.at<0>(), '\x23');
-//    EXPECT_EQ(p2.at<2>(), 2.3f);
-
-//    // Overwrite merge
-//    auto p3 = P{2};
-//    auto p4 = P{4};
-//    auto p5 = p3.merge(p4);
-//    ASSERT_FALSE(p5.which().at<0>());
-//    ASSERT_TRUE(p5.which().at<1>());
-//    ASSERT_FALSE(p5.which().at<2>());
-
-//    EXPECT_EQ(p5.at<1>(), 4);
-
-//    auto p6 = p4.merge(p3);
-//    ASSERT_FALSE(p6.which().at<0>());
-//    ASSERT_TRUE(p6.which().at<1>());
-//    ASSERT_FALSE(p6.which().at<2>());
-
-//    EXPECT_EQ(p6.at<1>(), 2);
-//}
+//     EXPECT_EQ(23, p.at(_index<0>));
+//     EXPECT_EQ(32, p.at(_index<1>));
+// }
 
 TEST(Partial, visitInitialized) {
     using P = Partial<char, int, float>;
@@ -145,4 +121,35 @@ TEST(Partial, visitWithIndex) {
         EXPECT_TRUE((std::is_same_v<V, char> || std::is_same_v<V, float>));
     });
     EXPECT_EQ(count, 2u);
+}
+
+TEST(Partial, ostream) {
+    auto out = std::stringstream{};
+    using P = Partial<char, int, float>;
+    out << P::fromArgs('a', 2.3f);
+    EXPECT_EQ(out.str(), "<[a; 2.3]>");
+}
+
+// note: merge often contains custom functionality
+// note: We keep the test implementation to show how it works.
+template<class... Ts> auto merge(const Partial<Ts...>& a, const Partial<Ts...>& b) -> Partial<Ts...> {
+    using P = Partial<Ts...>;
+    return P::fromFactory(
+        [&](size_t i) { return a.which()[i] || b.which()[i]; },
+        [&]<class T>(Type<T>*, void* ptr) { new (ptr) T((b.which().of(type<T>) ? b : a).template of<T>()); });
+}
+
+TEST(Partial, disjunct_merge) {
+    using P = Partial<char, int, float>;
+    auto p0 = P::fromArgs('\x23');
+    auto p1 = P::fromArgs(2.3f);
+    EXPECT_EQ(merge(p0, p1), P::fromArgs('\x23', 2.3f));
+}
+
+TEST(Partial, overwrite_merge) {
+    using P = Partial<char, int, float>;
+    auto p0 = P::fromArgs(2);
+    auto p1 = P::fromArgs(4);
+    EXPECT_EQ(merge(p0, p1), P::fromArgs(4));
+    EXPECT_EQ(merge(p1, p0), P::fromArgs(2));
 }
