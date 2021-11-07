@@ -2,8 +2,8 @@
 #include "Tuple.ostream.h"
 #include "meta19/Index.h"
 
-#include <stddef.h> // size_t
 #include <gtest/gtest.h>
+#include <stddef.h> // size_t
 #include <utility>
 
 using namespace tuple19;
@@ -109,4 +109,11 @@ TEST(Tuple, fromTuple) {
     EXPECT_EQ((l.of<double>()), 4.2);
     EXPECT_EQ((l.of<int>()), 23);
     EXPECT_EQ((l.of<float>()), 0);
+}
+
+TEST(Tuple, ostream) {
+    auto out = std::stringstream{};
+    using T = Tuple<char, int, double>;
+    out << T{'c', 23, 4.2};
+    EXPECT_EQ(out.str(), "[c; 23; 4.2]");
 }

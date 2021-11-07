@@ -48,6 +48,9 @@ private:
         template<class F> constexpr void visitAll(F&& f) const& {
             (void)((f(static_cast<const details::TupleEntry<Is, Ts>*>(this)->v), ...));
         }
+        template<class F> constexpr void visitAllWithIndex(F&& f) const& {
+            (void)((f(Is, static_cast<const details::TupleEntry<Is, Ts>*>(this)->v), ...));
+        }
         template<class F> constexpr void amendAll(F&& f) & {
             (void)((f(static_cast<details::TupleEntry<Is, Ts>*>(this)->v), ...));
         }
@@ -100,7 +103,13 @@ public:
         return details::amendEntryOf<O>(indexed);
     }
 
+    // callback f is invoked once for each stored value
     template<class F> constexpr void visitAll(F&& f) const& { indexed.visitAll(static_cast<F&&>(f)); }
+
+    // callback f is invoked once with (index, value) for each stored value
+    template<class F> constexpr void visitAllWithIndex(F&& f) const& { indexed.visitAllWithIndex(static_cast<F&&>(f)); }
+
+    // callback f is invoked once with a modifiable reference for each stored value
     template<class F> constexpr void amendAll(F&& f) & { indexed.amendAll(static_cast<F&&>(f)); }
 };
 
