@@ -2,8 +2,8 @@ from conans import ConanFile, CMake
 from conan.tools.cmake import CMakeToolchain
 import os
 
-class Enum19Conan(ConanFile):
-    name = "enum19"
+class Strong19Conan(ConanFile):
+    name = "strong19"
     version = "1.0"
     
     # Optional metadata
@@ -20,7 +20,7 @@ class Enum19Conan(ConanFile):
 
     def export_sources(self):
         self.copy("CMakeLists.txt")
-        self.copy("*", src="enum19", dst="enum19")
+        self.copy("*", src="strong19", dst="strong19")
 
     def config_options(self):
         if self.settings.os == "Windows":
@@ -31,5 +31,5 @@ class Enum19Conan(ConanFile):
         tc.generate()
 
     def package(self):
-        self.copy("*.h", src="enum19", dst="include")
+        self.copy("*.h", src="strong19", dst="include")
 

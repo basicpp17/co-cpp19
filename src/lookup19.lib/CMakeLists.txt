@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.21 FATAL_ERROR)
 
 add_library(lookup19 INTERFACE)
+set(CMAKE_CXX_STANDARD 20)
 
 target_include_directories(lookup19 INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/>
