@@ -1,10 +1,9 @@
-#include "ReadArchive.h"
-#include "array19/DynamicArrayOf.equals.h"
-#include "array19/DynamicArrayOf.ostream.h"
-#include "dynamicWrite.h"
-#include "serialize.DynamicArrayOf.h"
-
+#include <array19/DynamicArrayOf.equals.h>
+#include <array19/DynamicArrayOf.ostream.h>
 #include <gtest/gtest.h>
+#include <serialize19/ReadArchive.h>
+#include <serialize19/dynamicWrite.h>
+#include <serialize19/serialize.DynamicArrayOf.h>
 
 using namespace serialize19;
 

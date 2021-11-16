@@ -1,12 +1,11 @@
-#include "ReadArchive.h"
-#include "dynamicWrite.h"
-#include "optional19/PackedOptional.equals.h"
-#include "optional19/PackedOptional.h"
-#include "optional19/PackedOptional.ostream.h"
-#include "optional19/PackedOptionalNan.h"
-#include "serialize.PackedOptional.h"
-
 #include <gtest/gtest.h>
+#include <optional19/PackedOptional.equals.h>
+#include <optional19/PackedOptional.h>
+#include <optional19/PackedOptional.ostream.h>
+#include <optional19/PackedOptionalNan.h>
+#include <serialize19/ReadArchive.h>
+#include <serialize19/dynamicWrite.h>
+#include <serialize19/serialize.PackedOptional.h>
 
 using namespace serialize19;
 using optional19::defaultOf;

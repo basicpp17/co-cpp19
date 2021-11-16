@@ -1,11 +1,10 @@
-#include "ReadArchive.h"
-#include "dynamicWrite.h"
-#include "optional19/Optional.equals.h"
-#include "optional19/Optional.h"
-#include "optional19/Optional.ostream.h"
-#include "serialize.Optional.h"
-
 #include <gtest/gtest.h>
+#include <optional19/Optional.equals.h>
+#include <optional19/Optional.h>
+#include <optional19/Optional.ostream.h>
+#include <serialize19/ReadArchive.h>
+#include <serialize19/dynamicWrite.h>
+#include <serialize19/serialize.Optional.h>
 
 using namespace serialize19;
 using optional19::Optional;

@@ -1,8 +1,7 @@
-#include "serialize.Variant.h"
-
 #include <gtest/gtest.h>
 #include <serialize19/ReadArchive.h>
 #include <serialize19/dynamicWrite.h>
+#include <serialize19/serialize.Variant.h>
 #include <serialize19/serialize.std_string.h>
 #include <variant19/Variant.equals.h>
 #include <variant19/Variant.ostream.h>
