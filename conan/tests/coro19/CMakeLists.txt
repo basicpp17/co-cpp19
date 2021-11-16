@@ -18,7 +18,7 @@ if(coro19_FOUND)
       "../../../src/coro19.lib/*.test.cpp")
 
    add_executable(cocpp19 ${coro19-tests})
-   target_link_libraries(cocpp19 GTest::gtest_main coro19::coro19)
+   target_link_libraries(cocpp19 GTest::gtest_main GTest::gtest coro19::coro19)
    add_test(cocpp19 bin/cocpp19)
    
 endif()

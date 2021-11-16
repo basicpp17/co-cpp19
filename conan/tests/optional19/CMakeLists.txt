@@ -18,7 +18,7 @@ if(optional19_FOUND)
       "../../../src/optional19.lib/*.test.cpp")
 
    add_executable(cocpp19 ${optional19-tests})
-   target_link_libraries(cocpp19 GTest::gtest_main optional19::optional19)
+   target_link_libraries(cocpp19 GTest::gtest_main GTest::gtest optional19::optional19)
    add_test(cocpp19 bin/cocpp19)
    
 endif()

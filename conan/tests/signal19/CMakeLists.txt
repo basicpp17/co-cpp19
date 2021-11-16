@@ -17,7 +17,7 @@ if(signal19_FOUND)
       "../../../src/signal19.lib/*.test.cpp")
 
    add_executable(cocpp19 ${signal19-tests})
-   target_link_libraries(cocpp19 GTest::gtest_main signal19::signal19)
+   target_link_libraries(cocpp19 GTest::gtest_main GTest::gtest signal19::signal19)
    add_test(cocpp19 bin/cocpp19)
    
 endif()

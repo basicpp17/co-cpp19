@@ -18,7 +18,7 @@ if(strong19_FOUND)
       "../../../src/strong19.lib/*.test.cpp")
 
    add_executable(cocpp19 ${strong19-tests})
-   target_link_libraries(cocpp19 GTest::gtest_main strong19::strong19)
+   target_link_libraries(cocpp19 GTest::gtest_main GTest::gtest strong19::strong19)
    add_test(cocpp19 bin/cocpp19)
    
 endif()

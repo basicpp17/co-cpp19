@@ -18,7 +18,7 @@ if(partial19_FOUND)
       "../../../src/partial19.lib/*.test.cpp")
 
    add_executable(cocpp19 ${partial19-tests})
-   target_link_libraries(cocpp19 GTest::gtest_main partial19::partial19)
+   target_link_libraries(cocpp19 GTest::gtest_main GTest::gtest partial19::partial19)
    add_test(cocpp19 bin/cocpp19)
    
 endif()

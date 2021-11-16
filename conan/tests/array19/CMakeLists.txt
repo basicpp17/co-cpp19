@@ -18,7 +18,7 @@ if(array19_FOUND)
       "../../../src/array19.lib/*.test.cpp")
 
    add_executable(cocpp19 ${array19-tests})
-   target_link_libraries(cocpp19 GTest::gtest_main array19::array19)
+   target_link_libraries(cocpp19 GTest::gtest_main GTest::gtest array19::array19)
    add_test(cocpp19 bin/cocpp19)
    
 endif()

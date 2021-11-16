@@ -18,7 +18,7 @@ if(variant19_FOUND)
       "../../../src/variant19.lib/*.test.cpp")
 
    add_executable(cocpp19 ${variant19-tests})
-   target_link_libraries(cocpp19 GTest::gtest_main variant19::variant19)
+   target_link_libraries(cocpp19 GTest::gtest_main GTest::gtest variant19::variant19)
    add_test(cocpp19 bin/cocpp19)
    
 endif()

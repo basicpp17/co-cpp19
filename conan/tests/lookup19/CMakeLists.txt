@@ -18,7 +18,7 @@ if(lookup19_FOUND)
       "../../../src/lookup19.lib/*.test.cpp")
 
    add_executable(cocpp19 ${lookup19-tests})
-   target_link_libraries(cocpp19 GTest::gtest_main lookup19::lookup19)
+   target_link_libraries(cocpp19 GTest::gtest_main GTest::gtest lookup19::lookup19)
    add_test(cocpp19 bin/cocpp19)
    
 endif()

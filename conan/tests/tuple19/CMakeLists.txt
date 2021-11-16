@@ -18,7 +18,7 @@ if(tuple19_FOUND)
       "../../../src/tuple19.lib/*.test.cpp")
 
    add_executable(cocpp19 ${tuple19-tests})
-   target_link_libraries(cocpp19 GTest::gtest_main tuple19::tuple19)
+   target_link_libraries(cocpp19 GTest::gtest_main GTest::gtest tuple19::tuple19)
    add_test(cocpp19 bin/cocpp19)
    
 endif()

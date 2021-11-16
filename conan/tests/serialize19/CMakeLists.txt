@@ -18,7 +18,7 @@ if(serialize19_FOUND)
       "../../../src/serialize19.lib/*.test.cpp")
 
    add_executable(cocpp19 ${serialize19-tests})
-   target_link_libraries(cocpp19 GTest::gtest_main serialize19::serialize19)
+   target_link_libraries(cocpp19 GTest::gtest_main GTest::gtest serialize19::serialize19)
    add_test(cocpp19 bin/cocpp19)
    
 endif()

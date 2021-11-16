@@ -39,7 +39,7 @@ if(co-cpp19_FOUND)
 
       include_directories(${GTest_INCLUDE_DIR})
       include_directories(${co-cpp19_INCLUDE_DIRS})
-      target_link_libraries(${subdir} GTest::gtest_main co-cpp19::co-cpp19)
+      target_link_libraries(${subdir} GTest::gtest_main GTest::gtest co-cpp19::co-cpp19)
       add_test(${subdir} ${CMAKE_CURRENT_BINARY_DIR}/bin/${subdir} )
    ENDFOREACH()
    
