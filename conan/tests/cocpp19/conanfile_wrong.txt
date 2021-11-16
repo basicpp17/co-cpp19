@@ -1,0 +1,7 @@
+[requires]
+co-cpp19/1.0@missing/coroutine
+
+[generators]
+cmake_find_package
+cmake_paths
+cmake

@@ -1,0 +1,7 @@
+[requires]
+tuple19/1.0
+
+[generators]
+cmake_find_package
+cmake_paths
+cmake
