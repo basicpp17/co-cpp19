@@ -7,13 +7,20 @@ conan_basic_setup(TARGETS)
 set(CMAKE_CXX_STANDARD 20)
 
 find_package(meta19 REQUIRED)
-
-add_executable(cocpp19 main.cpp)
-
+find_package(GTest REQUIRED)
 if(meta19_FOUND)
+   enable_testing()
    include_directories(${meta19_INCLUDE_DIRS})
-   target_link_libraries(cocpp19 meta19::meta19)
-endif()
+   include_directories(${GTest_INCLUDE_DIR})
+   file(
+      GLOB_RECURSE
+      meta19-tests
+      "../../../src/meta19.lib/*.test.cpp")
 
+   add_executable(cocpp19 ${meta19-tests})
+   target_link_libraries(cocpp19 GTest::gtest_main meta19::meta19)
+   add_test(cocpp19 bin/cocpp19)
+   
+endif()
 
 

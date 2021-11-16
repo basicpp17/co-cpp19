@@ -7,13 +7,22 @@ conan_basic_setup(TARGETS)
 set(CMAKE_CXX_STANDARD 20)
 
 find_package(enum19 REQUIRED)
-
-add_executable(cocpp19 main.cpp)
-
+find_package(GTest REQUIRED)
 if(enum19_FOUND)
+   enable_testing()
    include_directories(${enum19_INCLUDE_DIRS})
-   target_link_libraries(cocpp19 enum19::enum19)
+   include_directories(${GTest_INCLUDE_DIR})
+   file(
+      GLOB_RECURSE
+      enum19-tests
+      "../../../src/enum19.lib/*.test.cpp")
+
+   add_executable(cocpp19 ${enum19-tests})
+   target_link_libraries(cocpp19 GTest::gtest_main enum19::enum19)
+   add_test(cocpp19 bin/cocpp19)
+   
 endif()
+
 
 
 

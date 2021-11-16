@@ -7,13 +7,20 @@ conan_basic_setup(TARGETS)
 set(CMAKE_CXX_STANDARD 20)
 
 find_package(tuple19 REQUIRED)
-
-add_executable(cocpp19 main.cpp)
-
+find_package(GTest REQUIRED)
 if(tuple19_FOUND)
+   enable_testing()
    include_directories(${tuple19_INCLUDE_DIRS})
-   target_link_libraries(cocpp19 tuple19::tuple19)
-endif()
+   include_directories(${GTest_INCLUDE_DIR})
+   file(
+      GLOB_RECURSE
+      tuple19-tests
+      "../../../src/tuple19.lib/*.test.cpp")
 
+   add_executable(cocpp19 ${tuple19-tests})
+   target_link_libraries(cocpp19 GTest::gtest_main tuple19::tuple19)
+   add_test(cocpp19 bin/cocpp19)
+   
+endif()
 
 
