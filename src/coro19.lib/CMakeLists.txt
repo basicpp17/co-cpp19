@@ -12,6 +12,8 @@ target_sources(coro19 PRIVATE
 )
 
 if(${co-cpp19-enable-tests})
+    add_subdirectory(../../third_party build)
+    enable_testing()
     file(
         GLOB_RECURSE
         coro19-tests

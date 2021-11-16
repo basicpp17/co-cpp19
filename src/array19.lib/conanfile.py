@@ -31,5 +31,5 @@ class Array19Conan(ConanFile):
         tc.generate()
 
     def package(self):
-        self.copy("*.h", src="array19", dst="include")
+        self.copy("*.h", dst="include")
 

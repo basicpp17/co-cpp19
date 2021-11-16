@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.21 FATAL_ERROR)
+include_guard(GLOBAL)
 
 add_library(array19 INTERFACE)
 set(CMAKE_CXX_STANDARD 20)
@@ -8,6 +9,8 @@ target_include_directories(array19 INTERFACE
 )
 
 if(${co-cpp19-enable-tests})
+    add_subdirectory(../../third_party build)
+    enable_testing()
     file(
         GLOB_RECURSE
         array19-tests

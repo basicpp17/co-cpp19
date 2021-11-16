@@ -29,7 +29,9 @@ class Meta19Conan(ConanFile):
     def generate(self):
         tc = CMakeToolchain(self)
         tc.generate()
-
+        
     def package(self):
-        self.copy("*.h", src="meta19", dst="include")
+        self.copy("*.h", dst="include")
 
+    def requirements(self):
+        self.requires("array19/1.0")

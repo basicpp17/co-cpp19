@@ -31,5 +31,7 @@ class Optional19Conan(ConanFile):
         tc.generate()
 
     def package(self):
-        self.copy("*.h", src="optional19", dst="include")
+        self.copy("*.h", dst="include")
 
+    def requirements(self):
+        self.requires("meta19/1.0")

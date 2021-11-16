@@ -31,5 +31,9 @@ class Enum19Conan(ConanFile):
         tc.generate()
 
     def package(self):
-        self.copy("*.h", src="enum19", dst="include")
+        self.copy("*.h", dst="include")
 
+    def requirements(self):
+        self.requires("string19/1.0")
+        self.requires("array19/1.0")
+        self.requires("meta19/1.0")

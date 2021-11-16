@@ -31,5 +31,11 @@ class Serialize19Conan(ConanFile):
         tc.generate()
 
     def package(self):
-        self.copy("*.h", src="serialize19", dst="include")
+        self.copy("*.h", dst="include")
 
+    def requirements(self):
+        self.requires("tuple19/1.0")
+        self.requires("array19/1.0")
+        self.requires("partial19/1.0")
+        self.requires("variant19/1.0")
+        self.requires("optional19/1.0")

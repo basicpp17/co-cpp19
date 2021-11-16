@@ -31,5 +31,7 @@ class Signal19Conan(ConanFile):
         tc.generate()
 
     def package(self):
-        self.copy("*.h", src="signal19", dst="include")
+        self.copy("*.h", dst="include")
 
+    def requirements(self):
+        self.requires("array19/1.0")
