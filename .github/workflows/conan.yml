@@ -1,0 +1,89 @@
+name: Conan-Tests
+
+on: push
+
+jobs:
+  Conan-Tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - OS: "windows-latest"
+            CXX: ""
+            CC: ""
+            ConanExtra: ""
+          - OS: "ubuntu-latest"
+            CXX: g++-11
+            CC: gcc-11
+            ConanExtra: "-s compiler.version=11 -s compiler.libcxx=libstdc++11" 
+
+    name: Conan-tests
+    runs-on: ${{ matrix.OS }}
+    steps:
+      - name: Install Conan
+        id: conan
+        uses: turtlebrowser/get-conan@main
+
+      - name: install CMake 
+        uses: lukka/get-cmake@latest
+      
+      - name: Install Gcc
+        if: ${{ matrix.OS == 'ubuntu-latest' }}
+        run: |
+         sudo apt update
+         sudo apt install -y gcc-11 g++-11 git
+
+      - name: Install MSVC
+        if: ${{ matrix.OS == 'windows-latest' }}
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Install GTest 
+        run: |
+          git clone https://github.com/conan-io/conan-center-index/
+          cd conan-center-index
+          git checkout 2bd7020ededca50833509199c85190a8e787620c
+          cd recipes/gtest/all/ 
+          conan create . 1.11.0@ ${{ matrix.ConanExtra }}
+        env:
+          CC:  ${{ matrix.CC }}
+          CXX:  ${{ matrix.CXX }}   
+
+      - name: Checkout source
+        uses: actions/checkout@v2  
+
+      - name: Install packages
+        shell: pwsh
+        run: |
+          Set-Location src 
+          [array]$folders=@('array19.lib','coro19.lib','meta19.lib','tuple19.lib', 'string19.lib', 'strong19.lib', 'variant19.lib', 'enum19.lib', 'lookup19.lib', 'optional19.lib', 'partial19.lib', 'serialize19.lib', 'signal19.lib')
+          foreach ($folder in $folders) {
+              Set-Location $folder 
+              conan create . ${{ matrix.ConanExtra }}
+              Set-Location ..
+          }
+          Set-Location ../conan
+          conan create . ${{ matrix.ConanExtra }}
+        env:
+          CC:  ${{ matrix.CC }}
+          CXX:  ${{ matrix.CXX }}   
+
+      - name: Test packages 
+        shell: pwsh
+        run: |     
+          Set-Location conan/tests 
+          [array]$folders=Get-ChildItem -Path . -Directory 
+          foreach ($folder in $folders) {
+              Set-Location $folder 
+              New-Item -Path . -Name "build" -ItemType "directory"
+              Set-Location build
+              conan install .. ${{ matrix.ConanExtra }}
+              cmake .. -DCONAN_DISABLE_CHECK_COMPILER=true
+              cmake --build . --config Release
+              ctest
+              Set-Location ..
+              Remove-Item -Recurse -Force build
+              Set-Location ..
+          } 
+        env:
+          CC:  ${{ matrix.CC }}
+          CXX:  ${{ matrix.CXX }}
