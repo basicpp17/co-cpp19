@@ -1,10 +1,15 @@
 cmake_minimum_required(VERSION 3.21 FATAL_ERROR)
+include_guard(GLOBAL)
 
+set(CMAKE_CXX_STANDARD 20)
 add_library(signal19 INTERFACE)
 
 target_include_directories(signal19 INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/>
 )
+
+add_subdirectory(../array19.lib metaBuild)
+
 target_link_libraries(signal19 INTERFACE array19)
 
 if(${co-cpp19-enable-tests})
