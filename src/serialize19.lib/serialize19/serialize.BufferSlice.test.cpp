@@ -1,10 +1,9 @@
-#include "ReadArchive.h"
-#include "dynamicWrite.h"
-#include "serialize.BufferSlice.h"
-
 #include <array19/SliceOf.equals.h>
 #include <array19/SliceOf.ostream.h>
 #include <gtest/gtest.h>
+#include <serialize19/ReadArchive.h>
+#include <serialize19/dynamicWrite.h>
+#include <serialize19/serialize.BufferSlice.h>
 
 using namespace serialize19;
 
