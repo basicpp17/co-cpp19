@@ -1,10 +1,9 @@
-#include "serialize.Partial.h"
-
 #include <gtest/gtest.h>
 #include <partial19/Partial.equals.h>
 #include <partial19/Partial.ostream.h>
 #include <serialize19/ReadArchive.h>
 #include <serialize19/dynamicWrite.h>
+#include <serialize19/serialize.Partial.h>
 #include <serialize19/serialize.std_string.h>
 
 using partial19::Partial;

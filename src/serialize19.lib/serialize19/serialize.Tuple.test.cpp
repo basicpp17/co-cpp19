@@ -1,8 +1,7 @@
-#include "serialize.Tuple.h"
-
 #include <gtest/gtest.h>
 #include <serialize19/ReadArchive.h>
 #include <serialize19/dynamicWrite.h>
+#include <serialize19/serialize.Tuple.h>
 #include <serialize19/serialize.std_string.h>
 #include <tuple19/Tuple.ostream.h>
 
