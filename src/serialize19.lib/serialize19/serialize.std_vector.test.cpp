@@ -31,3 +31,16 @@ TEST(serialize, std_vector_empty) {
 
     EXPECT_EQ(output, input);
 }
+
+TEST(serialize, std_vector_bool) {
+    using T = std::vector<bool>;
+    auto input = T{1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1};
+
+    auto buffer = dynamicWrite(input);
+
+    auto reader = ReadArchive{buffer.slice()};
+    auto output = T{};
+    serialize(reader, output);
+
+    EXPECT_EQ(output, input);
+}
