@@ -1,0 +1,42 @@
+name: Coverity Scan
+
+on:
+  push:
+    branches:
+      - "feature/coverity-scan"
+  # schedule:
+  #   - cron: "0 18 * * *" # Daily at 18:00 UTC
+
+jobs:
+  coverity:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: arbmind/cmake-clang12:latest
+            preset: clang
+
+    env:
+      CMAKE_MAKE_PROGRAM: ninja
+
+    steps:
+      - name: Setup Ninja
+        uses: seanmiddleditch/gha-setup-ninja@master
+
+      - name: Setup Clang
+        uses: egor-tensin/setup-clang@v1
+        with:
+          version: 13
+          platform: x64
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - uses: vapier/coverity-scan-action@v0
+        with:
+          project: basicpp17%2Fco-cpp19
+          token: ${{ secrets.COVERITY_SCAN_TOKEN }}
+          email: ${{ secrets.COVERITY_EMAIL }}
+          command: script/build_cmake.sh clang debug
