@@ -129,7 +129,7 @@ template<> struct Tuple<> {
     template<class O> constexpr void amendOf(Type<O>* = {});
 
     template<class F> constexpr void visitAll(F&&) const& {}
-    template<class F> constexpr void visitAllWithIndex(F&& f) const& {}
+    template<class F> constexpr void visitAllWithIndex(F&&) const& {}
     template<class F> constexpr void amendAll(F&&) & {}
 };
 
