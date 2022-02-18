@@ -15,24 +15,22 @@ template<Archive A, class... Ts> void serialize(A& a, variant19::Variant<Ts...>&
     auto whichValue = static_cast<typename Which::Value>(variant.which());
     serialize(a, whichValue);
 
-    [&, whichValue ]<class... Vs, size_t... Is>(variant19::Variant<Vs...>*, std::index_sequence<Is...>*) {
-        ((whichValue == Is ? (
-                                 [&]<class Value>(Value*) {
-                                     if constexpr (A::mode == ArchiveMode::Read) {
-                                         auto value = Value{};
-                                         serialize(a, value);
-                                         variant = value;
-                                     }
-                                     else {
-                                         auto& value = variant.as(type<Value>);
-                                         serialize(a, value);
-                                     }
-                                 }(nullptr_to<Vs>),
-                                 0)
-                           : 0),
-         ...);
-    }
-    (&variant, nullptr_to<std::make_index_sequence<sizeof...(Ts)>>);
+    auto entry = [&a, &variant, &whichValue]<class Value>(Value*, size_t i) {
+        if (whichValue == i) {
+            if constexpr (A::mode == ArchiveMode::Read) {
+                auto value = Value{};
+                serialize(a, value);
+                variant = value;
+            }
+            else {
+                auto& value = variant.as(type<Value>);
+                serialize(a, value);
+            }
+        }
+    };
+    [&entry]<class... Vs, size_t... Is>(variant19::Variant<Vs...>*, std::index_sequence<Is...>*) {
+        (entry(nullptr_to<Vs>, Is), ...);
+    }(&variant, nullptr_to<std::make_index_sequence<sizeof...(Ts)>>);
 }
 
 } // namespace serialize19
