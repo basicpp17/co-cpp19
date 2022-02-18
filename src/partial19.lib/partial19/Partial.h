@@ -147,8 +147,11 @@ public:
         auto bits = Bits{};
         (bits.setAt(index_of_map<StoredOf<Vs>, Map>), ...);
         auto hasValue = [&](size_t i) { return bits[i]; };
+        auto factory_args = []<class T, class... Xs>(T*, void* ptr, Xs&&... xs) {
+            (details::ConditionalPlacementNew<std::is_same_v<T, StoredOf<Xs>>>::apply((Xs &&) xs, ptr), ...);
+        };
         auto factory = [&]<class T>(Type<T>*, void* ptr) {
-            ((void)(details::ConditionalPlacementNew<std::is_same_v<T, StoredOf<Vs>>>::apply((Vs &&) vs, ptr), 0), ...);
+            factory_args(nullptr_to<T>, ptr, (Vs&&)vs...);
         };
         return fromFactory(hasValue, factory);
     }
