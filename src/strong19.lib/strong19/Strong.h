@@ -4,7 +4,9 @@
 #include "meta19/TypePack.h"
 #include "string19/StringView.literal.h"
 
+#ifndef Q_MOC_RUN
 #include <compare>
+#endif
 #include <type_traits>
 
 namespace strong19 {
