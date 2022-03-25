@@ -28,6 +28,12 @@ template<class A, class B> struct Zip {
         constexpr auto operator*() const -> result { return {*aIt, *bIt}; }
         constexpr auto operator++() -> iterator& { return (++aIt, ++bIt, *this); }
         constexpr bool operator==(const iterator& o) const = default;
+
+        using iterator_category = std::forward_iterator_tag;
+        using value_type = result;
+        using difference_type = void;
+        using pointer = void*;
+        using reference = result;
     };
 
     constexpr Zip() = default;
