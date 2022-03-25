@@ -3,6 +3,9 @@ import qbs
 Project {
     name: "Co-Cpp19"
 
+    // to use libc++ set
+    // modules.cpp.cxxStandardLibrary:libc++ modules.cpp.staticLibraries:c++,c++abi
+
     references: [
         "third_party/third_party.qbs",
         "src/array19.lib",
@@ -50,11 +53,6 @@ Project {
                     "-ftemplate-backtrace-limit=0", // do not cut template backtraces
                     "-Wno-gnu-zero-variadic-macro-arguments" // accept this extensions for opaque strong types
                 )
-            }
-            Properties {
-                condition: qbs.toolchain.contains('clang')
-                cpp.cxxStandardLibrary: "libc++"
-                cpp.staticLibraries: ["c++", "c++abi"]
             }
         }
     }

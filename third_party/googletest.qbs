@@ -43,13 +43,10 @@ StaticLibrary {
     Properties {
         condition: qbs.toolchain.contains('clang') || qbs.toolchain.contains('gcc')
         cpp.cxxFlags: base.concat(
-                          "-Wno-unused-parameter",
-                          "-Wno-missing-field-initializers"
-                          )
-    }
-    Properties {
-        condition: qbs.toolchain.contains('clang')
-        cpp.cxxStandardLibrary: "libc++"
+            "-Wno-unused-parameter",
+            "-Wno-missing-field-initializers",
+            "-Wno-deprecated-copy"
+        )
     }
 
     Export {
@@ -62,7 +59,10 @@ StaticLibrary {
 
         Properties {
             condition: qbs.toolchain.contains('clang') || qbs.toolchain.contains('gcc')
-            cpp.cxxFlags: base.concat("-Wno-unused-parameter")
+            cpp.cxxFlags: base.concat(
+                "-Wno-unused-parameter",
+                "-Wno-deprecated-copy"
+            )
             cpp.dynamicLibraries: [ "pthread" ]
         }
 

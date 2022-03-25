@@ -12,9 +12,13 @@ jobs:
       matrix:
         include:
           - image: arbmind/qbs-clang10:qbs_v1.20.1
+            build_args: "modules.cpp.cxxStandardLibrary:libc++ modules.cpp.staticLibraries:c++,c++abi"
           - image: arbmind/qbs-clang11:qbs_v1.20.1
+            build_args: "modules.cpp.cxxStandardLibrary:libc++ modules.cpp.staticLibraries:c++,c++abi"
           - image: arbmind/qbs-clang12:qbs_v1.20.1
+            build_args: "modules.cpp.cxxStandardLibrary:libc++ modules.cpp.staticLibraries:c++,c++abi"
           - image: arbmind/qbs-gcc11:qbs_v1.20.1
+            build_args: ''
 
     steps:
       - uses: actions/checkout@v2
@@ -28,6 +32,7 @@ jobs:
           ${{ matrix.image }}
           build
           --build-directory /tmp/build
+          ${{ matrix.build_args }}
           -p autotest-runner
 
   windows:

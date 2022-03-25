@@ -43,12 +43,21 @@ template<class T> struct AllocatedArrayUtils {
     /// * slice.begin() has to be the pointer returned by allocate(size.count())
     /// * exceptions form delete will terminate - we assume memory is corrupted!
     static void deallocate(Slice slice) noexcept {
+#if __cpp_sized_deallocation
         if constexpr (__STDCPP_DEFAULT_NEW_ALIGNMENT__ < alignof(T)) {
             ::operator delete[](slice.begin(), slice.count() * sizeof(T), std::align_val_t{alignof(T)});
         }
         else {
             ::operator delete[](slice.begin(), slice.count() * sizeof(T));
         }
+#else
+        if constexpr (__STDCPP_DEFAULT_NEW_ALIGNMENT__ < alignof(T)) {
+            ::operator delete[](slice.begin(), std::align_val_t{alignof(T)});
+        }
+        else {
+            ::operator delete[](slice.begin());
+        }
+#endif
     }
 
     /// default construct every element of \param slice if necessary

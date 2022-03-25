@@ -11,11 +11,9 @@ This library uses the latest C++ features available in Clang and Visual Studio 2
 It compiles in "c++2a" on clang and "c++latest" on Visual Studio.
 
 Currently testd Compilers:
-* Clang 12
+* Clang 12 / 13
+* GCC 11
 * Visual Studio 2019 v16.10.x
-
-GCC may be supported once the following bugs have been fixed:
-* Lambdas in constexpr context
 
 ## Contents
 
