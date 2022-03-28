@@ -11,7 +11,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - image: arbmind/cmake-clang12:latest
+          - image: arbmind/cmake-clang:3.22.3-14
             preset: clang-analyze
 
     steps:

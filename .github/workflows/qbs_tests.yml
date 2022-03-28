@@ -11,14 +11,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - image: arbmind/qbs-clang10:qbs_v1.20.1
+          - image: arbmind/qbs-clang:1.21.0-13
             build_args: "modules.cpp.cxxStandardLibrary:libc++ modules.cpp.staticLibraries:c++,c++abi"
-          - image: arbmind/qbs-clang11:qbs_v1.20.1
+          - image: arbmind/qbs-clang:1.21.0-14
             build_args: "modules.cpp.cxxStandardLibrary:libc++ modules.cpp.staticLibraries:c++,c++abi"
-          - image: arbmind/qbs-clang12:qbs_v1.20.1
-            build_args: "modules.cpp.cxxStandardLibrary:libc++ modules.cpp.staticLibraries:c++,c++abi"
-          - image: arbmind/qbs-gcc11:qbs_v1.20.1
-            build_args: ''
+          - image: arbmind/qbs-clang-libstdcpp:1.21.0-14-11
+          - image: arbmind/qbs-gcc:1.21.0-11
 
     steps:
       - uses: actions/checkout@v2
@@ -28,7 +26,7 @@ jobs:
 
       - name: Build and run Tests
         run: >-
-          docker run --rm -v ${GITHUB_WORKSPACE}:/build -w /build
+          docker run --rm -v ${GITHUB_WORKSPACE}:/project -w /project
           ${{ matrix.image }}
           build
           --build-directory /tmp/build

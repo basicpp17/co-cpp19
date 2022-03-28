@@ -42,11 +42,17 @@ StaticLibrary {
 
     Properties {
         condition: qbs.toolchain.contains('clang') || qbs.toolchain.contains('gcc')
-        cpp.cxxFlags: base.concat(
-            "-Wno-unused-parameter",
-            "-Wno-missing-field-initializers",
-            "-Wno-deprecated-copy"
-        )
+        cpp.cxxFlags: {
+            var flags = base.concat(
+                "-Wno-unused-parameter",
+                "-Wno-missing-field-initializers",
+                "-Wno-deprecated-copy"
+            );
+            if (qbs.toolchain.contains('gcc')) {
+                flags.push("-Wno-maybe-uninitialized")
+            }
+            return flags;
+        }
     }
 
     Export {

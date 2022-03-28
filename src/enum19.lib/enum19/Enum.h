@@ -30,7 +30,7 @@ using string19::StringView;
 
 template<class T> constexpr void metaEnumFor(ADL*, T*) {
     static_assert(std::is_enum_v<T>, "metaEnumFor can only work for an enum declared with ENUM19 macro!");
-    static_assert((sizeof(T), false), "Declare enum class with ENUM19 macro to get access to metaEnum!");
+    static_assert(sizeof(T) && false, "Declare enum class with ENUM19 macro to get access to metaEnum!");
 }
 
 template<class T> constexpr auto meta_enum_for = metaEnumFor(adl, nullptr_to<T>);

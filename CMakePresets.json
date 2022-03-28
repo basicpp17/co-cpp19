@@ -31,11 +31,22 @@
             "name": "clang",
             "inherits": "multi-config",
             "displayName": "Clang",
-            "description": "Recommended configuration for Clang",
+            "description": "Recommended configuration for Clang with libc++",
             "cacheVariables": {
                 "CMAKE_CXX_COMPILER": "clang++",
                 "CMAKE_CXX_EXTENSIONS": false,
                 "CMAKE_CXX_FLAGS": "-stdlib=libc++ -fsized-deallocation -Wall -Wextra -Werror --pedantic -ftemplate-backtrace-limit=0 -Wno-gnu-zero-variadic-macro-arguments"
+            }
+        },
+        {
+            "name": "clang-libstdcpp",
+            "inherits": "multi-config",
+            "displayName": "Clang",
+            "description": "Recommended configuration for Clang with libstdcpp",
+            "cacheVariables": {
+                "CMAKE_CXX_COMPILER": "clang++",
+                "CMAKE_CXX_EXTENSIONS": false,
+                "CMAKE_CXX_FLAGS": "-stdlib=libstdc++ -fsized-deallocation -Wall -Wextra -Werror --pedantic -ftemplate-backtrace-limit=0 -Wno-gnu-zero-variadic-macro-arguments"
             }
         },
         {
@@ -82,6 +93,18 @@
             "name": "clang-release",
             "displayName": "Clang Release Build",
             "configurePreset": "clang",
+            "configuration": "Release"
+        },
+        {
+            "name": "clang-libstdcpp-debug",
+            "displayName": "Clang libstdc++ Debug Build",
+            "configurePreset": "clang-libstdcpp",
+            "configuration": "Debug"
+        },
+        {
+            "name": "clang-libstdcpp-release",
+            "displayName": "Clang libstdc++ Release Build",
+            "configurePreset": "clang-libstdcpp",
             "configuration": "Release"
         },
         {
@@ -142,6 +165,20 @@
             "inherits": "test-base",
             "displayName": "Test Clang Release Build",
             "configurePreset": "clang",
+            "configuration": "Release"
+        },
+        {
+            "name": "test-clang-libstdcpp-debug",
+            "inherits": "test-base",
+            "displayName": "Test Clang libstdc++ Debug Build",
+            "configurePreset": "clang-libstdcpp",
+            "configuration": "Debug"
+        },
+        {
+            "name": "test-clang-libstdcpp-release",
+            "inherits": "test-base",
+            "displayName": "Test Clang libstdc++ Release Build",
+            "configurePreset": "clang-libstdcpp",
             "configuration": "Release"
         },
         {

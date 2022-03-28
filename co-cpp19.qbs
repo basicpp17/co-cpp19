@@ -77,6 +77,12 @@ Project {
             "helpers/partial19_natvis.sh",
             "helpers/tuple19_natvis.sh",
             "helpers/variant19_natvis.sh",
+            "script/build_cmake.sh",
+            "script/docker_run_cmake_clang.bat",
+            "script/docker_run_cmake_gcc.bat",
+            "script/docker_run_qbs_clang_autotest-runner.bat",
+            "script/test_cmake.bat",
+            "script/test_cmake.sh",
         ]
     }
 }

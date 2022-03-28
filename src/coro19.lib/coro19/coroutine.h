@@ -34,10 +34,10 @@
 #        include <memory>
 #        include <new>
 #    endif // _STL_COMPILER_PREPROCESSOR
-#    include <stddef.h>
 #    include <cstdint>
 #    include <exception> // std::current_exception
 #    include <functional> // std::hash
+#    include <stddef.h>
 #    include <type_traits>
 
 struct portable_coro_prefix;
@@ -226,8 +226,12 @@ template<class _Ret> struct coro_traits_sfinae<_Ret, void_t<typename _Ret::promi
 // there is no way but to define in `std::experimental` since compilers are checking it
 namespace experimental {
 
+#    if !defined(__clang__) || (__clang_major__ < 14)
+
 // STRUCT TEMPLATE coroutine_traits
 template<typename _Ret, typename... _Ts> struct coroutine_traits : coro_traits_sfinae<_Ret> {};
+
+#    endif
 
 #    if defined(__clang__)
 
@@ -272,9 +276,18 @@ template<typename _Ret, typename... _Ts> struct _Resumable_helper_traits {
 
 } // namespace experimental
 
+#    if !defined(__clang__) || (__clang_major__ < 14)
+
 // STRUCT TEMPLATE coroutine_traits
 template<typename _Ret, typename... _Param>
 using coroutine_traits = std::experimental::coroutine_traits<_Ret, _Param...>;
+
+#    else
+
+// STRUCT TEMPLATE coroutine_traits
+template<typename _Ret, typename... _Ts> struct coroutine_traits : coro_traits_sfinae<_Ret> {};
+
+#    endif
 
 // 17.12.3.7, hash support
 template<typename _PromiseT> struct hash<coroutine_handle<_PromiseT>> {
