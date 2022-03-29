@@ -1,7 +1,13 @@
-#include "coroutine.h"
-// #include <experimental/coroutine>
 
+
+// requires C++ 17 __has_include
+#if __has_include(<yvals_core.h>)
+#    include <yvals_core.h>
+#endif
 #if not defined(__cpp_lib_coroutine)
+
+#    include "coroutine.h"
+// #include <experimental/coroutine>
 
 #    if defined(__GNUC__)
 using procedure_t = void (*)(void*);

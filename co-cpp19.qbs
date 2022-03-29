@@ -47,7 +47,7 @@ Project {
                 )
             }
             Properties {
-                condition: qbs.toolchain.contains('clang') || qbs.toolchain.contains('gcc')
+                condition: qbs.toolchain.contains('gcc') // also set for clang
                 cpp.cxxFlags: base.concat(
                     "--pedantic", // best C++ compatibility
                     "-ftemplate-backtrace-limit=0", // do not cut template backtraces

@@ -41,14 +41,14 @@ StaticLibrary {
     cpp.defines: ["GTEST_LANG_CXX11"]
 
     Properties {
-        condition: qbs.toolchain.contains('clang') || qbs.toolchain.contains('gcc')
+        condition: qbs.toolchain.contains('gcc') // also set for clang
         cpp.cxxFlags: {
             var flags = base.concat(
                 "-Wno-unused-parameter",
                 "-Wno-missing-field-initializers",
                 "-Wno-deprecated-copy"
             );
-            if (qbs.toolchain.contains('gcc')) {
+            if (!qbs.toolchain.contains('clang')) {
                 flags.push("-Wno-maybe-uninitialized")
             }
             return flags;
@@ -64,7 +64,7 @@ StaticLibrary {
         cpp.defines: ["GTEST_LANG_CXX11"]
 
         Properties {
-            condition: qbs.toolchain.contains('clang') || qbs.toolchain.contains('gcc')
+            condition: qbs.toolchain.contains('gcc') // also set for clang
             cpp.cxxFlags: base.concat(
                 "-Wno-unused-parameter",
                 "-Wno-deprecated-copy"
