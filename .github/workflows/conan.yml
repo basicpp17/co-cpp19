@@ -57,12 +57,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - image: "ghcr.io/fettpet/clang-conan-cmake-dockercontainer:cmake3.21.4-clang11-conan1.42.1"
+        include: 
+                    
+          - image: "ghcr.io/fettpet/clang-conan-cmake-dockercontainer:latest-clang11"
             ConanExtra: "-s compiler.libcxx=libc++"
-          - image: "ghcr.io/fettpet/clang-conan-cmake-dockercontainer:cmake3.21.4-clang12-conan1.42.1"
+          - image: "ghcr.io/fettpet/clang-conan-cmake-dockercontainer:latest-clang12"
             ConanExtra: "-s compiler.libcxx=libc++"
-          - image: "ghcr.io/fettpet/clang-conan-cmake-dockercontainer:cmake3.21.4-clang13-conan1.42.1"
+          - image: "ghcr.io/fettpet/clang-conan-cmake-dockercontainer:latest-clang13"
             ConanExtra: "-s compiler.libcxx=libc++"
     steps:
 
