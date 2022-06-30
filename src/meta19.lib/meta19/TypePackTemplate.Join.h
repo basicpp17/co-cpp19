@@ -14,10 +14,10 @@ auto operator+(const Join<Tpl<Ts...>>&, const Join<Tpl<Ps...>>&) -> Join<Tpl<Ts.
     return {};
 }
 
-template<template<class...> class Tpl, class... Ts> auto operator!(const Join<Tpl<Ts...>>&) -> Tpl<Ts...>;
+template<template<class...> class Tpl, class... Ts> auto unwrap(const Join<Tpl<Ts...>>&) -> Tpl<Ts...>;
 
 } // namespace details
 
-template<class... Ps> using JoinTypePacks = decltype(!(*nullptr_to<details::Join<Ps>> + ...));
+template<class... Ps> using JoinTypePacks = decltype(details::unwrap((*nullptr_to<details::Join<Ps>> + ...)));
 
 } // namespace meta19
