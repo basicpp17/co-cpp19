@@ -14,7 +14,7 @@ namespace array19 {
 ///     constexpr auto array = storeSlice<slice.count()>(slice);
 template<size_t N, class T> constexpr auto storeSlice(const SliceOf<T>& slice) noexcept -> Array<T, N> {
     return [&]<size_t... Is>(std::index_sequence<Is...>*)->Array<T, N> { return {slice[Is]...}; }
-    (static_cast<std::make_index_sequence<3>*>(nullptr));
+    (static_cast<std::make_index_sequence<N>*>(nullptr));
 }
 
 } // namespace array19

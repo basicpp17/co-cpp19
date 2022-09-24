@@ -46,10 +46,12 @@ void mutable_SliceOf_test() {
 }
 
 TEST(SliceOf, Mutate) {
-    int a[] = {1, 2, 3};
+    int a[] = {1, 2, 3, 4};
     auto s = amendSliceOfCArray(a);
     s[1] = 5;
-    auto sa = storeSlice<3>(s);
+    EXPECT_EQ(a[1], 5);
 
+    auto sa = storeSlice<4>(s);
     EXPECT_EQ(sa[1], 5);
+    EXPECT_EQ(sa[3], 4);
 }
