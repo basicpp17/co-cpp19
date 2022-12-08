@@ -15,6 +15,7 @@ Product {
         "Enum.extras.ostream.h",
         "Enum.fmt.h",
         "Enum.h",
+        "Enum.max.h",
         "Enum.names.h",
         "Enum.ostream.h",
         "visitEnumMemberNames.h",

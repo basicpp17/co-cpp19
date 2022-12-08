@@ -12,5 +12,6 @@ Application {
     files: [
         "Enum.ostream.test.cpp",
         "Enum.test.cpp",
+        "Enum.max.test.cpp",
     ]
 }
