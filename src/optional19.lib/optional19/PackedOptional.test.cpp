@@ -38,6 +38,13 @@ TEST(PackedOptional, defaultOfInt) {
 
         ASSERT_FALSE(constOpt && [](int v) { return v > 42; });
         ASSERT_TRUE(constOpt && [](int v) { return v > 0; });
+
+        if (optInt && constOpt) {
+            // compiles?
+        }
+        if (optInt || constOpt) {
+            // compiles?
+        }
     }
 
     auto optInt = OptInt{};
