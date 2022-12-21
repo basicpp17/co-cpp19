@@ -23,8 +23,7 @@ constexpr auto unknown_of = [] {
 }();
 
 /// true if v is a known member of the enum
-template<auto v>
-requires(std::is_enum_v<decltype(v)>) constexpr auto is_member = [] {
+template<auto v> requires(std::is_enum_v<decltype(v)>) constexpr auto is_member = [] {
     using T = decltype(v);
     for (auto& m : meta_enum_for<T>.members) {
         if (m.value == v) return true;
@@ -43,8 +42,7 @@ template<class T> requires(std::is_enum_v<T>) constexpr auto valueName(T v) {
 template<auto v> constexpr auto value_name = valueName(v);
 
 /// StringStore of "Enum::"+value_name<v>
-template<auto v>
-requires(std::is_enum_v<decltype(v)>) constexpr auto type_value_name = [] {
+template<auto v> requires(std::is_enum_v<decltype(v)>) constexpr auto type_value_name = [] {
     using T = decltype(v);
     constexpr auto rope = Rope{meta_enum_for<T>.name, viewLiteral("::"), value_name<v>};
     constexpr auto N = ropeCount(rope);
@@ -52,8 +50,7 @@ requires(std::is_enum_v<decltype(v)>) constexpr auto type_value_name = [] {
 }();
 
 /// StringStore of value_name<v> + " (xx)" where xx is the decimal representation of v
-template<auto v>
-requires(std::is_enum_v<decltype(v)>) constexpr auto debug_value_name = [] {
+template<auto v> requires(std::is_enum_v<decltype(v)>) constexpr auto debug_value_name = [] {
     using T = decltype(v);
     constexpr auto underlying = static_cast<std::underlying_type_t<T>>(v);
     if constexpr (is_member<v>) {

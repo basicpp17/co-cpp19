@@ -1,5 +1,6 @@
-#include "AllocatedArrayOf.equals.h"
 #include "AllocatedArrayOf.h"
+
+#include "AllocatedArrayOf.equals.h"
 #include "AllocatedArrayOf.ostream.h"
 #include "SliceOf.carray.h"
 #include "SliceOf.equals.h"

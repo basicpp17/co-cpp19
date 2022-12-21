@@ -150,9 +150,7 @@ public:
         auto factory_args = []<class T, class... Xs>(T*, void* ptr, Xs&&... xs) {
             (details::ConditionalPlacementNew<std::is_same_v<T, StoredOf<Xs>>>::apply((Xs &&) xs, ptr), ...);
         };
-        auto factory = [&]<class T>(Type<T>*, void* ptr) {
-            factory_args(nullptr_to<T>, ptr, (Vs&&)vs...);
-        };
+        auto factory = [&]<class T>(Type<T>*, void* ptr) { factory_args(nullptr_to<T>, ptr, (Vs &&) vs...); };
         return fromFactory(hasValue, factory);
     }
 

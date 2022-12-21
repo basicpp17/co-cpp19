@@ -14,7 +14,9 @@ template<class Enum> auto enumNameOstream(std::ostream& out, const Enum& e) -> s
 }
 
 /// This wrapper enables ADL for ostream operator
-template<class T> requires(std::is_enum_v<T>) struct EnumName { T v; };
+template<class T> requires(std::is_enum_v<T>) struct EnumName {
+    T v;
+};
 template<class T> EnumName(T) -> EnumName<T>;
 
 template<class T> auto operator<<(std::ostream& out, EnumName<T> wrapper) -> std::ostream& {

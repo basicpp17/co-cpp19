@@ -1,4 +1,5 @@
 #include "Enum.h"
+
 #include "string19/StringView.equals.h"
 #include "string19/StringView.literal.h"
 #include "string19/StringView.ostream.h"

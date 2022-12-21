@@ -1,8 +1,8 @@
 #pragma once
 #include "Strong.h"
 
-#include <stddef.h> // size_t
 #include <functional> // std::hash
+#include <stddef.h> // size_t
 
 namespace strong19 {
 

@@ -1,5 +1,6 @@
-#include "SliceOf.carray.h"
 #include "SliceOf.h"
+
+#include "SliceOf.carray.h"
 #include "SliceOf.store.h"
 
 #include <gtest/gtest.h>

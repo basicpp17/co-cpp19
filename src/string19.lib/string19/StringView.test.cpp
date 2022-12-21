@@ -1,4 +1,5 @@
 #include "StringView.h"
+
 #include "StringView.literal.h"
 
 #include <gtest/gtest.h>

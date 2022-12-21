@@ -1,5 +1,6 @@
-#include "Partial.equals.h"
 #include "Partial.h"
+
+#include "Partial.equals.h"
 #include "Partial.ostream.h"
 
 #include <gtest/gtest.h>

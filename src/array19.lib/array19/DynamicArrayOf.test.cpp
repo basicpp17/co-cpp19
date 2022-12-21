@@ -1,6 +1,7 @@
+#include "DynamicArrayOf.h"
+
 #include "Array.h"
 #include "DynamicArrayOf.equals.h"
-#include "DynamicArrayOf.h"
 #include "DynamicArrayOf.ostream.h"
 #include "SliceOf.carray.h"
 #include "SliceOf.equals.h"

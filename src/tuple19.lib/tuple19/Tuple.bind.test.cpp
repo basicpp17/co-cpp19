@@ -1,5 +1,6 @@
-#include "Tuple.bind.h"
 #include "Tuple.h"
+
+#include "Tuple.bind.h"
 #include "Tuple.ostream.h"
 
 #include <gtest/gtest.h>

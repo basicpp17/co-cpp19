@@ -5,7 +5,7 @@
 #include "string19/StringView.literal.h"
 
 #ifndef Q_MOC_RUN
-#include <compare>
+#    include <compare>
 #endif
 #include <type_traits>
 
@@ -24,9 +24,8 @@ template<class V> struct Weak {
     static_assert(!is_strong<V>);
     V v{};
     constexpr Weak() = default;
-    template<class... Ts>
-    requires(sizeof...(Ts) > 0 && std::is_constructible_v<V, Ts...>) constexpr explicit Weak(Ts&&... ts)
-            : v((Ts &&) ts...) {}
+    template<class... Ts> requires(sizeof...(Ts) > 0 && std::is_constructible_v<V, Ts...>)
+    constexpr explicit Weak(Ts&&... ts) : v((Ts &&) ts...) {}
     bool operator==(const Weak&) const = default;
 };
 

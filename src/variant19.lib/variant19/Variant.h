@@ -8,9 +8,9 @@
 #include "meta19/index_pack.h"
 
 #include <limits>
-#include <stddef.h> // size_t
 #include <memory>
 #include <new>
+#include <stddef.h> // size_t
 #include <utility> // std::launder
 
 namespace variant19 {
@@ -25,7 +25,9 @@ using meta19::StoredOf;
 using meta19::Type;
 using meta19::TypeAtMap;
 
-template<class... Ts> struct Overloaded : Ts... { using Ts::operator()...; };
+template<class... Ts> struct Overloaded : Ts... {
+    using Ts::operator()...;
+};
 template<class... Ts> Overloaded(Ts...) -> Overloaded<Ts...>;
 
 namespace details {
@@ -250,8 +252,8 @@ public:
     }
 
     /// Convinience function to overload all given lambdas
-    template<class... Fs>
-    requires(sizeof...(Fs) > 0) constexpr auto visitOverloaded(Fs&&... fs) const -> decltype(auto) {
+    template<class... Fs> requires(sizeof...(Fs) > 0)
+    constexpr auto visitOverloaded(Fs&&... fs) const -> decltype(auto) {
         return indexed.visitImpl(Overloaded{(Fs &&) fs...});
     }
 

@@ -1,4 +1,5 @@
 #include "Tuple.h"
+
 #include "Tuple.ostream.h"
 #include "meta19/Index.h"
 

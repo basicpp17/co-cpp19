@@ -8,9 +8,10 @@ namespace serialize19 {
 /// - ReadArchive
 /// - SizeArchive
 /// - WriteToArchive
-template<class A> concept Archive = requires(A& a, ArchiveMode& mode, int v) {
-    mode = A::mode;
-    a.withPrimitive(v);
-};
+template<class A>
+concept Archive = requires(A& a, ArchiveMode& mode, int v) {
+                      mode = A::mode;
+                      a.withPrimitive(v);
+                  };
 
 } // namespace serialize19

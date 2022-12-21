@@ -1,5 +1,6 @@
-#include "Array.h"
 #include "Zip.h"
+
+#include "Array.h"
 
 using namespace array19;
 

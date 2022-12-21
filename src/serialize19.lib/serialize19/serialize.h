@@ -13,7 +13,7 @@ struct SerializeFallback {
 };
 template<class A> void serialize(A&, SerializeFallback) {}
 
-template<class T> concept SerializePrimitive = !std::is_const_v<T> && (std::is_arithmetic_v<T> || std::is_enum_v<T>);
+template<class T> concept SerializePrimitive = (!std::is_const_v<T> && (std::is_arithmetic_v<T> || std::is_enum_v<T>));
 
 template<Archive A, SerializePrimitive V> auto serialize(A& a, V& v) { a.withPrimitive(v); }
 

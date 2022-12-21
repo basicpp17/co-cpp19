@@ -31,7 +31,7 @@ public:
 
     [[nodiscard]] constexpr operator SliceOf<const T>() const noexcept { return SliceOf<const T>{m_data, m_count}; }
 
-    template<class K>[[nodiscard]] constexpr auto lowerBound(K&& key) -> Element* {
+    template<class K> [[nodiscard]] constexpr auto lowerBound(K&& key) -> Element* {
         auto less = Less{};
         auto lower_bound = m_data;
         auto count = m_count;
@@ -48,7 +48,7 @@ public:
         return lower_bound;
     }
 
-    template<class K>[[nodiscard]] constexpr auto upperBound(K&& key) -> Element* {
+    template<class K> [[nodiscard]] constexpr auto upperBound(K&& key) -> Element* {
         auto less = Less{};
         auto upper_bound = m_data;
         auto count = m_count;
@@ -65,7 +65,7 @@ public:
         return upper_bound;
     }
 
-    template<class K>[[nodiscard]] constexpr auto equalRange(K&& key) -> OrderedSliceOf {
+    template<class K> [[nodiscard]] constexpr auto equalRange(K&& key) -> OrderedSliceOf {
         auto less = Less{};
         auto count = m_count;
         auto lower_bound = m_data;

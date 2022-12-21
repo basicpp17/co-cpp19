@@ -6,7 +6,10 @@
 
 namespace strong19 {
 
-template<class T> concept Ostreamable = requires(T v, std::ostream& out) { {out << v.v}; };
+template<class T>
+concept Ostreamable = requires(T v, std::ostream& out) {
+                          { out << v.v };
+                      };
 
 template<class S> auto strongOstream(std::ostream& out, const S& s) -> std::ostream& {
     if constexpr (Ostreamable<S>) {

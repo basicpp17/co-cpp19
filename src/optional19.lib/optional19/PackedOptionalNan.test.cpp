@@ -1,6 +1,7 @@
+#include "PackedOptionalNan.h"
+
 #include "PackedOptional.equals.h"
 #include "PackedOptional.ostream.h"
-#include "PackedOptionalNan.h"
 
 #include <gtest/gtest.h>
 

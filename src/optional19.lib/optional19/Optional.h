@@ -90,8 +90,8 @@ template<class T> struct OptionalStorage {
 
 /// simplified specialization if no destructor is required
 /// * storing actual type saves a lot of casting overhead
-template<class T>
-requires(std::is_trivially_default_constructible_v<T>&& std::is_trivially_destructible_v<T>) struct OptionalStorage<T> {
+template<class T> requires(std::is_trivially_default_constructible_v<T> && std::is_trivially_destructible_v<T>)
+struct OptionalStorage<T> {
     T m_value{};
     bool m_valid{};
 

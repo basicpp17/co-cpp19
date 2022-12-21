@@ -1,5 +1,6 @@
-#include "Optional.equals.h"
 #include "Optional.h"
+
+#include "Optional.equals.h"
 #include "Optional.ostream.h"
 
 #include <gtest/gtest.h>

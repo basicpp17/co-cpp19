@@ -3,8 +3,8 @@
 #include "MoveSliceOf.h"
 #include "SliceOf.single.h"
 
-#include <stddef.h> // size_t
 #include <new> // new allocators
+#include <stddef.h> // size_t
 #include <type_traits> // is_nothrow_*
 
 namespace array19 {
@@ -52,7 +52,8 @@ public:
     }
 
     template<class... Ts> requires(sizeof...(Ts) > 0) && requires(Ts&&... args) { (T{(Ts &&) args}, ...); }
-    explicit AllocatedArrayOf(Ts&&... args) : m_pointer(Utils::allocate(sizeof...(Ts))), m_count(0) {
+    explicit AllocatedArrayOf(Ts&&... args) : m_pointer(Utils::allocate(sizeof...(Ts)))
+                                            , m_count(0) {
         (new (m_pointer + m_count++) T{(Ts &&) args}, ...);
     }
 

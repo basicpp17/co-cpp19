@@ -1,8 +1,8 @@
 #pragma once
 #include "Array.h"
 
-#include <stddef.h> // size_t
 #include <ostream>
+#include <stddef.h> // size_t
 
 namespace array19 {
 

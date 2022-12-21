@@ -64,3 +64,7 @@ PointerAlignment: Left
 PenaltyReturnTypeOnItsOwnLine: 2000
 PenaltyBreakBeforeFirstCallParameter: 100
 PenaltyBreakTemplateDeclaration: 10
+
+RequiresClausePosition: SingleLine
+IndentRequiresClause: false
+BreakBeforeConceptDeclarations: Allowed

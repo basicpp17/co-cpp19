@@ -1,4 +1,5 @@
 #include "Strong.h"
+
 #include "Strong.ostream.h"
 #include "Strong.traits.h"
 

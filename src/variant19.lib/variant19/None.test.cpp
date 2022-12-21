@@ -1,4 +1,5 @@
 #include "None.h"
+
 #include "None.ostream.h"
 
 #include <gtest/gtest.h>

@@ -1,5 +1,6 @@
-#include "SignalWith.h"
 #include "Subscriptions.h"
+
+#include "SignalWith.h"
 
 #include <gtest/gtest.h>
 

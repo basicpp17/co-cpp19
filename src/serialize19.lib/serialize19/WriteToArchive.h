@@ -29,8 +29,8 @@ private:
 static_assert(Archive<WriteToArchive<>>);
 
 // note: Writing wont modify the value, but serialize methods can only have one signature
-template<class T, EndianBehaviour endian>
-requires(std::is_const_v<T>) void serialize(WriteToArchive<endian>& wa, T& v) {
+template<class T, EndianBehaviour endian> requires(std::is_const_v<T>)
+void serialize(WriteToArchive<endian>& wa, T& v) {
     serialize(wa, const_cast<std::remove_const_t<T>&>(v));
 }
 

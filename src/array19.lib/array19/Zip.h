@@ -47,6 +47,6 @@ private:
     B* b{};
 };
 
-template<class A, class B> Zip(A&, B&)->Zip<A, B>;
+template<class A, class B> Zip(A&, B&) -> Zip<A, B>;
 
 } // namespace array19

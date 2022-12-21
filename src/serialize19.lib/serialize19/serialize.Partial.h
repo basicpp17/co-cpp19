@@ -2,8 +2,8 @@
 #include "partial19/Partial.h" // requires partial19
 #include "serialize.h"
 
-#include <stddef.h> // size_t
 #include <cstdint>
+#include <stddef.h> // size_t
 
 namespace serialize19 {
 

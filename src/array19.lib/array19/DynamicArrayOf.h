@@ -3,8 +3,8 @@
 #include "MoveSliceOf.h"
 #include "SliceOf.single.h"
 
-#include <stddef.h> // size_t
 #include <new> // launder
+#include <stddef.h> // size_t
 
 namespace array19 {
 
@@ -49,7 +49,8 @@ public:
     }
 
     template<class... Ts> requires(sizeof...(Ts) > 0) && requires(Ts&&... args) { (T{(Ts &&) args}, ...); }
-    explicit DynamicArrayOf(Ts&&... args) : m_pointer(Utils::allocate(sizeof...(Ts))), m_capacity(sizeof...(Ts)) {
+    explicit DynamicArrayOf(Ts&&... args) : m_pointer(Utils::allocate(sizeof...(Ts)))
+                                          , m_capacity(sizeof...(Ts)) {
         (new (m_pointer + m_count++) T{(Ts &&) args}, ...);
     }
 
