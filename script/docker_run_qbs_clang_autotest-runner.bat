@@ -1,7 +1,7 @@
 @echo off
 
 set "PROJECT=co-cpp19"
-set "IMAGE=arbmind/qbs-clang12:latest"
+set "IMAGE=arbmind/qbs-clang-libstdcpp:latest"
 set "BUILD_VOLUME=%PROJECT%-qbs-build"
 
 pushd "%~dp0.."

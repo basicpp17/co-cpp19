@@ -1,7 +1,7 @@
 @echo off
 
 set "PROJECT=co-cpp19"
-set "IMAGE=arbmind/cmake-clang12:latest"
+set "IMAGE=arbmind/cmake-clang:latest"
 set "BUILD_VOLUME=%PROJECT%-cmake-build"
 
 pushd "%~dp0.."

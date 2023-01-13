@@ -39,9 +39,11 @@ jobs:
             preset: "clang"
           - image: "arbmind/cmake-clang:3.22.3-14"
             preset: "clang"
-          - image: "arbmind/cmake-clang-libstdcpp:3.22.3-14-11"
+          - image: "arbmind/cmake-clang-libstdcpp:3.25.1-15-12"
             preset: "clang-libstdcpp"
           - image: "arbmind/cmake-gcc:3.22.3-11"
+            preset: "gcc"
+          - image: "arbmind/cmake-gcc:3.25.1-12"
             preset: "gcc"
 
     steps:
