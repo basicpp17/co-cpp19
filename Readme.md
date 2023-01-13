@@ -7,18 +7,18 @@ A versatile collection of compile time optimized tools for C++ programming.
 
 ## Target Compilers
 
-This library uses the latest C++ features available in Clang and Visual Studio 2019.
-It compiles in "c++2a" on clang and "c++latest" on Visual Studio.
+This library uses the latest C++ features available in GCC, Clang and Visual Studio 2019 and 2022.
+It compiles in "c++20" mode on all compilers.
 
-Currently testd Compilers:
-* Clang 12 / 13
-* GCC 11
-* Visual Studio 2019 v16.10.x
+Currently tested Compilers:
+* Clang 12 to 15
+* GCC 11, 12
+* Visual Studio 2019 v16.11.x, 2022 v17.4.x
 
 ## Contents
 
 Co-Cpp19 contains a lot of sublibraries and is splitted into many small headers.
-This should optimize for pay only for what you use policy of C++, also at compile time.
+This aims to enable the "pay only what you use policy" of C++ at compile time.
 
 * cpp19 - compiler configuration (yours should be somewhat similar)
 * array19 - static and dynamic arrays, slices
