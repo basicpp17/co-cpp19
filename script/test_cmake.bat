@@ -1,9 +1,9 @@
 @echo off
 
 :: default arguments:
-::   script/test_cmake.bat msvc2019 debug
+::   script/test_cmake.bat msvc debug
 if "%~1"=="" (
-  set ConfigPreset=msvc2019
+  set ConfigPreset=msvc
 ) else (
   set ConfigPreset=%1
 )

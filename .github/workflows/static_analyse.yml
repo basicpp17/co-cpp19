@@ -11,12 +11,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - image: arbmind/cmake-clang:3.22.3-14
+          - image: arbmind/cmake-clang:3.25.1-15
             preset: clang-analyze
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Build and Analyze
         run: >-

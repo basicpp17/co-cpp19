@@ -1,8 +1,7 @@
 [requires]
-variant19/1.0
+co-cpp19/1.0
 gtest/1.11.0
 
 [generators]
-cmake_find_package
-cmake_paths
 cmake
+CMakeDeps

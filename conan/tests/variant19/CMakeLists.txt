@@ -1,29 +1,14 @@
-project(conan-cocpp19)
-cmake_minimum_required(VERSION 3.1)
-include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup(TARGETS)
-
+cmake_minimum_required(VERSION 3.15)
+project(cocpp19-variant19)
 set(CMAKE_CXX_STANDARD 20)
 
-find_package(variant19 REQUIRED)
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+conan_basic_setup()
+
+set(CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR} ${CMAKE_MODULE_PATH})
 find_package(GTest REQUIRED)
-if(variant19_FOUND)
-   enable_testing()
-   include_directories(${variant19_INCLUDE_DIRS})
-   include_directories(${GTest_INCLUDE_DIR})
-   file(
-      GLOB_RECURSE
-      variant19-tests
-      "../../../src/variant19.lib/*.test.cpp")
-      
-   if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++ -fsized-deallocation -Wall -Wextra -Werror --pedantic -ftemplate-backtrace-limit=0 -Wno-gnu-zero-variadic-macro-arguments")
-   endif()
-   add_executable(cocpp19 ${variant19-tests})
-   target_link_libraries(cocpp19 GTest::gtest_main GTest::gtest variant19::variant19)
-   add_test(cocpp19 bin/cocpp19)
-   
-endif()
+find_package(CoCpp19 COMPONENTS variant19 REQUIRED)
 
+enable_testing()
 
+include("../../../src/variant19.lib/variant19/variant19.tests.cmake")

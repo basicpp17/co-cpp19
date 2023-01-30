@@ -10,108 +10,72 @@ jobs:
       - name: Install Conan
         uses: turtlebrowser/get-conan@main
 
-      - name: install CMake 
+      - name: install CMake
         uses: lukka/get-cmake@latest
 
       - name: Install MSVC
         uses: ilammy/msvc-dev-cmd@v1
 
       - name: Checkout source
-        uses: actions/checkout@v2  
+        uses: actions/checkout@v3
 
-      - name: Install packages
+      - name: Create conan package
+        run: |
+          cd conan
+          conan create . --build=missing --profile profiles/msvc2022
+
+      - name: Test package components
         shell: pwsh
         run: |
-          Set-Location src 
-          [array]$folders=@('array19.lib','coro19.lib','meta19.lib','tuple19.lib', 'string19.lib', 'strong19.lib', 'variant19.lib', 'enum19.lib', 'lookup19.lib', 'optional19.lib', 'partial19.lib', 'serialize19.lib', 'signal19.lib')
-          foreach ($folder in $folders) {
-              Set-Location $folder 
-              conan create . ${{ matrix.ConanExtra }}
-              Set-Location ..
-          }
-          Set-Location ../conan
-          conan create . ${{ matrix.ConanExtra }}
-
-      - name: Test packages 
-        shell: pwsh
-        run: |     
-          Set-Location conan/tests 
-          [array]$folders=Get-ChildItem -Path . -Directory 
-          foreach ($folder in $folders) {
-              Set-Location $folder 
-              New-Item -Path . -Name "build" -ItemType "directory"
-              Set-Location build
-              conan install .. ${{ matrix.ConanExtra }}
-              cmake .. -DCONAN_DISABLE_CHECK_COMPILER=true
-              cmake --build . --config Release
-              ctest
-              Set-Location ..
-              Remove-Item -Recurse -Force build
-              Set-Location ..
-          } 
-
-  Conan-Tests-Linux:
-    name: Conan-tests-linux
-    runs-on: "ubuntu-latest"
-
-    strategy:
-      fail-fast: false
-      matrix:
-        include: 
-                    
-          - image: "ghcr.io/fettpet/clang-conan-cmake-dockercontainer:latest-clang11"
-            ConanExtra: "-s compiler.libcxx=libc++"
-          - image: "ghcr.io/fettpet/clang-conan-cmake-dockercontainer:latest-clang12"
-            ConanExtra: "-s compiler.libcxx=libc++"
-          - image: "ghcr.io/fettpet/clang-conan-cmake-dockercontainer:latest-clang13"
-            ConanExtra: "-s compiler.libcxx=libc++"
-    steps:
-
-      - name: Checkout source
-        uses: actions/checkout@v2  
-
-
-      - name: Create Conan home folder 
-        shell: pwsh
-        run: |
-          $DIRECTORY_PATH= Join-Path ${Env:RUNNER_TEMP} conanserver
-          echo "DIRECTORY_PATH=${DIRECTORY_PATH}" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf-8 -Append
-          if(!(Test-Path -path $DIRECTORY_PATH))  
-          {   
-              New-Item -ItemType directory -Path $DIRECTORY_PATH
-          }
-
-      - name: Debug 
-        shell: pwsh 
-        run: gci env:* | sort-object name
-
-      - name: Install packages
-        shell: pwsh
-        run: |
-          Set-Location src 
-          [array]$folders=@('array19.lib','coro19.lib','meta19.lib','tuple19.lib', 'string19.lib', 'strong19.lib', 'variant19.lib', 'enum19.lib', 'lookup19.lib', 'optional19.lib', 'partial19.lib', 'serialize19.lib', 'signal19.lib')
-          foreach ($folder in $folders) {
-              Set-Location $folder 
-              docker run --network="host" --rm  -v ${PWD}:/project -v ${env:DIRECTORY_PATH}:/conan -w /project ${{ matrix.image }} conan create . ${{ matrix.ConanExtra }}
-              Set-Location ..
-          }
-          Set-Location ../conan
-          $Path = Get-Location
-          Write-Output $Path
-          docker run --network="host" --rm  -v ${env:GITHUB_WORKSPACE}:/project -v ${env:DIRECTORY_PATH}:/conan -w /project/conan ${{ matrix.image }} conan create . ${{ matrix.ConanExtra }}
-
-      - name: Test packages 
-        shell: pwsh
-        run: |     
-          Set-Location conan/tests 
-          [array]$folders=Get-ChildItem -Path . -Directory -Name
-          foreach ($folder in $folders) {
-              New-Item -Path . -Name $folder"/build" -ItemType "directory"
-              docker run --network="host" --rm  -v ${env:GITHUB_WORKSPACE}:/project -v ${env:DIRECTORY_PATH}:/conan -w /project/conan/tests/${folder}/build ${{ matrix.image }} conan install .. --build=gtest ${{ matrix.ConanExtra }}
-              docker run --network="host" --rm  -v ${env:GITHUB_WORKSPACE}:/project -v ${env:DIRECTORY_PATH}:/conan -w /project/conan/tests/${folder}/build ${{ matrix.image }} cmake .. -DCONAN_DISABLE_CHECK_COMPILER=true
-              docker run --network="host" --rm  -v ${env:GITHUB_WORKSPACE}:/project -v ${env:DIRECTORY_PATH}:/conan -w /project/conan/tests/${folder}/build ${{ matrix.image }} cmake --build . 
-              docker run --network="host" --rm  -v ${env:GITHUB_WORKSPACE}:/project -v ${env:DIRECTORY_PATH}:/conan -w /project/conan/tests/${folder}/build ${{ matrix.image }} ctest --no-tests=error
-              if (!$?) {
+          foreach ($folder in (Get-ChildItem -Path ./conan/tests -Directory | Foreach-Object {$_.Name})) {
+              echo "Running ${folder}"
+              & script\test_conan.bat "${folder}" --profile "$pwd/conan/profiles/msvc2022"
+              if ($LASTEXITCODE -ne 0) {
                 exit(1)
               }
-          } 
+          }
+
+  # TODO: need new docker images - gcc12-ubuntu-22.04-cmake-3.25.2-conan-1.57
+  # Conan-Tests-Linux:
+  #   name: Conan-tests-linux
+  #   runs-on: "ubuntu-latest"
+
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       include:
+  #         # - image: "conanio/gcc12-ubuntu18.04:latest"
+  #         # - image: "ghcr.io/fettpet/clang-conan-cmake-dockercontainer:latest-clang11"
+  #         #   ConanExtra: "-s compiler.libcxx=libc++"
+  #         # - image: "ghcr.io/fettpet/clang-conan-cmake-dockercontainer:latest-clang12"
+  #         #   ConanExtra: "-s compiler.libcxx=libc++"
+  #         # - image: "ghcr.io/fettpet/clang-conan-cmake-dockercontainer:latest-clang13"
+  #         #   ConanExtra: "-s compiler.libcxx=libc++"
+  #   steps:
+  #     - name: Checkout source
+  #       uses: actions/checkout@v3
+
+  #     - name: Create Conan home folder
+  #       shell: pwsh
+  #       run: |
+  #         $DIRECTORY_PATH=Join-Path ${Env:RUNNER_TEMP} conanserver
+  #         echo "DIRECTORY_PATH=${DIRECTORY_PATH}" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf-8 -Append
+  #         if (!(Test-Path -path $DIRECTORY_PATH)) {
+  #             New-Item -ItemType directory -Path $DIRECTORY_PATH
+  #         }
+
+  #     - name: Create conan package
+  #       shell: pwsh
+  #       run: |
+  #         docker run --network="host" --rm  -v ${env:GITHUB_WORKSPACE}:/project -v ${env:DIRECTORY_PATH}:/conan -w /project/conan ${{ matrix.image }} conan create . --build=gtest --build=co-cpp19 ${{ matrix.ConanExtra }}
+
+  #     - name: Test package components
+  #       shell: pwsh
+  #       run: |
+  #         [array]$folders=Get-ChildItem -Path conan/tests -Directory -Name
+  #         foreach ($folder in $folders) {
+  #             docker run --network="host" --rm -v ${env:GITHUB_WORKSPACE}:/project -v ${env:DIRECTORY_PATH}:/conan -w /project ${{ matrix.image }} script/test_conan.sh ${folder} ${{ matrix.ConanExtra }}
+  #             if (!$?) {
+  #               exit(1)
+  #             }
+  #         }

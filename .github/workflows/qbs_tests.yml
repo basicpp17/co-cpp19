@@ -20,7 +20,7 @@ jobs:
           - image: arbmind/qbs-gcc:1.24.0-12
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Get Googletest
         run: third_party/git_clone_googletest.sh
@@ -49,16 +49,17 @@ jobs:
 
           - os: windows-2022
             vcvars: C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat
-            experimental: true
+            experimental: false
 
     steps:
       - name: Install Qbs
         run: choco install qbs
+
       - name: Setup Qbs
         run: |
           qbs setup-toolchains --type msvc $(cmd /c '"${{ matrix.vcvars }}" >nul & where cl') msvc
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Get Googletest
         run: third_party/git_clone_googletest.sh

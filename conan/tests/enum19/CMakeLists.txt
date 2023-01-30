@@ -1,31 +1,14 @@
-project(conan-cocpp19)
-cmake_minimum_required(VERSION 3.1)
-include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup(TARGETS)
-
+cmake_minimum_required(VERSION 3.15)
+project(cocpp19-enum19)
 set(CMAKE_CXX_STANDARD 20)
 
-find_package(enum19 REQUIRED)
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+conan_basic_setup()
+
+set(CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR} ${CMAKE_MODULE_PATH})
 find_package(GTest REQUIRED)
-if(enum19_FOUND)
-   enable_testing()
-   include_directories(${enum19_INCLUDE_DIRS})
-   include_directories(${GTest_INCLUDE_DIR})
-   file(
-      GLOB_RECURSE
-      enum19-tests
-      "../../../src/enum19.lib/*.test.cpp")
-      
-   if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++ -fsized-deallocation -Wall -Wextra -Werror --pedantic -ftemplate-backtrace-limit=0 -Wno-gnu-zero-variadic-macro-arguments")
-   endif()
-   add_executable(cocpp19 ${enum19-tests})
-   target_link_libraries(cocpp19 GTest::gtest_main GTest::gtest enum19::enum19)
-   add_test(cocpp19 bin/cocpp19)
-   
-endif()
+find_package(CoCpp19 COMPONENTS enum19 REQUIRED)
 
+enable_testing()
 
-
-
+include("../../../src/enum19.lib/enum19/enum19.tests.cmake")

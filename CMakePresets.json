@@ -12,16 +12,15 @@
             "generator": "Ninja Multi-Config",
             "binaryDir": "${sourceDir}/build/${presetName}",
             "cacheVariables": {
-                "co-cpp19-enable-tests": true,
                 "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
                 "CMAKE_CTEST_ARGUMENTS": "--output-on-failure",
                 "CMAKE_CONFIGURATION_TYPES": "Debug;Release"
             }
         },
         {
-            "name": "msvc2019",
+            "name": "msvc",
             "inherits": "multi-config",
-            "displayName": "Visual Studio 2019",
+            "displayName": "Visual Studio 2019/2022",
             "description": "Recommended configuration for windows builds",
             "cacheVariables": {
                 "CMAKE_CXX_FLAGS": "/EHsc /permissive- /Zc:__cplusplus /Zc:externConstexpr /Zc:inline /Zc:preprocessor /Zc:throwingNew /diagnostics:caret /experimental:external /external:anglebrackets /external:W0 /wd4068 /D_ENABLE_EXTENDED_ALIGNED_STORAGE"
@@ -72,15 +71,15 @@
     ],
     "buildPresets": [
         {
-            "name": "msvc2019-debug",
-            "displayName": "Visual Studio 2019 Debug Build",
-            "configurePreset": "msvc2019",
+            "name": "msvc-debug",
+            "displayName": "Visual Studio 2019/2022 Debug Build",
+            "configurePreset": "msvc",
             "configuration": "Debug"
         },
         {
-            "name": "msvc2019-release",
-            "displayName": "Visual Studio 2019 Release Build",
-            "configurePreset": "msvc2019",
+            "name": "msvc-release",
+            "displayName": "Visual Studio 2019/2022 Release Build",
+            "configurePreset": "msvc",
             "configuration": "Release"
         },
         {
@@ -140,17 +139,17 @@
             }
         },
         {
-            "name": "test-msvc2019-debug",
+            "name": "test-msvc-debug",
             "inherits": "test-base",
-            "displayName": "Test Visual Studio 2019 Debug Build",
-            "configurePreset": "msvc2019",
+            "displayName": "Test Visual Studio 2019/2022 Debug Build",
+            "configurePreset": "msvc",
             "configuration": "Debug"
         },
         {
-            "name": "test-msvc2019-release",
+            "name": "test-msvc-release",
             "inherits": "test-base",
-            "displayName": "Test Visual Studio 2019 Release Build",
-            "configurePreset": "msvc2019",
+            "displayName": "Test Visual Studio 2019/2022 Release Build",
+            "configurePreset": "msvc",
             "configuration": "Release"
         },
         {

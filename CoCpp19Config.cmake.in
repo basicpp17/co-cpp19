@@ -1,0 +1,25 @@
+@PACKAGE_INIT@
+
+set(_CoCpp19_supported_components
+  array19
+  coro19
+  enum19
+  lookup19
+  meta19
+  optional19
+  partial19
+  serialize19
+  serialize19
+  string19
+  strong19
+  tuple19
+  variant19
+)
+
+foreach(_comp ${CoCpp19_FIND_COMPONENTS})
+  if (NOT _comp IN_LIST _CoCpp19_supported_components)
+    set(CoCpp19_FOUND False)
+    set(CoCpp19_NOT_FOUND_MESSAGE "Unsupported component: ${_comp}")
+  endif()
+  include("${CMAKE_CURRENT_LIST_DIR}/CoCpp19-${_comp}-targets.cmake")
+endforeach()

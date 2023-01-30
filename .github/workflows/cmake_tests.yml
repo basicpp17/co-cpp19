@@ -5,20 +5,25 @@ on: push
 jobs:
   windows:
     name: "Windows"
-    runs-on: windows-2019
+    runs-on: ${{ matrix.os }}
 
     strategy:
       fail-fast: false
       matrix:
         include:
-          - preset: "msvc2019"
+          - os: windows-2019
+            preset: "msvc"
+
+          - os: windows-2022
+            preset: "msvc"
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install Tools Ninja and mvsc
         uses: ilammy/msvc-dev-cmd@v1
+
       - uses: seanmiddleditch/gha-setup-ninja@master
 
       - name: Build and Test Debug
@@ -35,20 +40,20 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - image: "arbmind/cmake-clang:3.22.3-13"
+          - image: "arbmind/cmake-clang:3.25.1-13"
             preset: "clang"
-          - image: "arbmind/cmake-clang:3.22.3-14"
+          - image: "arbmind/cmake-clang:3.25.1-14"
             preset: "clang"
           - image: "arbmind/cmake-clang-libstdcpp:3.25.1-15-12"
             preset: "clang-libstdcpp"
-          - image: "arbmind/cmake-gcc:3.22.3-11"
+          - image: "arbmind/cmake-gcc:3.25.1-11"
             preset: "gcc"
           - image: "arbmind/cmake-gcc:3.25.1-12"
             preset: "gcc"
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Build and Test Debug
         run: >-
