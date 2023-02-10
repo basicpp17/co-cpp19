@@ -22,6 +22,7 @@
             "inherits": "multi-config",
             "displayName": "Visual Studio 2019/2022",
             "description": "Recommended configuration for windows builds",
+            "installDir": "${sourceDir}/artifacts/msvc",
             "cacheVariables": {
                 "CMAKE_CXX_FLAGS": "/EHsc /permissive- /Zc:__cplusplus /Zc:externConstexpr /Zc:inline /Zc:preprocessor /Zc:throwingNew /diagnostics:caret /experimental:external /external:anglebrackets /external:W0 /wd4068 /D_ENABLE_EXTENDED_ALIGNED_STORAGE"
             }
@@ -31,6 +32,7 @@
             "inherits": "multi-config",
             "displayName": "Clang",
             "description": "Recommended configuration for Clang with libc++",
+            "installDir": "${sourceDir}/artifacts/clang",
             "cacheVariables": {
                 "CMAKE_CXX_COMPILER": "clang++",
                 "CMAKE_CXX_EXTENSIONS": false,
@@ -42,6 +44,7 @@
             "inherits": "multi-config",
             "displayName": "Clang",
             "description": "Recommended configuration for Clang with libstdcpp",
+            "installDir": "${sourceDir}/artifacts/clang-libstdcpp",
             "cacheVariables": {
                 "CMAKE_CXX_COMPILER": "clang++",
                 "CMAKE_CXX_EXTENSIONS": false,
@@ -64,6 +67,7 @@
             "inherits": "multi-config",
             "displayName": "G++",
             "description": "Recommended configuration for GNU GCC",
+            "installDir": "${sourceDir}/artifacts/gcc",
             "cacheVariables": {
                 "CMAKE_CXX_FLAGS": "-fsized-deallocation -Wall -Wextra -Werror --pedantic -ftemplate-backtrace-limit=0 -Wno-maybe-uninitialized -Wno-stringop-overflow -Wno-array-bounds -Wno-restrict"
             }

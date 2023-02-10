@@ -8,7 +8,7 @@ set(_CoCpp19_supported_components
   meta19
   optional19
   partial19
-  serialize19
+  signal19
   serialize19
   string19
   strong19
@@ -23,3 +23,5 @@ foreach(_comp ${CoCpp19_FIND_COMPONENTS})
   endif()
   include("${CMAKE_CURRENT_LIST_DIR}/CoCpp19-${_comp}-targets.cmake")
 endforeach()
+
+check_required_components(CoCpp19)
