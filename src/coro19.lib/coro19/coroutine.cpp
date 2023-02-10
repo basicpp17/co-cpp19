@@ -4,6 +4,9 @@
 #if __has_include(<yvals_core.h>)
 #    include <yvals_core.h>
 #endif
+#if __has_include(<version>)
+#    include <version>
+#endif
 #if not defined(__cpp_lib_coroutine)
 
 #    include "coroutine.h"

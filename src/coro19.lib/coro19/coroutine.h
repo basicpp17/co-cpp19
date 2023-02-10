@@ -19,6 +19,9 @@
 #if __has_include(<yvals_core.h>)
 #    include <yvals_core.h>
 #endif
+#if __has_include(<version>)
+#    include <version>
+#endif
 #ifdef __cpp_lib_coroutine
 #    include <coroutine>
 #else
