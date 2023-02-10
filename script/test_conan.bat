@@ -17,12 +17,16 @@ pushd "%~dp0.."
 
 mkdir "%BUILD_PATH%"
 cd "%BUILD_PATH%"
+
 conan install "%BASE_DIR%/%SOURCE_PATH%" %2 %3 %4 %5
 if !errorlevel! neq 0 exit /b !errorlevel!
+
 cmake "%BASE_DIR%/%SOURCE_PATH%" "-DCMAKE_BUILD_TYPE=Release" -G "Ninja"
 if !errorlevel! neq 0 exit /b !errorlevel!
+
 cmake --build .
 if !errorlevel! neq 0 exit /b !errorlevel!
+
 ctest
 if !errorlevel! neq 0 exit /b !errorlevel!
 

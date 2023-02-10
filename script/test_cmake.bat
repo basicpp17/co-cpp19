@@ -1,4 +1,5 @@
 @echo off
+setlocal enabledelayedexpansion
 
 :: default arguments:
 ::   script/test_cmake.bat msvc debug
@@ -20,8 +21,12 @@ set "BUILD_PATH=build/%ConfigPreset%"
 pushd "%~dp0.."
 if not exist "%BUILD_PATH%/compile_commands.json" (
   cmake -S . --preset "%ConfigPreset%"
+  if !errorlevel! neq 0 exit /b !errorlevel!
 )
 cmake --build --preset "%BuildPreset%"
+if !errorlevel! neq 0 exit /b !errorlevel!
+
 ctest --preset "%TestPreset%"
+if !errorlevel! neq 0 exit /b !errorlevel!
 
 popd
