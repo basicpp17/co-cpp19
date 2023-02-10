@@ -10,4 +10,5 @@ third_party/*/
 .vscode/
 .vs/
 build/
+artifacts/
 CMakeUserPresets.json
