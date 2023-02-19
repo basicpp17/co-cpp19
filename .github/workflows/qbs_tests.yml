@@ -28,11 +28,20 @@ jobs:
       - name: Build and run Tests
         run: >-
           docker run --rm -v ${GITHUB_WORKSPACE}:/project -w /project
+          --env GTEST_OUTPUT=xml:/project/reports/qbs/
           ${{ matrix.image }}
           build
           --build-directory /tmp/build
           ${{ matrix.build_args }}
           -p autotest-runner
+
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: success() || failure()
+        with:
+          name: ${{ matrix.image }} Tests
+          path: reports/**/*.xml
+          reporter: java-junit
 
   windows:
     name: "Windows"
@@ -66,7 +75,17 @@ jobs:
         shell: bash
 
       - name: Build and run Tests
+        env:
+          GTEST_OUTPUT: xml:${{ github.workspace }}\reports\msvc\
         run: >-
           qbs build profile:msvc
           --build-directory ${env:RUNNER_TEMP}\build
           -p autotest-runner
+
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: success() || failure()
+        with:
+          name: ${{ matrix.os }} Tests
+          path: reports/**/*.xml
+          reporter: java-junit

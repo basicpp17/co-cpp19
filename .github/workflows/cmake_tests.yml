@@ -21,16 +21,29 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Setup CMake & Ninja
+        uses: lukka/get-cmake@latest
+
       - name: Install Tools Ninja and mvsc
         uses: ilammy/msvc-dev-cmd@v1
 
-      - uses: seanmiddleditch/gha-setup-ninja@master
-
       - name: Build and Test Debug
+        env:
+          GTEST_OUTPUT: xml:${{ github.workspace }}\reports\debug\
         run: script/test_cmake.bat ${{ matrix.preset }} debug
 
       - name: Build and Test Release
+        env:
+          GTEST_OUTPUT: xml:${{ github.workspace }}\reports\release\
         run: script/test_cmake.bat ${{ matrix.preset }} release
+
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: success() || failure()
+        with:
+          name: ${{ matrix.os }} Tests
+          path: reports/**/*.xml
+          reporter: java-junit
 
   linux:
     name: "Linux"
@@ -58,11 +71,24 @@ jobs:
       - name: Build and Test Debug
         run: >-
           docker run --rm -v ${GITHUB_WORKSPACE}:/project -w /project
+          --env GTEST_OUTPUT=xml:/project/reports/debug/
           ${{ matrix.image }}
           script/test_cmake.sh ${{ matrix.preset }} debug
 
       - name: Build and Test Release
         run: >-
           docker run --rm -v ${GITHUB_WORKSPACE}:/project -w /project
+          --env GTEST_OUTPUT=xml:/project/reports/release/
           ${{ matrix.image }}
           script/test_cmake.sh ${{ matrix.preset }} release
+
+      - run: >-
+          ls -la reports/*
+
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: success() || failure()
+        with:
+          name: ${{ matrix.image }} Tests
+          path: reports/**/*.xml
+          reporter: java-junit
