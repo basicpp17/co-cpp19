@@ -9,25 +9,26 @@ namespace array19 {
 
 /// set of sorted of values
 /// - useful for sets of ids
-template<class T> struct DynamicSortedSet {
-    auto count() const -> size_t { return m.count(); }
-    auto begin() const -> const T* { return m.begin(); }
-    auto end() const -> const T* { return m.end(); }
+template<class T, class Less = std::less<>> struct DynamicSortedSet {
+    [[nodiscard]] auto isEmpty() const noexcept -> bool { return m.isEmpty(); }
+    [[nodiscard]] auto count() const -> size_t { return m.count(); }
+    [[nodiscard]] auto begin() const -> T const* { return m.begin(); }
+    [[nodiscard]] auto end() const -> T const* { return m.end(); }
 
-    bool has(const T& v) const {
-        auto [b, e] = std::equal_range(m.begin(), m.end(), v);
+    [[nodiscard]] bool has(const T& v) const {
+        auto [b, e] = std::equal_range(m.begin(), m.end(), v, Less{});
         return b != e;
     }
 
-    void add(const T& v) {
-        auto [b, e] = std::equal_range(m.amendBegin(), m.amendEnd(), v);
+    void add(T const& v) {
+        auto [b, e] = std::equal_range(m.amendBegin(), m.amendEnd(), v, Less{});
         if (b == e) {
             m.splice(b, 0, array19::sliceOfSingle(v));
         }
     }
 
-    void remove(const T& v) {
-        auto [b, e] = std::equal_range(m.amendBegin(), m.amendEnd(), v);
+    void remove(T const& v) {
+        auto [b, e] = std::equal_range(m.amendBegin(), m.amendEnd(), v, Less{});
         if (b != e) {
             m.remove(b, 1);
         }
