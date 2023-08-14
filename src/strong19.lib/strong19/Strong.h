@@ -39,10 +39,10 @@ template<class V> struct Weak {
 /// Forward declares a strong value type with name @param NAME that stores value of type @param VALUE and optional tags
 #define DECLARE_STRONG(NAME, VALUE, ...)                                                                               \
     struct NAME;                                                                                                       \
-    constexpr inline auto isStrong(strong19::ADL*, NAME*)->bool { return true; }                                       \
-    auto strongValueType(NAME*)->STRONG19_REMOVEPAREN(VALUE);                                                          \
-    auto strongTags(NAME*)->meta19::TypePack<__VA_ARGS__>;                                                             \
-    constexpr inline auto strongName(NAME*)->string19::StringView { return string19::viewLiteral(#NAME); }             \
+    [[maybe_unused]] constexpr inline auto isStrong(strong19::ADL*, NAME*)->bool { return true; }                                       \
+    [[maybe_unused]] auto strongValueType(NAME*)->STRONG19_REMOVEPAREN(VALUE);                                                          \
+    [[maybe_unused]] auto strongTags(NAME*)->meta19::TypePack<__VA_ARGS__>;                                                             \
+    [[maybe_unused]] constexpr inline auto strongName(NAME*)->string19::StringView { return string19::viewLiteral(#NAME); }             \
     DECLARE_STRONG_EXTRAS(NAME)                                                                                        \
     struct NAME
 
