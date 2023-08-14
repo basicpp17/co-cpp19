@@ -20,7 +20,6 @@ Product {
     files: [
         "ADL.h",
         "Macro.h",
-        "SortedStrongSet.h",
         "Strong.extras.ostream.h",
         "Strong.fmt.h",
         "Strong.h",
