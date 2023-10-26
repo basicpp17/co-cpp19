@@ -3,7 +3,10 @@
 
 A versatile collection of compile time optimized tools for C++ programming.
 
-[![Actions: Test Runner](https://github.com/basicpp17/co-cpp19/workflows/Test%20Runner/badge.svg)](https://github.com/basicpp17/co-cpp19/actions)
+[![Qbs-Tests](https://github.com/basicpp17/co-cpp19/actions/workflows/qbs_tests.yml/badge.svg)](https://github.com/basicpp17/co-cpp19/actions/workflows/qbs_tests.yml)
+[![CMake-Tests](https://github.com/basicpp17/co-cpp19/actions/workflows/cmake_tests.yml/badge.svg)](https://github.com/basicpp17/co-cpp19/actions/workflows/cmake_tests.yml)
+[![Static Analyzer](https://github.com/basicpp17/co-cpp19/actions/workflows/static_analyse.yml/badge.svg)](https://github.com/basicpp17/co-cpp19/actions/workflows/static_analyse.yml)
+[![Conan-Tests](https://github.com/basicpp17/co-cpp19/actions/workflows/conan.yml/badge.svg)](https://github.com/basicpp17/co-cpp19/actions/workflows/conan.yml)
 
 ## Target Compilers
 
