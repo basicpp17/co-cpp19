@@ -4,7 +4,7 @@
 #include "meta19/Type.h"
 
 #include <stddef.h> // size_t
-#include <type_traits>
+#include <type_traits> // index_sequence
 #include <utility>
 
 namespace tuple19 {
@@ -35,7 +35,7 @@ template<class T, size_t I> constexpr auto indexOf(TupleEntry<I, T>*) -> size_t 
 
 template<class... Ts> struct Tuple {
 private:
-    template<class Is> struct IndexedTuple;
+    template<class> struct IndexedTuple;
 
     template<size_t... Is> struct IndexedTuple<std::index_sequence<Is...>> : details::TupleEntry<Is, Ts>... {
 
@@ -69,6 +69,8 @@ public:
 
     bool operator==(const Tuple&) const = default;
 
+    /// set all values given with arguments (the rest keeps default initialisation)
+    /// note: works best if types in tuple are unique
     template<class... Os> static constexpr auto fromArgs(Os&&... os) -> Tuple {
         auto res = Tuple{};
         ((res.amendOf(type<StoredOf<Os>>) = std::forward<Os>(os)), ...);

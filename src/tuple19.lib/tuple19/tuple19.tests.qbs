@@ -11,6 +11,7 @@ Application {
 
     files: [
         "Tuple.bind.test.cpp",
+        "Tuple.join.test.cpp",
         "Tuple.test.cpp",
     ]
 }
