@@ -10,6 +10,6 @@ template<class T, class Char> requires(strong19::is_strong<T>) struct fmt::forma
     constexpr auto parse(fmt::basic_format_parse_context<Char>& ctx) { return ctx.begin(); }
 
     template<typename FormatContext> auto format(const T& v, FormatContext& ctx) {
-        return fmt::format_to(ctx.out(), "{} [{}]", v.v, strong19::strong_name<T>);
+        return fmt::format_to(ctx.out(), "{}{{{}}}", strong19::strong_name<T>, v.v);
     }
 };

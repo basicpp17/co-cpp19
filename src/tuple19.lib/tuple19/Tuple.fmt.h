@@ -26,9 +26,10 @@ template<class... Ts, class Char> struct fmt::formatter<tuple19::Tuple<Ts...>, C
             return fmt::format_to(ctx.out(), "Tuple<>");
         }
         else {
-            [&]<size_t... Is>(std::index_sequence<0, Is...> const&) {
-                fmt::format_to(ctx.out(), "{}", v.template at<0>());
-                (fmt::format_to(ctx.out(), ", {}", v.template at<Is>()), ...);
+            return [&]<size_t... Is>(std::index_sequence<0, Is...> const&) {
+                auto out = fmt::format_to(ctx.out(), "{}", v.template at<0>());
+                ((out = fmt::format_to(out, ", {}", v.template at<Is>())), ...);
+                return out;
             }
             (std::make_index_sequence<sizeof...(Ts)>{});
         }
