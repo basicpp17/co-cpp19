@@ -12,7 +12,9 @@ Product {
     }
 
     files: [
-        "OrderedSetOf.h",
+        "OrderedMapOf.equals.h",
+        "OrderedMapOf.h",
+        "OrderedMapOf.ostream.h",
         "OrderedSliceOf.h",
     ]
 }

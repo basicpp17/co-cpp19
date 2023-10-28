@@ -22,12 +22,17 @@ private:
 
 public:
     constexpr OrderedSliceOf() = default;
-    constexpr explicit OrderedSliceOf(Element* data, Element* end) noexcept : m_data(data), m_count(end - data) {}
-    constexpr explicit OrderedSliceOf(Element* data, Count count) noexcept : m_data(data), m_count(count) {}
+    constexpr explicit OrderedSliceOf(Element* data, Element* end) noexcept
+            : m_data{data}
+            , m_count{static_cast<Count>(end - data)} {}
+    constexpr explicit OrderedSliceOf(Element* data, Count count) noexcept : m_data{data}, m_count{count} {}
+    constexpr explicit OrderedSliceOf(SliceOf<T> slice) noexcept : m_data{slice.begin()}, m_count{slice.count()} {}
 
+    [[nodiscard]] constexpr auto isEmpty() const noexcept -> bool { return m_count == 0; }
     [[nodiscard]] constexpr auto count() const -> Count { return m_count; }
     [[nodiscard]] constexpr auto begin() const& noexcept -> Element* { return m_data; }
     [[nodiscard]] constexpr auto end() const& -> Element* { return m_data + m_count; }
+    [[nodiscard]] constexpr auto operator[](Index index) const noexcept -> Element& { return *(m_data + index); }
 
     [[nodiscard]] constexpr operator SliceOf<const T>() const noexcept { return SliceOf<const T>{m_data, m_count}; }
 
@@ -89,5 +94,7 @@ public:
         return OrderedSliceOf{lower_bound, upper_bound};
     }
 };
+
+template<class T, class Less> struct OrderedSliceOf<T&&, Less>; // use MoveSliceOf<T> for that
 
 } // namespace lookup19
