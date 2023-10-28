@@ -37,16 +37,16 @@ template<class A, class B> struct Zip {
     };
 
     constexpr Zip() = default;
-    constexpr explicit Zip(A& a, B& b) : a(&a), b(&b) {}
+    constexpr explicit Zip(A&& a, B&& b) : a{(A &&) a}, b{(B &&) b} {}
 
-    constexpr auto begin() const -> iterator { return {adlBegin(*a), adlBegin(*b)}; }
-    constexpr auto end() const -> iterator { return {adlEnd(*a), adlEnd(*b)}; }
+    constexpr auto begin() const -> iterator { return {adlBegin(a), adlBegin(b)}; }
+    constexpr auto end() const -> iterator { return {adlEnd(a), adlEnd(b)}; }
 
 private:
-    A* a{};
-    B* b{};
+    A&& a{};
+    B&& b{};
 };
 
-template<class A, class B> Zip(A&, B&) -> Zip<A, B>;
+template<class A, class B> Zip(A&&, B&&) -> Zip<A, B>;
 
 } // namespace array19
