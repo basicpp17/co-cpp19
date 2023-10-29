@@ -1,6 +1,5 @@
 #pragma once
-#include "MoveSliceOf.h"
-#include "SliceOf.h"
+#include "Span.h"
 
 #include <new> // ::operator new, ::operator delete
 #include <stddef.h> // size_t
@@ -10,19 +9,21 @@
 
 namespace array19 {
 
+template<class T, class B> concept will_construct = requires(T&& arg) { B{(T &&) arg}; };
+
 /// Utility functions that implement the meat of allocated arrays
 ///
 /// note:
 /// * This replaces the algorithmns form std <memory> header.
-/// * It works with Slices instead of iterators to simplify the interface
+/// * It works with spans instead of iterators to simplify the interface
 template<class T> struct AllocatedArrayUtils {
     static_assert(std::is_nothrow_move_constructible_v<T>, "Please ensure move constructior is marked noexcept!");
     static_assert(std::is_nothrow_move_assignable_v<T>, "Please ensure move assignment is marked noexcept!");
     static_assert(std::is_nothrow_destructible_v<T>, "Please ensure destructor is marked noexcept!");
 
-    using Slice = SliceOf<T>;
-    using ConstSlice = SliceOf<const T>;
-    using MoveSlice = MoveSliceOf<T>;
+    using ConstSpan = Span<const T>;
+    using AmendSpan = Span<T>;
+    using MoveSpan = Span<T&&>;
 
     /// returns uninitialized storage for \param count elements with proper alignment
     /// note:
@@ -38,143 +39,144 @@ template<class T> struct AllocatedArrayUtils {
         }
     }
 
-    /// frees the storage pointed to by the slice
+    /// frees the storage pointed to by the span
     /// note:
-    /// * slice.begin() has to be the pointer returned by allocate(size.count())
+    /// * span.begin() has to be the pointer returned by allocate(size.count())
     /// * exceptions form delete will terminate - we assume memory is corrupted!
-    static void deallocate(Slice slice) noexcept {
+    static void deallocate(AmendSpan span) noexcept {
 #if __cpp_sized_deallocation
         if constexpr (__STDCPP_DEFAULT_NEW_ALIGNMENT__ < alignof(T)) {
-            ::operator delete[](slice.begin(), slice.count() * sizeof(T), std::align_val_t{alignof(T)});
+            ::operator delete[](span.begin(), span.count() * sizeof(T), std::align_val_t{alignof(T)});
         }
         else {
-            ::operator delete[](slice.begin(), slice.count() * sizeof(T));
+            ::operator delete[](span.begin(), span.count() * sizeof(T));
         }
 #else
         if constexpr (__STDCPP_DEFAULT_NEW_ALIGNMENT__ < alignof(T)) {
-            ::operator delete[](slice.begin(), std::align_val_t{alignof(T)});
+            ::operator delete[](span.begin(), std::align_val_t{alignof(T)});
         }
         else {
-            ::operator delete[](slice.begin());
+            ::operator delete[](span.begin());
         }
 #endif
     }
 
-    /// default construct every element of \param slice if necessary
-    static void defaultConstruct(Slice slice) noexcept(std::is_nothrow_default_constructible_v<T>) {
-        if constexpr (!std::is_trivially_default_constructible_v<T>)
-            for (auto& e : slice) new (&e) T();
+    /// default construct every element of \param span if necessary
+    static void defaultConstruct(AmendSpan span) noexcept(std::is_nothrow_default_constructible_v<T>) {
+        if constexpr (!std::is_trivially_default_constructible_v<T>) {
+            for (auto& e : span) new (&e) T();
+        }
     }
 
-    /// calls destructor for every element of \param slice if necessary
+    /// calls destructor for every element of \param span if necessary
     /// note:
     /// * we assume destructors are always noexcept
-    static void destruct(Slice slice) noexcept {
+    static void destruct(AmendSpan span) noexcept {
         if constexpr (!std::is_trivially_destructible_v<T>)
-            for (auto& elem : slice) elem.~T();
+            for (auto& elem : span) elem.~T();
     }
 
-    /// constructs a copy of \param fromSlice at \param toPointer
+    /// constructs a copy of \param fromSpan at \param toPointer
     /// note:
-    /// * toPointer has to point to least fromSlice.count() elements
-    /// * assumes toPointer and fromSlice do not overlap
-    static void copyConstruct(T* toPointer, ConstSlice fromSlice) noexcept(std::is_nothrow_copy_constructible_v<T>) {
+    /// * toPointer has to point to least fromSpan.count() elements
+    /// * assumes toPointer and fromSpan do not overlap
+    static void copyConstruct(T* toPointer, ConstSpan fromSpan) noexcept(std::is_nothrow_copy_constructible_v<T>) {
         if constexpr (std::is_trivially_copy_constructible_v<T>) {
-            if (!fromSlice.isEmpty()) {
-                memcpy(toPointer, fromSlice.begin(), fromSlice.count() * sizeof(T));
+            if (!fromSpan.isEmpty()) {
+                memcpy(toPointer, fromSpan.begin(), fromSpan.count() * sizeof(T));
             }
         }
         else {
-            for (auto& from : fromSlice) new (toPointer++) T(from);
+            for (auto& from : fromSpan) new (toPointer++) T(from);
         }
     }
 
-    /// move constructs elements of \param fromSlice into \param to Pointer
+    /// move constructs elements of \param fromSpan into \param to Pointer
     /// note:
-    /// * toPointer has to point to least fromSlice.count() elements
-    /// * assumes toPointer and fromSlice do not overlap
+    /// * toPointer has to point to least fromSpan.count() elements
+    /// * assumes toPointer and fromSpan do not overlap
     /// * we assume move is always noexcept!
-    static void moveConstruct(T* toPointer, MoveSlice fromSlice) noexcept {
+    static void moveConstruct(T* toPointer, MoveSpan fromSpan) noexcept {
         if constexpr (std::is_trivially_move_constructible_v<T>) {
-            if (!fromSlice.isEmpty()) {
-                memcpy(toPointer, fromSlice.begin(), fromSlice.count() * sizeof(T));
+            if (!fromSpan.isEmpty()) {
+                memcpy(toPointer, fromSpan.begin(), fromSpan.count() * sizeof(T));
             }
         }
         else {
-            for (auto& from : fromSlice) new (toPointer++) T(std::move(from));
+            for (auto& from : fromSpan) new (toPointer++) T(std::move(from));
         }
     }
 
-    /// assigns elements of \param fromSlice into \param toPointer
+    /// assigns elements of \param fromSpan into \param toPointer
     /// note:
-    /// * toPointer has to point to least fromSlice.count() initialized elements
-    /// * assumes toPointer and fromSlice do not overlap
-    static void copyAssign(T* toPointer, ConstSlice fromSlice) noexcept(std::is_nothrow_copy_assignable_v<T>) {
+    /// * toPointer has to point to least fromSpan.count() initialized elements
+    /// * assumes toPointer and fromSpan do not overlap
+    static void copyAssign(T* toPointer, ConstSpan fromSpan) noexcept(std::is_nothrow_copy_assignable_v<T>) {
         if constexpr (std::is_trivially_copy_assignable_v<T>) {
-            if (!fromSlice.isEmpty()) {
-                memcpy(toPointer, fromSlice.begin(), fromSlice.count() * sizeof(T));
+            if (!fromSpan.isEmpty()) {
+                memcpy(toPointer, fromSpan.begin(), fromSpan.count() * sizeof(T));
             }
         }
         else {
-            for (const auto& from : fromSlice) *toPointer++ = from;
+            for (const auto& from : fromSpan) *toPointer++ = from;
         }
     }
 
-    /// move assigns elements of \param fromSlice into \param to Pointer
+    /// move assigns elements of \param fromSpan into \param to Pointer
     /// note:
-    /// * toPointer has to point to least fromSlice.count() elements
-    /// * assumes toPointer and fromSlice do not overlap
+    /// * toPointer has to point to least fromSpan.count() elements
+    /// * assumes toPointer and fromSpan do not overlap
     /// * we assume move is always noexcept!
-    static void moveAssign(T* toPointer, MoveSlice fromSlice) noexcept {
+    static void moveAssign(T* toPointer, MoveSpan fromSpan) noexcept {
         if constexpr (std::is_trivially_move_assignable_v<T>) {
-            if (!fromSlice.isEmpty()) {
-                memcpy(toPointer, fromSlice.begin(), fromSlice.count() * sizeof(T));
+            if (!fromSpan.isEmpty()) {
+                memcpy(toPointer, fromSpan.begin(), fromSpan.count() * sizeof(T));
             }
         }
         else {
-            for (auto& from : fromSlice) *toPointer++ = std::move(from);
+            for (auto& from : fromSpan) *toPointer++ = std::move(from);
         }
     }
 
-    /// move assigns elements of \param fromSlice into \param to Pointer
+    /// move assigns elements of \param fromSpan into \param to Pointer
     /// note:
-    /// * toPointer has to point to least fromSlice.count() elements
-    /// * toPointer has to be before fromSlice.begin() if ranges overlap
+    /// * toPointer has to point to least fromSpan.count() elements
+    /// * toPointer has to be before fromSpan.begin() if ranges overlap
     /// * we assume move is always noexcept!
     ///
     /// example:
     ///         [ e e e e e e e ]
-    /// toPointer ^   ^ fromSlice.begin()
-    static void moveAssignForward(T* toPointer, MoveSlice fromSlice) noexcept {
+    /// toPointer ^   ^ fromSpan.begin()
+    static void moveAssignForward(T* toPointer, MoveSpan fromSpan) noexcept {
         if constexpr (std::is_trivially_move_constructible_v<T>) {
-            if (!fromSlice.isEmpty()) {
-                memmove(toPointer, fromSlice.begin(), fromSlice.count() * sizeof(T));
+            if (!fromSpan.isEmpty()) {
+                memmove(toPointer, fromSpan.begin(), fromSpan.count() * sizeof(T));
             }
         }
         else {
-            for (auto& from : fromSlice) *toPointer++ = std::move(from);
+            for (auto& from : fromSpan) *toPointer++ = std::move(from);
         }
     }
 
-    /// move assigns elements of \param fromSlice into \param to Pointer
+    /// move assigns elements of \param fromSpan into \param to Pointer
     /// note:
-    /// * toPointer has to point to least fromSlice.count() elements
-    /// * toPointer has to be behind fromSlice.begin() if ranges overlap
+    /// * toPointer has to point to least fromSpan.count() elements
+    /// * toPointer has to be behind fromSpan.begin() if ranges overlap
     /// * we assume move is always noexcept!
     ///
     /// example:
     ///                 [ e e e e e e e ]
-    /// fromSlice.begin() ^     ^ toPointer
-    static void moveAssignReverse(T* toPointer, MoveSlice fromSlice) noexcept {
+    /// fromSpan.begin() ^     ^ toPointer
+    static void moveAssignReverse(T* toPointer, MoveSpan fromSpan) noexcept {
         if constexpr (std::is_trivially_move_assignable_v<T>) {
-            if (!fromSlice.isEmpty()) {
-                memmove(toPointer, fromSlice.begin(), fromSlice.count() * sizeof(T));
+            if (!fromSpan.isEmpty()) {
+                memmove(toPointer, fromSpan.begin(), fromSpan.count() * sizeof(T));
             }
         }
         else {
-            auto rTo = toPointer + fromSlice.count();
-            auto rFrom = fromSlice.end();
-            auto rFromEnd = fromSlice.begin();
+            auto rTo = toPointer + fromSpan.count();
+            auto rFrom = fromSpan.end();
+            auto rFromEnd = fromSpan.begin();
             while (rFrom != rFromEnd) *(--rTo) = std::move(*(--rFrom));
         }
     }

@@ -1,11 +1,11 @@
 #pragma once
-#include "array19/SliceOf.h"
+#include "array19/Span.h"
 
 #include <stddef.h> // size_t
 
 namespace lookup19 {
 
-using array19::SliceOf;
+using array19::Span;
 
 /// Readonly SliceOf an ordered array
 ///
@@ -29,7 +29,7 @@ public:
     [[nodiscard]] constexpr auto begin() const& noexcept -> Element* { return m_data; }
     [[nodiscard]] constexpr auto end() const& -> Element* { return m_data + m_count; }
 
-    [[nodiscard]] constexpr operator SliceOf<const T>() const noexcept { return SliceOf<const T>{m_data, m_count}; }
+    [[nodiscard]] constexpr operator Span<const T>() const noexcept { return Span<const T>{m_data, m_count}; }
 
     template<class K> [[nodiscard]] constexpr auto lowerBound(K&& key) -> Element* {
         auto less = Less{};

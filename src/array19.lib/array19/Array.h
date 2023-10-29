@@ -1,6 +1,5 @@
 #pragma once
-#include "MoveSliceOf.h"
-#include "SliceOf.h"
+#include "Span.h"
 
 #include <stddef.h> // size_t
 
@@ -9,43 +8,41 @@ namespace array19 {
 /// simplified version of std::array
 /// * no member types
 /// * no exceptions
-template<class T, size_t C> struct Array {
+template<class T, size_t N> struct Array {
     using Element = T;
-    static constexpr auto count = C;
+    static constexpr auto count = N;
 
     T m[count];
 
     bool operator==(const Array&) const = default;
 
     [[nodiscard]] constexpr auto isEmpty() const noexcept -> bool { return false; }
-    [[nodiscard]] constexpr auto begin() const noexcept -> const T* { return m; }
-    [[nodiscard]] constexpr auto end() const noexcept -> const T* { return m + C; }
-    [[nodiscard]] constexpr auto operator[](size_t i) const noexcept -> const T& { return m[i]; }
-    [[nodiscard]] constexpr operator SliceOf<const T>() const& noexcept { return SliceOf{m, C}; }
-    [[nodiscard]] constexpr auto move() noexcept -> MoveSliceOf<T> { return MoveSliceOf{m, C}; }
 
-    // hint: use `amendSliceOfArray()` if you need to iterate and mutate
-    [[nodiscard]] constexpr auto amendBegin() noexcept -> T* { return m; }
-    [[nodiscard]] constexpr auto amendEnd() noexcept -> T* { return m + C; }
-    [[nodiscard]] constexpr auto amend() noexcept -> SliceOf<T> { return SliceOf{m, C}; }
+    [[nodiscard]] constexpr auto begin() const noexcept -> T const* { return m; }
+    [[nodiscard]] constexpr auto end() const noexcept -> T const* { return m + count; }
+
+    // requires: index < count
+    [[nodiscard]] constexpr auto operator[](size_t index) const noexcept -> T const& { return m[index]; }
+
+    [[nodiscard]] constexpr operator Span<T const>() const& noexcept { return Span<T const>{m, count}; }
+    [[nodiscard]] constexpr auto amend() noexcept -> Span<T> { return Span<T>{m, count}; }
+    [[nodiscard]] constexpr auto move() noexcept -> Span<T&&> { return Span<T&&>{m, count}; }
 };
 
 template<class T> struct Array<T, 0u> {
     using Element = T;
-    static constexpr auto count = 0u;
+    static constexpr auto count = size_t{};
 
     bool operator==(const Array&) const = default;
 
     [[nodiscard]] constexpr auto isEmpty() const noexcept -> bool { return true; }
-    [[nodiscard]] constexpr auto begin() const noexcept -> const T* { return nullptr; }
-    [[nodiscard]] constexpr auto end() const noexcept -> const T* { return nullptr; }
-    [[nodiscard]] constexpr operator SliceOf<const T>() const& noexcept { return SliceOf{begin(), 0u}; }
-    [[nodiscard]] constexpr auto move() noexcept -> MoveSliceOf<T> { return MoveSliceOf{amendBegin(), 0u}; }
 
-    // hint: use `amendSliceOfArray()` if you need to iterate and mutate
-    [[nodiscard]] constexpr auto amendBegin() noexcept -> T* { return nullptr; }
-    [[nodiscard]] constexpr auto amendEnd() noexcept -> T* { return nullptr; }
-    [[nodiscard]] constexpr auto amend() noexcept -> SliceOf<T> { return SliceOf{amendBegin(), 0u}; }
+    [[nodiscard]] constexpr auto begin() const noexcept -> T const* { return nullptr; }
+    [[nodiscard]] constexpr auto end() const noexcept -> T const* { return nullptr; }
+
+    [[nodiscard]] constexpr operator Span<T const>() const& noexcept { return Span<T const>{nullptr, count}; }
+    [[nodiscard]] constexpr auto amend() noexcept -> Span<T> { return Span<T>{nullptr, count}; }
+    [[nodiscard]] constexpr auto move() noexcept -> Span<T&&> { return Span<T&&>{nullptr, count}; }
 };
 
 /// simplified deduction guide

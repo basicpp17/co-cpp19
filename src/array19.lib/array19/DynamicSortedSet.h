@@ -1,6 +1,6 @@
 #pragma once
-#include "DynamicArrayOf.h"
-#include "SliceOf.single.h"
+#include "DynamicArray.h"
+#include "Span.one.h"
 
 #include <algorithm>
 #include <stddef.h> // size_t
@@ -21,14 +21,14 @@ template<class T, class Less = std::less<>> struct DynamicSortedSet {
     }
 
     void add(T const& v) {
-        auto [b, e] = std::equal_range(m.amendBegin(), m.amendEnd(), v, Less{});
+        auto [b, e] = std::equal_range(m.begin(), m.end(), v, Less{});
         if (b == e) {
-            m.splice(b, 0, array19::sliceOfSingle(v));
+            m.splice(b, 0, array19::spanOne(v));
         }
     }
 
     void remove(T const& v) {
-        auto [b, e] = std::equal_range(m.amendBegin(), m.amendEnd(), v, Less{});
+        auto [b, e] = std::equal_range(m.begin(), m.end(), v, Less{});
         if (b != e) {
             m.remove(b, 1);
         }
@@ -37,7 +37,7 @@ template<class T, class Less = std::less<>> struct DynamicSortedSet {
     void clear() { m.clear(); }
 
 private:
-    DynamicArrayOf<T> m;
+    DynamicArray<T> m;
 };
 
 } // namespace array19

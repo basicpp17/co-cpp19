@@ -1,15 +1,15 @@
-#include "SliceOf.h"
+#include "Span.h"
 
-#include "SliceOf.carray.h"
-#include "SliceOf.store.h"
+#include "Span.carray.h"
+#include "Span.store.h"
 
 #include <gtest/gtest.h>
 
 using namespace array19;
 
-void constexpr_SliceOf_test() {
+void constexpr_Span_test() {
     constexpr static int a[3] = {1, 2, 3};
-    constexpr auto s = sliceOfCArray(a);
+    constexpr auto s = spanOfCArray(a);
 
     static_assert(s.count() == 3);
     static_assert(s[1] == 2);
@@ -22,9 +22,9 @@ void constexpr_SliceOf_test() {
     static_assert(sum == 6);
 }
 
-TEST(SliceOf, Access) {
+TEST(Span, Access) {
     int a[3] = {1, 2, 3};
-    auto s = sliceOfCArray(a);
+    auto s = spanOfCArray(a);
 
     EXPECT_EQ(s.count(), 3u);
     EXPECT_EQ(s[1], 2);
@@ -34,24 +34,24 @@ TEST(SliceOf, Access) {
     EXPECT_EQ(sum, 6);
 }
 
-void mutable_SliceOf_test() {
+void mutable_Span_test() {
     constexpr auto sa = [] {
         int a[] = {1, 2, 3};
-        auto s = amendSliceOfCArray(a);
+        auto s = amendSpanOfCArray(a);
         s[1] = 5;
-        return storeSlice<3>(s);
+        return storeSpan<3>(s);
     }();
 
     static_assert(sa[1] == 5);
 }
 
-TEST(SliceOf, Mutate) {
+TEST(Span, Mutate) {
     int a[] = {1, 2, 3, 4};
-    auto s = amendSliceOfCArray(a);
+    auto s = amendSpanOfCArray(a);
     s[1] = 5;
     EXPECT_EQ(a[1], 5);
 
-    auto sa = storeSlice<4>(s);
+    auto sa = storeSpan<4>(s);
     EXPECT_EQ(sa[1], 5);
     EXPECT_EQ(sa[3], 4);
 }

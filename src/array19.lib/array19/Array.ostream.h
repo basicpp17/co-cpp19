@@ -6,8 +6,8 @@
 
 namespace array19 {
 
-template<class Chr, class Traits, class T, size_t C>
-auto operator<<(std::basic_ostream<Chr, Traits>& out, const Array<T, C>& a) -> decltype(out)& {
+template<class Chr, class Traits, class T, size_t N>
+auto operator<<(std::basic_ostream<Chr, Traits>& out, Array<T, N> const& a) -> decltype(out)& {
     out << "[";
     bool first = true;
     for (auto& v : a) {

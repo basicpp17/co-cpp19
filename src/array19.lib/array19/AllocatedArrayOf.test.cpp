@@ -1,25 +1,25 @@
-#include "AllocatedArrayOf.h"
+#include "AllocatedArray.h"
 
-#include "AllocatedArrayOf.equals.h"
-#include "AllocatedArrayOf.ostream.h"
-#include "SliceOf.carray.h"
-#include "SliceOf.equals.h"
-#include "SliceOf.ostream.h"
+#include "AllocatedArray.equals.h"
+#include "AllocatedArray.ostream.h"
+#include "Span.carray.h"
+#include "Span.equals.h"
+#include "Span.ostream.h"
 
 #include <gtest/gtest.h>
 #include <utility>
 
 using namespace array19;
 
-TEST(AllocatedArrayOf, construct) {
-    auto v = AllocatedArrayOf{1, 2, 3};
-    ASSERT_EQ(sliceOfCArray({1, 2, 3}), SliceOf{v});
+TEST(AllocatedArray, construct) {
+    auto v = AllocatedArray{1, 2, 3};
+    ASSERT_EQ(spanOfCArray({1, 2, 3}), Span{v});
 }
 
 namespace {
 
 struct NonTrivial;
-using NonTrivialArray = AllocatedArrayOf<NonTrivial>;
+using NonTrivialArray = AllocatedArray<NonTrivial>;
 
 struct User {
     NonTrivialArray v;
@@ -48,13 +48,13 @@ private:
 
 } // namespace
 
-TEST(AllocatedArrayOf, NontrivialExample) {
-    auto v = AllocatedArrayOf<NonTrivial>{};
+TEST(AllocatedArray, NontrivialExample) {
+    auto v = AllocatedArray<NonTrivial>{};
 
     EXPECT_TRUE(v.isEmpty());
     ASSERT_EQ(v.count(), 0u);
 
-    v = AllocatedArrayOf{NonTrivial{}, NonTrivial{2}};
+    v = AllocatedArray{NonTrivial{}, NonTrivial{2}};
 
     ASSERT_EQ(v.count(), 2u);
 
@@ -62,9 +62,9 @@ TEST(AllocatedArrayOf, NontrivialExample) {
     ASSERT_EQ(v, v2);
 }
 
-TEST(AllocatedArrayOf, MoveAssignAfterMove) {
+TEST(AllocatedArray, MoveAssignAfterMove) {
     using E = NonTrivial;
-    using AA = AllocatedArrayOf<E>;
+    using AA = AllocatedArray<E>;
     auto v = AA{E{1}};
 
     auto v2 = std::move(v);
@@ -74,9 +74,9 @@ TEST(AllocatedArrayOf, MoveAssignAfterMove) {
     ASSERT_EQ(v, (AA{E{2}, E{3}}));
 }
 
-TEST(AllocatedArrayOf, CopyAssignAfterMove) {
+TEST(AllocatedArray, CopyAssignAfterMove) {
     using E = NonTrivial;
-    using AA = AllocatedArrayOf<E>;
+    using AA = AllocatedArray<E>;
     auto v = AA{E{1}};
 
     auto v2 = std::move(v);

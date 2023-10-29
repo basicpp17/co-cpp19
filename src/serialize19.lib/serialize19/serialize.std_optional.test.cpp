@@ -14,7 +14,7 @@ TEST(serialize, std_optional_value) {
 
     ASSERT_EQ(buffer.size(), 1 + sizeof(int)); // contains just a bool + int
 
-    auto reader = ReadArchive{buffer.slice()};
+    auto reader = ReadArchive{buffer.span()};
     auto output = T{};
     serialize(reader, output);
 
@@ -29,7 +29,7 @@ TEST(serialize, std_optional_empty) {
 
     ASSERT_EQ(buffer.size(), 1u); // contains just a bool
 
-    auto reader = ReadArchive{buffer.slice()};
+    auto reader = ReadArchive{buffer.span()};
     auto output = T{};
     serialize(reader, output);
 

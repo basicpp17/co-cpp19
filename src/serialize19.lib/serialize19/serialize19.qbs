@@ -28,10 +28,10 @@ Product {
     Group {
         name: "Impl"
         files: [
-            "BufferSlice.h",
+            "BufferSpan.h",
             "Endianess.h",
             "SizeAppender.h",
-            "SliceReader.h",
+            "SpanReader.h",
             "UniqueBuffer.h",
             "WriteAppender.h",
         ]
@@ -39,10 +39,10 @@ Product {
     Group {
         name: "serialize co-cpp19"
         files: [
-            "serialize.AllocatedArrayOf.h",
+            "serialize.AllocatedArray.h",
             "serialize.Array.h",
-            "serialize.BufferSlice.h",
-            "serialize.DynamicArrayOf.h",
+            "serialize.BufferSpan.h",
+            "serialize.DynamicArray.h",
             "serialize.None.h",
             "serialize.Optional.h",
             "serialize.PackedOptional.h",

@@ -13,7 +13,7 @@ TEST(serialize, std_bitset23) {
 
     auto buffer = dynamicWrite(input);
 
-    auto reader = ReadArchive{buffer.slice()};
+    auto reader = ReadArchive{buffer.span()};
     auto output = T{};
     serialize(reader, output);
 
@@ -27,7 +27,7 @@ TEST(serialize, std_bitset24) {
 
     auto buffer = dynamicWrite(input);
 
-    auto reader = ReadArchive{buffer.slice()};
+    auto reader = ReadArchive{buffer.span()};
     auto output = T{};
     serialize(reader, output);
 

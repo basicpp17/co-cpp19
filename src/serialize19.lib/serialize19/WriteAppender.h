@@ -1,12 +1,12 @@
 #pragma once
 #include "Endianess.h"
-#include "array19/SliceOf.h"
+#include "array19/Span.h"
 
 #include <stdint.h> // uint8_t
 
 namespace serialize19 {
 
-using array19::SliceOf;
+using array19::Span;
 
 namespace details {
 
@@ -30,9 +30,9 @@ template<> struct WriteAppender<EndianBehaviour::Keep> final : details::WriteApp
         *(T*)m_data = value;
         return WriteAppender{m_data + sizeof(T)};
     }
-    template<class T> auto appendSlice(SliceOf<const T> slice) const -> WriteAppender {
+    template<class T> auto appendSpan(Span<const T> span) const -> WriteAppender {
         auto p = (T*)m_data;
-        for (auto v : slice) *p++ = v;
+        for (auto v : span) *p++ = v;
         return WriteAppender{(uint8_t*)p};
     }
 };
@@ -44,9 +44,9 @@ template<> struct WriteAppender<EndianBehaviour::Flip> final : details::WriteApp
         *(T*)m_data = endianFlipFor<T>(value);
         return WriteAppender{m_data + sizeof(T)};
     }
-    template<class T> auto appendSlice(SliceOf<const T> slice) const -> WriteAppender {
+    template<class T> auto appendSpan(Span<const T> span) const -> WriteAppender {
         auto p = (T*)m_data;
-        for (auto v : slice) *p++ = endianFlipFor<T>(v);
+        for (auto v : span) *p++ = endianFlipFor<T>(v);
         return WriteAppender{(uint8_t*)p};
     }
 };

@@ -12,7 +12,7 @@ TEST(serialize, std_vector) {
 
     auto buffer = dynamicWrite(input);
 
-    auto reader = ReadArchive{buffer.slice()};
+    auto reader = ReadArchive{buffer.span()};
     auto output = T{};
     serialize(reader, output);
 
@@ -25,7 +25,7 @@ TEST(serialize, std_vector_empty) {
 
     auto buffer = dynamicWrite(input);
 
-    auto reader = ReadArchive{buffer.slice()};
+    auto reader = ReadArchive{buffer.span()};
     auto output = T{};
     serialize(reader, output);
 
@@ -38,7 +38,7 @@ TEST(serialize, std_vector_bool) {
 
     auto buffer = dynamicWrite(input);
 
-    auto reader = ReadArchive{buffer.slice()};
+    auto reader = ReadArchive{buffer.span()};
     auto output = T{};
     serialize(reader, output);
 

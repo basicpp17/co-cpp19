@@ -7,7 +7,7 @@ namespace serialize19 {
 
 using array19::Array;
 
-/// use by SliceReader & WriteAppender to mark change in endianess
+/// use by SpanReader & WriteAppender to mark change in endianess
 /// note: compare host to target endianness
 enum class EndianBehaviour : bool { Keep, Flip };
 

@@ -21,8 +21,8 @@ template<class T, class Less = DefaultLess> struct OrderedSetOf {
     using Iterator = Element*;
     using ConstIterator = const Element*;
     using Slice = OrderedSliceOf<const T, Less>;
-    using AmendableSlice = SliceOf<T>;
-    using UnorderedSlice = SliceOf<const T>;
+    using AmendableSlice = Span<T>;
+    using UnorderedSlice = Span<const T>;
 
     static_assert(std::is_trivial_v<T>, "Only works for trivial types!");
 
@@ -36,7 +36,7 @@ private:
 public:
     OrderedSetOf() = default;
     ~OrderedSetOf() noexcept {
-        if (m_pointer) Utils::deallocate(SliceOf{m_pointer, m_capacity});
+        if (m_pointer) Utils::deallocate(Span{m_pointer, m_capacity});
     }
 
     [[nodiscard]] constexpr auto isEmpty() const noexcept -> bool { return m_count == 0; }
@@ -83,7 +83,7 @@ public:
             if (fCount != m_count) {
                 memcpy(nPtr, m_pointer + fCount, m_count - fCount);
             }
-            Utils::deallocate(SliceOf{m_pointer, m_capacity});
+            Utils::deallocate(Span{m_pointer, m_capacity});
             m_pointer = newStorage.begin();
             m_capacity = newStorage.count();
             m_count++;
@@ -122,7 +122,7 @@ public:
             auto nEnd = elems.end();
             if (isEmpty()) {
                 memcpy(dPtr, nPtr, nCount);
-                Utils::deallocate(SliceOf{m_pointer, m_capacity});
+                Utils::deallocate(Span{m_pointer, m_capacity});
                 m_pointer = newStorage.begin();
                 m_capacity = newStorage.count();
                 m_count = nCount;
@@ -160,7 +160,7 @@ public:
                     o = *oPtr;
                 }
             }
-            Utils::deallocate(SliceOf{m_pointer, m_capacity});
+            Utils::deallocate(Span{m_pointer, m_capacity});
             m_pointer = newStorage.begin();
             m_capacity = newStorage.count();
             m_count += nCount;
@@ -221,7 +221,7 @@ private:
     void growBy(size_t by) {
         auto newStorage = grownStorage(by);
         memcpy(newStorage.begin(), m_pointer, m_count);
-        Utils::deallocate(SliceOf{m_pointer, m_capacity});
+        Utils::deallocate(Span{m_pointer, m_capacity});
         m_pointer = newStorage.begin();
         m_capacity = newStorage.count();
     }

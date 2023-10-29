@@ -38,7 +38,7 @@ TEST(Codec, Person) {
     auto input = Person{"Santa Clause", -100, Profession::Guru};
     auto buffer = dynamicWrite(input);
 
-    auto reader = ReadArchive{buffer.slice()};
+    auto reader = ReadArchive{buffer.span()};
     auto output = Person{};
     serialize(reader, output);
 

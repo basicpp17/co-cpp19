@@ -1,20 +1,20 @@
 #pragma once
 #include "Subscription.h"
 
-#include <array19/DynamicArrayOf.h>
-#include <array19/MoveSliceOf.single.h>
+#include <array19/DynamicArray.h>
+#include <array19/Span.one.h>
 #include <utility>
 
 namespace signal19 {
 
-using array19::DynamicArrayOf;
-using array19::moveSliceOfSingle;
+using array19::DynamicArray;
+using array19::moveSpanOne;
 
 /// Holds many subscriptions
 ///
 /// useful if a single entity subscribes to multiple signals.
 struct Subscriptions {
-    using Array = DynamicArrayOf<Subscription>;
+    using Array = DynamicArray<Subscription>;
 
 private:
     Array m_array;
@@ -34,7 +34,7 @@ public:
     ///
     /// note:
     /// * does NOT check for duplicates (subscription is already done)
-    auto add(Subscription&& subscription) { m_array.appendMoved(moveSliceOfSingle(std::move(subscription))); }
+    auto add(Subscription&& subscription) { m_array.appendMoved(moveSpanOne(std::move(subscription))); }
 
     /// cancels all the subscriptions
     ///

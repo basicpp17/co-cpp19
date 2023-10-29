@@ -1,13 +1,13 @@
 #pragma once
 #include "Subscription.h"
-#include "array19/DynamicArrayOf.h"
+#include "array19/DynamicArray.h"
 
 #include <algorithm>
 #include <utility>
 
 namespace signal19 {
 
-using array19::DynamicArrayOf;
+using array19::DynamicArray;
 
 namespace details {
 
@@ -39,7 +39,7 @@ struct TrackingCancellation : Cancellation {
 template<class... Args> struct SignalWith final : details::Signal {
 private:
     struct StoredCancellation;
-    using Vec = DynamicArrayOf<StoredCancellation>;
+    using Vec = DynamicArray<StoredCancellation>;
 
     /// partial implementation that implements the cancellation
     /// This also is the interface for the internal type erasure.
@@ -50,7 +50,7 @@ private:
 
         // Cancellation interface
         void cancel() noexcept final override {
-            auto it = std::find_if(forSignal.vec.amendBegin(), forSignal.vec.amendEnd(), [this](auto& ptr) {
+            auto it = std::find_if(forSignal.vec.amend().begin(), forSignal.vec.amend().end(), [this](auto& ptr) {
                 return &ptr.m() == this;
             });
             forSignal.vec.remove(it, 1);

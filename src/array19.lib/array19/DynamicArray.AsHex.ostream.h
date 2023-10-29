@@ -1,5 +1,5 @@
 #pragma once
-#include "DynamicArrayOf.h"
+#include "DynamicArray.h"
 
 #include <iomanip>
 #include <ostream>
@@ -8,8 +8,8 @@ namespace array19 {
 
 template<class T> struct AsHex;
 
-template<class T> struct AsHex<DynamicArrayOf<T>> {
-    using Array = DynamicArrayOf<T>;
+template<class T> struct AsHex<DynamicArray<T>> {
+    using Array = DynamicArray<T>;
     const Array& a;
 
     template<class Chr, class Traits>
@@ -27,6 +27,6 @@ template<class T> struct AsHex<DynamicArrayOf<T>> {
     }
 };
 
-template<class T> AsHex(DynamicArrayOf<T>&&) -> AsHex<DynamicArrayOf<T>>;
+template<class T> AsHex(DynamicArray<T>&&) -> AsHex<DynamicArray<T>>;
 
 } // namespace array19
