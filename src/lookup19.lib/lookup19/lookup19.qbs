@@ -12,9 +12,9 @@ Product {
     }
 
     files: [
-        "OrderedMapOf.equals.h",
-        "OrderedMapOf.h",
-        "OrderedMapOf.ostream.h",
-        "OrderedSliceOf.h",
+        "OrderedMapArray.equals.h",
+        "OrderedMapArray.h",
+        "OrderedMapArray.ostream.h",
+        "OrderedSpan.h",
     ]
 }

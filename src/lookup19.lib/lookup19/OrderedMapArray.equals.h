@@ -1,11 +1,11 @@
 #pragma once
-#include "OrderedMapOf.h"
-#include "array19/SliceOf.equals.h"
+#include "OrderedMapArray.h"
+#include "array19/Span.equals.h"
 
 namespace lookup19 {
 
 template<class Key, class Value, class Less>
-bool operator==(const OrderedMapOf<Key, Value, Less>& a, const OrderedMapOf<Key, Value, Less>& b) {
+bool operator==(const OrderedMapArray<Key, Value, Less>& a, const OrderedMapArray<Key, Value, Less>& b) {
     return a.keys() == b.keys() && a.values() == b.values();
 }
 

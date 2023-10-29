@@ -26,8 +26,8 @@ Application {
     Group {
         name: "co-cpp19"
         files: [
-            "serialize.BufferSlice.test.cpp",
-            "serialize.DynamicArrayOf.test.cpp",
+            "serialize.BufferSpan.test.cpp",
+            "serialize.DynamicArray.test.cpp",
             "serialize.Optional.test.cpp",
             "serialize.PackedOptional.test.cpp",
             "serialize.Partial.test.cpp",

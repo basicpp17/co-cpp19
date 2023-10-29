@@ -20,7 +20,7 @@ TEST(serialize, PackedOptional_value) {
 
     ASSERT_EQ(buffer.size(), sizeof(int)); // contains just the int
 
-    auto reader = ReadArchive{buffer.slice()};
+    auto reader = ReadArchive{buffer.span()};
     auto output = T{};
     serialize(reader, output);
 
@@ -35,7 +35,7 @@ TEST(serialize, PackedOptional_default) {
 
     ASSERT_EQ(buffer.size(), sizeof(int)); // contains just the int
 
-    auto reader = ReadArchive{buffer.slice()};
+    auto reader = ReadArchive{buffer.span()};
     auto output = T{};
     serialize(reader, output);
 
@@ -50,7 +50,7 @@ TEST(serialize, PackedOptionalNan_value) {
 
     ASSERT_EQ(buffer.size(), sizeof(double)); // contains just the int
 
-    auto reader = ReadArchive{buffer.slice()};
+    auto reader = ReadArchive{buffer.span()};
     auto output = T{};
     serialize(reader, output);
 
@@ -65,7 +65,7 @@ TEST(serialize, PackedOptionalNan_default) {
 
     ASSERT_EQ(buffer.size(), sizeof(double)); // contains just the int
 
-    auto reader = ReadArchive{buffer.slice()};
+    auto reader = ReadArchive{buffer.span()};
     auto output = T{};
     serialize(reader, output);
 

@@ -1,15 +1,15 @@
 #pragma once
-#include "DynamicArrayOf.h"
+#include "Span.h"
 
 #include <ostream>
 
 namespace array19 {
 
 template<class Chr, class Traits, class T>
-auto operator<<(std::basic_ostream<Chr, Traits>& out, const DynamicArrayOf<T>& a) -> decltype(out)& {
+auto operator<<(std::basic_ostream<Chr, Traits>& out, Span<T> const& s) -> decltype(out)& {
     out << "[";
     bool first = true;
-    for (auto& v : a) {
+    for (auto& v : s) {
         if (first)
             first = false;
         else

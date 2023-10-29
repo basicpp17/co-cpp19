@@ -9,8 +9,8 @@ namespace array19 {
 /// usage:
 ///    for(auto [value, index] : WithIndex{container});
 template<class C> struct WithIndex {
-    using It = decltype(adlBegin(*static_cast<C*>(nullptr)));
-    using Res = decltype(**static_cast<It*>(nullptr));
+    using It = decltype(adlBegin(std::declval<C&>()));
+    using Res = decltype(*std::declval<const It&>());
 
     // not using std::pair to avoid reference hassles
     struct result {
@@ -28,15 +28,15 @@ template<class C> struct WithIndex {
         constexpr auto operator++() -> iterator& { return (++it, ++index, *this); }
     };
 
-    constexpr WithIndex(C& c) noexcept : c(c) {}
+    constexpr WithIndex(C&& c) noexcept : c((C &&) c) {}
 
     [[nodiscard]] constexpr auto begin() -> iterator { return iterator{adlBegin(c), {}}; }
     [[nodiscard]] constexpr auto end() -> It { return adlEnd(c); }
 
 private:
-    C& c;
+    C&& c;
 };
 
-template<class C> WithIndex(C&) -> WithIndex<C>;
+template<class C> WithIndex(C&&) -> WithIndex<C>;
 
 } // namespace array19

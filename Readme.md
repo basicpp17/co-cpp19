@@ -24,7 +24,7 @@ Co-Cpp19 contains a lot of sublibraries and is splitted into many small headers.
 This aims to enable the "pay only what you use policy" of C++ at compile time.
 
 * cpp19 - compiler configuration (yours should be somewhat similar)
-* array19 - static and dynamic arrays, slices
+* array19 - static and dynamic arrays, spans
 * meta19 - utilities, type, index and pack wrappers and operations
 * coro19 - basic coroutine with generator support
 * strong19 - named strong types with tags

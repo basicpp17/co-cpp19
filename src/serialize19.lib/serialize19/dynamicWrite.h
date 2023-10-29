@@ -10,7 +10,7 @@ template<EndianBehaviour endian = EndianBehaviour::Keep, class T> auto dynamicWr
     auto sizeArchive = SizeArchive{};
     serialize(sizeArchive, value);
     auto buffer = UniqueBuffer{sizeArchive.size()};
-    auto writeArchive = WriteToArchive<endian>{buffer.amendSlice()};
+    auto writeArchive = WriteToArchive<endian>{buffer.amend()};
     serialize(writeArchive, value);
     return buffer;
 }

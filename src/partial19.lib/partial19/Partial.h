@@ -1,8 +1,8 @@
 #pragma once
 #include "Bitset.h"
 #include "align.h"
-#include "array19/SliceOf.carray.h"
-#include "array19/SliceOf.max.h"
+#include "array19/Span.carray.h"
+#include "array19/Span.max.h"
 #include "meta19/Index.h"
 #include "meta19/RemoveReference.h"
 #include "meta19/TypeAt.h"
@@ -15,8 +15,8 @@
 
 namespace partial19 {
 
-using array19::sliceMaximum;
-using array19::sliceOfCArray;
+using array19::spanMaximum;
+using array19::spanOfCArray;
 using meta19::_index;
 using meta19::Index;
 using meta19::index_of_map;
@@ -87,7 +87,7 @@ template<class... Ts> struct Partial {
     using Map = typename Which::Map;
     static constexpr size_t sizeof_ts[] = {sizeof(Ts)...};
     static constexpr size_t alignof_ts[] = {alignof(Ts)...};
-    enum : size_t { count = sizeof...(Ts), max_align = sliceMaximum(sliceOfCArray(alignof_ts)) };
+    enum : size_t { count = sizeof...(Ts), max_align = spanMaximum(spanOfCArray(alignof_ts)) };
 
 private:
     Bits m_bits{};

@@ -1,15 +1,15 @@
 #pragma once
-#include "BufferSlice.h"
+#include "BufferSpan.h"
 
 #include <stddef.h> // size_t
 
 namespace serialize19 {
 
 /// UniqueBuffer is allocated on construction and carries the ownership of the memory
-/// Use slices to access the data
+/// Use spans to access the data
 struct UniqueBuffer {
-    using Slice = SliceOf<uint8_t>;
-    using ConstSlice = BufferSlice;
+    using ConstSpan = BufferSpan;
+    using AmendSpan = Span<uint8_t>;
 
     UniqueBuffer() = default;
     explicit UniqueBuffer(size_t size) : m_pointer(new uint8_t[size]), m_size(size) {}
@@ -25,8 +25,8 @@ struct UniqueBuffer {
     }
 
     [[nodiscard]] auto size() const -> size_t { return m_size; }
-    [[nodiscard]] auto slice() const -> ConstSlice { return ConstSlice{m_pointer, m_size}; }
-    [[nodiscard]] auto amendSlice() -> Slice { return Slice{m_pointer, m_size}; }
+    [[nodiscard]] auto span() const -> ConstSpan { return ConstSpan{m_pointer, m_size}; }
+    [[nodiscard]] auto amend() -> AmendSpan { return AmendSpan{m_pointer, m_size}; }
 
 private:
     uint8_t* m_pointer{};

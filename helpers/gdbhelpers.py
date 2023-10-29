@@ -23,7 +23,7 @@ def qdump__array19__Array(d, value):
     if d.isExpanded():
         d.putPlotData(value.address(), count, inner_type)
 
-def qdump__array19__SliceOf(d, value):
+def qdump__array19__Span(d, value):
     inner_type = value.type[0]
     data = value['m_data'].pointer()
     count = value['m_count'].integer()
@@ -32,18 +32,9 @@ def qdump__array19__SliceOf(d, value):
         d.checkPointer(data)
     d.putPlotData(data, count, inner_type)
 
-def qdump__array19__MoveSliceOf(d, value):
+def qdump__array19__DynamicArray(d, value):
     inner_type = value.type[0]
     data = value['m_data'].pointer()
-    count = value['m_count'].integer()
-    d.putItemCount(count)
-    if count > 0:
-        d.checkPointer(data)
-    d.putPlotData(data, count, inner_type)
-
-def qdump__array19__DynamicArrayOf(d, value):
-    inner_type = value.type[0]
-    data = value['m_pointer'].pointer()
     count = value['m_count'].integer()
 
     d.putItemCount(count)
@@ -55,6 +46,20 @@ def qdump__array19__DynamicArrayOf(d, value):
             for i in range(count):
                 d.putSubItem(i, d.createValue(data + i * inner_type.size(), inner_type))
             d.putSubItem('capacity', value["m_capacity"])
+
+def qdump__array19__AllocatedArray(d, value):
+    inner_type = value.type[0]
+    data = value['m_data'].pointer()
+    count = value['m_count'].integer()
+
+    d.putItemCount(count)
+    d.putNumChild(count + 1)
+    if count > 0:
+        d.checkPointer(data)
+    if d.isExpanded():
+        with Children(d):
+            for i in range(count):
+                d.putSubItem(i, d.createValue(data + i * inner_type.size(), inner_type))
 
 def qdump__variant19__Variant(d, value):
     whichValue = value["indexed"]["which"].integer()

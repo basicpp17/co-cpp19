@@ -13,7 +13,7 @@ TEST(serialize, std_tuple) {
 
     auto buffer = dynamicWrite(input);
 
-    auto reader = ReadArchive{buffer.slice()};
+    auto reader = ReadArchive{buffer.span()};
     auto output = T{};
     serialize(reader, output);
 

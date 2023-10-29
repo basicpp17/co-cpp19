@@ -15,7 +15,7 @@ template<Archive A, class T, class... Ts> void serialize(A& a, std::vector<T, Ts
         // note: vector<bool> allows no byte level access
         if constexpr (A::mode == ArchiveMode::Size) {
             auto byteCount = (size + 7u) >> 3;
-            a.withSlice(BufferSlice{nullptr, byteCount});
+            a.withSpan(BufferSpan{nullptr, byteCount});
         }
         else if constexpr (A::mode == ArchiveMode::Read) {
             auto it = vector.begin();

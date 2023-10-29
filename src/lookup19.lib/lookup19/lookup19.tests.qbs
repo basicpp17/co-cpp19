@@ -13,6 +13,6 @@ Application {
     // cpp.combineCxxSources: true
 
     files: [
-        "OrderedMapOf.test.cpp",
+        "OrderedMapArray.test.cpp",
     ]
 }

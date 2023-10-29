@@ -1,19 +1,19 @@
 #pragma once
 #include "Archive.h"
-#include "BufferSlice.h"
+#include "BufferSpan.h"
 #include "WriteAppender.h"
 #include "serialize.h"
 
 namespace serialize19 {
 
-/// Archive adapter for writing to a slice of memory
+/// Archive adapter for writing to a span of memory
 /// see: WriteAppender
 template<EndianBehaviour endian = EndianBehaviour::Keep> struct WriteToArchive {
     static constexpr auto mode = ArchiveMode::Write;
 
-    WriteToArchive(SliceOf<uint8_t> slice) : m_appender(slice.begin()) {}
+    WriteToArchive(Span<uint8_t> span) : m_appender(span.begin()) {}
 
-    void withSlice(BufferSlice slice) { m_appender = m_appender.appendSlice(slice); }
+    void withSpan(BufferSpan span) { m_appender = m_appender.appendSpan(span); }
 
     template<class T> void withPrimitive(const T& value) { m_appender = m_appender.appendValue(value); }
 

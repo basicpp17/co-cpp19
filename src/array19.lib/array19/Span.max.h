@@ -1,12 +1,13 @@
 #pragma once
-#include "SliceOf.h"
+#include "Span.h"
 
 namespace array19 {
 
-template<class T> constexpr auto sliceMaximum(SliceOf<T> slice) {
+template<class T> constexpr auto spanMaximum(Span<T> span) {
     auto result = T{};
-    for (auto v : slice)
+    for (auto v : span) {
         if (v > result) result = v;
+    }
     return result;
 }
 

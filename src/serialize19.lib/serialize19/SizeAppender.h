@@ -1,11 +1,11 @@
 #pragma once
-#include "array19/SliceOf.h"
+#include "array19/Span.h"
 
 #include <stddef.h> // size_t
 
 namespace serialize19 {
 
-using array19::SliceOf;
+using array19::Span;
 
 /// accumulates the size of everything that is appended to this
 struct SizeAppender {
@@ -15,8 +15,8 @@ struct SizeAppender {
     constexpr auto count() const -> size_t { return m_count; }
 
     template<class T> constexpr auto appendValue(T) const -> SizeAppender { return SizeAppender{m_count + sizeof(T)}; }
-    template<class T> constexpr auto appendSlice(SliceOf<const T> slice) const -> SizeAppender {
-        return SizeAppender{m_count + sizeof(T) * slice.count()};
+    template<class T> constexpr auto appendSpan(Span<const T> span) const -> SizeAppender {
+        return SizeAppender{m_count + sizeof(T) * span.count()};
     }
 
 private:

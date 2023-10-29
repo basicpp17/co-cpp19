@@ -1,6 +1,6 @@
 #pragma once
 #include "Archive.h"
-#include "BufferSlice.h"
+#include "BufferSpan.h"
 #include "SizeAppender.h"
 #include "serialize.h"
 
@@ -16,7 +16,7 @@ struct SizeArchive {
 
     constexpr auto size() const -> size_t { return m_appender.count(); }
 
-    void withSlice(BufferSlice slice) { m_appender = m_appender.appendSlice(slice); }
+    void withSpan(BufferSpan span) { m_appender = m_appender.appendSpan(span); }
 
     template<class T> void withPrimitive(const T& value) { m_appender = m_appender.appendValue(value); }
 
