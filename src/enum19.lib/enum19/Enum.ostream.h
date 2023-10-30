@@ -3,6 +3,7 @@
 
 #include <ostream>
 #include <string19/StringView.ostream.h>
+#include <stdint.h> // int64_t, uint64_t
 
 namespace enum19 {
 

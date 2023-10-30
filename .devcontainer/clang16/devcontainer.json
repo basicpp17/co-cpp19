@@ -1,0 +1,16 @@
+{
+	"name": "clang16",
+	"build": {
+		"dockerfile": "./clang16.Dockerfile",
+		"context": "."
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-vscode.cpptools",
+				"ms-vscode.cmake-tools"
+			]
+		}
+	},
+	"remoteUser": "vscode"
+}

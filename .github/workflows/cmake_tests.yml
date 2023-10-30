@@ -53,15 +53,17 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - image: "arbmind/cmake-clang:3.25.1-13"
-            preset: "clang"
           - image: "arbmind/cmake-clang:3.25.1-14"
+            preset: "clang"
+          - image: "arbmind/cmake-clang:3.27.6-17"
             preset: "clang"
           - image: "arbmind/cmake-clang-libstdcpp:3.25.1-15-12"
             preset: "clang-libstdcpp"
           - image: "arbmind/cmake-gcc:3.25.1-11"
             preset: "gcc"
           - image: "arbmind/cmake-gcc:3.25.1-12"
+            preset: "gcc"
+          - image: "arbmind/cmake-gcc:3.27.6-13"
             preset: "gcc"
 
     steps:
