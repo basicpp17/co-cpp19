@@ -22,7 +22,7 @@ template<int V> constexpr void ropeAppend(ADL*, char*& data, Decimal<V>*) {
     auto c = static_cast<int>(ropeCount(adl, decimal<V>));
     auto n = V < 0 ? -V : V;
     for (int o = c - 1; o >= 0; o--, n /= 10) data[o] = n % 10 + '0';
-    if (V < 0) data[0] = '-';
+    if constexpr (V < 0) data[0] = '-';
     data += c;
 }
 

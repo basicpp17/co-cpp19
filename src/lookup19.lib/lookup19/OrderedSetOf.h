@@ -57,10 +57,10 @@ public:
     [[nodiscard]] operator Slice() const noexcept { return Slice{begin(), m_count}; }
 
     void ensureCapacity(Count count) {
-        if (totalCapacity() < count) growBy(count - totalCapacity());
+        if (totalCapacity() < count) growBy(static_cast<size_t>(count - totalCapacity()));
     }
     void ensureUnusedCapacity(Count count) {
-        if (unusedCapacity() < count) growBy(count);
+        if (unusedCapacity() < count) growBy(static_cast<size_t>(count - unusedCapacity()));
     }
 
     /// inserts a single value to the set if it is not yet present
@@ -90,7 +90,7 @@ public:
             return true;
         }
         if (it != end()) {
-            memmove(it + 1, it, end() - it);
+            memmove(it + 1, it, static_cast<size_t>(end() - it));
         }
         *it = v;
         m_count++;
@@ -103,7 +103,7 @@ public:
     void remove(ConstIterator cIt) {
         auto it = const_cast<Iterator>(cIt);
         if (it + 1 != end()) {
-            memmove(it, it + 1, end() - it - 1);
+            memmove(it, it + 1, static_cast<size_t>(end() - it - 1));
         }
         m_count--;
     }
@@ -210,7 +210,7 @@ public:
     }
 
 private:
-    [[nodiscard]] auto grownStorage(int growBy) const -> AmendableSlice {
+    [[nodiscard]] auto grownStorage(size_t growBy) const -> AmendableSlice {
         auto cur = m_capacity;
         auto res = (cur << 1) - (cur >> 1) + (cur >> 4); // * 1.563
         if (res < 5) res = 5;
@@ -218,7 +218,7 @@ private:
         auto ptr = Utils::allocate(res);
         return AmendableSlice{ptr, res};
     }
-    void growBy(int by) {
+    void growBy(size_t by) {
         auto newStorage = grownStorage(by);
         memcpy(newStorage.begin(), m_pointer, m_count);
         Utils::deallocate(SliceOf{m_pointer, m_capacity});

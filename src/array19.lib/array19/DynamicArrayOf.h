@@ -120,10 +120,10 @@ public:
     [[nodiscard]] auto move() -> MoveSlice { return MoveSlice{amendBegin(), m_count}; }
 
     void ensureCapacity(Count count) {
-        if (totalCapacity() < count) growBy(count - totalCapacity());
+        if (totalCapacity() < count) growBy(static_cast<size_t>(count - totalCapacity()));
     }
     void ensureUnusedCapacity(Count count) {
-        if (unusedCapacity() < count) growBy(count - unusedCapacity());
+        if (unusedCapacity() < count) growBy(static_cast<size_t>(count - unusedCapacity()));
     }
 
     void clear() {

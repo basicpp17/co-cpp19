@@ -7,7 +7,7 @@
 namespace serialize19 {
 
 template<Archive A, size_t size> void serialize(A& a, std::bitset<size>& bitset) {
-    if (a.mode == ArchiveMode::Read) {
+    if constexpr (A::mode == ArchiveMode::Read) {
         for (auto i = 0u; i < size;) {
             auto chunk = uint8_t{};
             serialize(a, chunk);

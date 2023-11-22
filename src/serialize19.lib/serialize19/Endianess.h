@@ -18,7 +18,7 @@ template<class T> auto endianFlipFor(T input) -> T {
         return input;
     else if constexpr (N == 2) {
         auto value = *(uint16_t*)&input;
-        value = (uint16_t)(value << 8) | (value >> 8);
+        value = static_cast<uint16_t>((value << 8) | (value >> 8));
         return *(T*)&value;
     }
     else if constexpr (N == 4) {

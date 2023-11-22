@@ -11,6 +11,4 @@ constexpr bool operator==(StringView a, StringView b) noexcept {
     return true;
 }
 
-constexpr bool operator!=(StringView a, StringView b) noexcept { return !(a == b); }
-
 } // namespace string19

@@ -89,7 +89,7 @@ constexpr auto buildMetaEnumFor(
             index++,
             memberNames[nameIndex++],
             ((value = members.filled ? members.value : nextValue),
-             nextValue = value + 1,
+             nextValue = static_cast<Underlying>(value + 1),
              static_cast<Enum>(value)) //
         }...} //
     };

@@ -99,15 +99,15 @@ TEST(Variant, amendVisit) {
     using V = Variant<char, int, float>;
     V v1(3.14f), v2('c');
 
-    v1.amendVisit([](auto& value) { value += 3.2f; });
+    v1.amendVisit([](auto& value) { value += 3; });
     //    v1.amendVisit([](int& value) { value -= 1; }, [](char&) {}, [](float& value) { value += 1; });
 
     v1.visit([](auto value) {
         EXPECT_EQ(sizeof(value), sizeof(float));
-        EXPECT_EQ(value, 3.14f + 3.2f /*+ 1*/);
+        EXPECT_EQ(value, 3.14f + 3 /*+ 1*/);
     });
 
-    v2.amendVisit([](auto& value) { value += 3.2f; });
+    v2.amendVisit([](auto& value) { value += 3; });
     //    v2.amendVisit([](int& value) { value -= 1; }, [](char&) {}, [](float& value) { value += 1; });
     v2.visit([](auto value) {
         EXPECT_EQ(sizeof(value), sizeof(char));
@@ -115,16 +115,16 @@ TEST(Variant, amendVisit) {
     });
 }
 
-// TEST(Variant, overloaded) {
-//    auto v = Variant<char, int, float>{};
+TEST(Variant, overloaded) {
+    auto v = Variant<char, int, float>{};
 
-//    auto charVisitor = [](char) { return 1; };
-//    auto intVisitor = [](int) { return 2; };
-//    auto floatVisitor = [](float) { return 3; };
+    auto charVisitor = [](char) -> int { return 1; };
+    auto intVisitor = [](int) -> int { return 2; };
+    auto floatVisitor = [](float) -> int { return 3; };
 
-//    EXPECT_EQ(1, v.visit(charVisitor, intVisitor, floatVisitor));
-//    v = 1;
-//    EXPECT_EQ(2, v.visit(charVisitor, intVisitor, floatVisitor));
-//    v = 3.2f;
-//    EXPECT_EQ(3, v.visit(charVisitor, intVisitor, floatVisitor));
-//}
+    EXPECT_EQ(1, v.visitOverloaded(charVisitor, intVisitor, floatVisitor));
+    v = 1;
+    EXPECT_EQ(2, v.visitOverloaded(charVisitor, intVisitor, floatVisitor));
+    v = 3.2f;
+    EXPECT_EQ(3, v.visitOverloaded(charVisitor, intVisitor, floatVisitor));
+}

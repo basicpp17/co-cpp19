@@ -19,7 +19,7 @@ struct Person {
 template<class A> void serialize(A& a, std::string& s) {
     auto size = s.size();
     serialize(a, size);
-    if (a.mode == ArchiveMode::Read) {
+    if constexpr (A::mode == ArchiveMode::Read) {
         s.resize(size);
         for (auto i = 0U; i < size; i++) serialize(a, s[i]);
     }

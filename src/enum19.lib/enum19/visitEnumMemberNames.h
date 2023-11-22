@@ -16,7 +16,7 @@ constexpr bool isCppIdentifierChar(char c) {
 
 template<size_t N> constexpr auto extractEnumMemberNames(StringView body) -> Array<StringView, N> {
     auto result = Array<StringView, N>{};
-    auto i = 0;
+    auto i = 0u;
     auto p = body.data;
     auto e = body.data + body.count;
 

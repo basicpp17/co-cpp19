@@ -28,13 +28,13 @@ template<class C> struct WithIndex {
         constexpr auto operator++() -> iterator& { return (++it, ++index, *this); }
     };
 
-    constexpr WithIndex(C& c) noexcept : c(c) {}
+    constexpr WithIndex(C& c) noexcept : c(&c) {}
 
-    [[nodiscard]] constexpr auto begin() -> iterator { return iterator{adlBegin(c), {}}; }
-    [[nodiscard]] constexpr auto end() -> It { return adlEnd(c); }
+    [[nodiscard]] constexpr auto begin() -> iterator { return iterator{adlBegin(*c), {}}; }
+    [[nodiscard]] constexpr auto end() -> It { return adlEnd(*c); }
 
 private:
-    C& c;
+    C* c;
 };
 
 template<class C> WithIndex(C&) -> WithIndex<C>;
