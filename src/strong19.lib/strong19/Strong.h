@@ -25,8 +25,8 @@ template<class V> struct Weak {
     V v{};
     constexpr Weak() = default;
     template<class... Ts> requires(sizeof...(Ts) > 0 && std::is_constructible_v<V, Ts...>)
-    constexpr explicit Weak(Ts&&... ts) : v((Ts &&) ts...) {}
-    bool operator==(const Weak&) const = default;
+    constexpr explicit Weak(Ts&&... ts) : v((Ts&&)ts...) {}
+    auto operator==(const Weak&) const -> bool = default;
 };
 
 #ifndef DECLARE_STRONG_EXTRAS
@@ -39,10 +39,12 @@ template<class V> struct Weak {
 /// Forward declares a strong value type with name @param NAME that stores value of type @param VALUE and optional tags
 #define DECLARE_STRONG(NAME, VALUE, ...)                                                                               \
     struct NAME;                                                                                                       \
-    [[maybe_unused]] constexpr inline auto isStrong(strong19::ADL*, NAME*)->bool { return true; }                                       \
-    [[maybe_unused]] auto strongValueType(NAME*)->STRONG19_REMOVEPAREN(VALUE);                                                          \
-    [[maybe_unused]] auto strongTags(NAME*)->meta19::TypePack<__VA_ARGS__>;                                                             \
-    [[maybe_unused]] constexpr inline auto strongName(NAME*)->string19::StringView { return string19::viewLiteral(#NAME); }             \
+    [[maybe_unused]] constexpr inline auto isStrong(strong19::ADL*, NAME*) -> bool { return true; }                    \
+    [[maybe_unused]] auto strongValueType(NAME*) -> STRONG19_REMOVEPAREN(VALUE);                                       \
+    [[maybe_unused]] auto strongTags(NAME*) -> meta19::TypePack<__VA_ARGS__>;                                          \
+    [[maybe_unused]] constexpr inline auto strongName(NAME*) -> string19::StringView {                                 \
+        return string19::viewLiteral(#NAME);                                                                           \
+    }                                                                                                                  \
     DECLARE_STRONG_EXTRAS(NAME)                                                                                        \
     struct NAME
 
@@ -62,7 +64,7 @@ template<class V> struct Weak {
         using Weak::Weak;                                                                                              \
         using Weak::v;                                                                                                 \
         STRONG19_IGNORE_DEFAULTED_FUNCTION_DELETED                                                                     \
-        bool operator==(const NAME&) const = default;                                                                  \
+        auto operator==(const NAME&) const -> bool = default;                                                          \
         STRONG19_RESTORE_DEFAULTED_FUNCTION_DELETED                                                                    \
     };                                                                                                                 \
     DEFINE_STRONG_EXTRAS(NAME)                                                                                         \
