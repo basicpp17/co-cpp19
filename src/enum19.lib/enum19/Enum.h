@@ -17,7 +17,7 @@
     enum class NAME : UNDERLYING { __VA_ARGS__ };                                                                      \
     constexpr auto metaEnumFor(enum19::ADL*, NAME*) {                                                                  \
         using Enum19_ValueWrapper = ::enum19::details::ValueWrapper<UNDERLYING>;                                       \
-        constexpr Enum19_ValueWrapper __VA_ARGS__;                                                                     \
+        constexpr Enum19_ValueWrapper __VA_ARGS__; /* NOLINT */                                                        \
         return ::enum19::details::buildMetaEnumFor<NAME>(#NAME, #__VA_ARGS__, __VA_ARGS__);                            \
     }                                                                                                                  \
     ENUM19_EXTRAS(NAME)
@@ -65,8 +65,6 @@ template<class Underlying> struct ValueWrapper {
     constexpr ValueWrapper operator=(Underlying) const { return *this; }
     constexpr operator Underlying() const { return value; }
 };
-
-template<class... Args> constexpr auto countArgs(Args&&...) -> size_t { return sizeof...(Args); }
 
 template<class Enum, size_t NameN, size_t BodyN, class... Args>
 constexpr auto buildMetaEnumFor(
