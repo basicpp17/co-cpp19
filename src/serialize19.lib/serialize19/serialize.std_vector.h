@@ -1,4 +1,5 @@
 #pragma once
+#include "BufferSlice.h"
 #include "serialize.h"
 
 #include <vector>
