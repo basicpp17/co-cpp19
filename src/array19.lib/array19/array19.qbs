@@ -15,6 +15,7 @@ Product {
         "AllocatedArrayUtils.h",
         "Array.h",
         "Array.ostream.h",
+        "DynamicArrayOf.AsHex.ostream.h",
         "DynamicArrayOf.equals.h",
         "DynamicArrayOf.h",
         "DynamicArrayOf.ostream.h",

@@ -1,6 +1,7 @@
 #include "DynamicArrayOf.h"
 
 #include "Array.h"
+#include "DynamicArrayOf.AsHex.ostream.h"
 #include "DynamicArrayOf.equals.h"
 #include "DynamicArrayOf.ostream.h"
 #include "SliceOf.carray.h"
@@ -151,7 +152,7 @@ struct Vec3 {
     bool operator==(const Vec3&) const = default;
 
     [[maybe_unused]] friend auto operator<<(std::ostream& o, const Vec3& v) -> std::ostream& {
-        return o << "x:" << v.x << ", y:" << v.y << ", z:" << v.z;
+        return o << "{x:" << v.x << ", y:" << v.y << ", z:" << v.z << '}';
     }
 };
 
@@ -163,6 +164,24 @@ TEST(DynamicArrayOf, EmplaceStruct) {
 
     auto v2 = DynamicArrayOf{Vec3{1.1, 2.2, 3.3}};
     EXPECT_EQ(v, v2);
+}
+
+TEST(DynamicArrayOf, Ostream) {
+    auto s = std::stringstream{};
+    s << DynamicArrayOf{10, 11, 16};
+    EXPECT_EQ(s.str(), "[10, 11, 16]");
+}
+
+TEST(DynamicArrayOf, OstreamStruct) {
+    auto s = std::stringstream{};
+    s << DynamicArrayOf{Vec3{1.1, 2.2, 3.3}, Vec3{10, 11, 16}};
+    EXPECT_EQ(s.str(), "[{x:1.1, y:2.2, z:3.3}, {x:10, y:11, z:16}]");
+}
+
+TEST(DynamicArrayOf, OstreamAsHex) {
+    auto s = std::stringstream{};
+    s << AsHex{DynamicArrayOf<uint8_t>{uint8_t{10}, uint8_t{11}, uint8_t{16}}};
+    EXPECT_EQ(s.str(), "[0a, 0b, 10]");
 }
 
 namespace {
