@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/devcontainers/base:alpine-3.18
+FROM mcr.microsoft.com/devcontainers/base:alpine-3.20
 
 RUN \
   apk add --update --no-cache \
@@ -8,5 +8,4 @@ RUN \
     git \
     gdb \
     linux-headers \
-    py3-pip \
-  && pip install conan
+    py3-pip

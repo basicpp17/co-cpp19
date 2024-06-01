@@ -1,14 +1,15 @@
 {
-	"name": "clang15",
+	"name": "cocpp19-clang17",
 	"build": {
-		"dockerfile": "./clang15.Dockerfile",
+		"dockerfile": "./clang17.Dockerfile",
 		"context": "."
 	},
 	"customizations": {
 		"vscode": {
 			"extensions": [
 				"ms-vscode.cpptools",
-				"ms-vscode.cmake-tools"
+				"ms-vscode.cmake-tools",
+				"ms-python.python"
 			]
 		}
 	},

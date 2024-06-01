@@ -11,13 +11,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - image: arbmind/qbs-clang:1.21.0-13
-            build_args: "modules.cpp.cxxStandardLibrary:libc++ modules.cpp.staticLibraries:c++,c++abi"
           - image: arbmind/qbs-clang:1.21.0-14
+            build_args: "modules.cpp.cxxStandardLibrary:libc++ modules.cpp.staticLibraries:c++,c++abi"
+          - image: arbmind/qbs-clang:2.1.2-17
             build_args: "modules.cpp.cxxStandardLibrary:libc++ modules.cpp.staticLibraries:c++,c++abi"
           - image: arbmind/qbs-clang-libstdcpp:1.24.0-15-12
           - image: arbmind/qbs-gcc:1.21.0-11
           - image: arbmind/qbs-gcc:1.24.0-12
+          - image: arbmind/qbs-gcc:2.1.2-13
 
     steps:
       - uses: actions/checkout@v3
