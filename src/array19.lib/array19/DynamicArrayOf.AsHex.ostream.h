@@ -6,11 +6,14 @@
 
 namespace array19 {
 
-template<class T> struct AsHex {
-    const DynamicArrayOf<T>& a;
+template<class T> struct AsHex;
+
+template<class T> struct AsHex<DynamicArrayOf<T>> {
+    using Array = DynamicArrayOf<T>;
+    const Array& a;
 
     template<class Chr, class Traits>
-    friend auto operator<<(std::basic_ostream<Chr, Traits>& out, AsHex<T>&& a) -> decltype(out)& {
+    friend auto operator<<(std::basic_ostream<Chr, Traits>& out, AsHex<Array>&& a) -> decltype(out)& {
         out << "[";
         bool first = true;
         for (auto& v : a.a) {
@@ -23,5 +26,7 @@ template<class T> struct AsHex {
         return out << std::dec << "]";
     }
 };
+
+template<class T> AsHex(DynamicArrayOf<T>&&) -> AsHex<DynamicArrayOf<T>>;
 
 } // namespace array19
