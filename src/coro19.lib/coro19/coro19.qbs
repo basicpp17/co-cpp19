@@ -8,11 +8,11 @@ StaticLibrary {
         cpp.cxxFlags: base.concat("/await") // enable coroutine-ts
     }
     Properties {
-        condition: qbs.toolchain.contains('msvc') && qbs.toolchain.contains('clang-cl')
+        condition: qbs.toolchain.contains('msvc') && qbs.toolchain.contains('clang-cl') && cpp.compilerVersionMajor < 11
         cpp.cxxFlags: base.concat("-Xclang", "-fcoroutines-ts") // enable coroutine-ts
     }
     Properties {
-        condition: qbs.toolchain.contains('clang')
+        condition: qbs.toolchain.contains('clang') && cpp.compilerVersionMajor < 11
         cpp.cxxFlags: base.concat("-fcoroutines-ts") // enable coroutine-ts
     }
 
@@ -33,7 +33,7 @@ StaticLibrary {
             cpp.cxxFlags: base.concat("/await") // enable coroutine-ts
         }
         Properties {
-            condition: qbs.toolchain.contains('msvc') && qbs.toolchain.contains('clang-cl')
+            condition: qbs.toolchain.contains('msvc') && qbs.toolchain.contains('clang-cl') && cpp.compilerVersionMajor < 11
             cpp.cxxFlags: base.concat("-Xclang", "-fcoroutines-ts") // enable coroutine-ts
         }
         Properties {
