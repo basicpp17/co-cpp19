@@ -1,7 +1,7 @@
-from conans import ConanFile
+from conan import ConanFile
 from conan.tools.cmake import CMake, CMakeToolchain, cmake_layout
-from conan.tools.files import apply_conandata_patches, export_conandata_patches, get, replace_in_file, rm, rmdir
-from conans import tools
+from conan.tools.files import copy, rmdir
+from conan.tools.build import check_min_cppstd
 
 import os
 
@@ -24,7 +24,7 @@ class Cocpp19Conan(ConanFile):
         "shared": False,
         "fPIC": True
     }
-    requires = [("gtest/1.11.0", "private")]
+    test_requires = "gtest/1.11.0"
     generators = "CMakeDeps"
 
     def layout(self):
@@ -32,19 +32,20 @@ class Cocpp19Conan(ConanFile):
         cmake_layout(self)
 
     def export_sources(self):
-        self.copy("CMakeLists.txt", src="..")
-        self.copy("CoCpp19Config.cmake.in", src="..")
-        self.copy("LICENSE", src="..")
-        self.copy("src/*", src="..", excludes="*.qbs")
-        self.copy("third_party/CMakeLists.txt", src="..")
-        self.copy("third_party/googletest.cmake", src="..")
+        folder = os.path.join(self.recipe_folder, "..")
+        copy(self, "CMakeLists.txt", folder, self.export_sources_folder)
+        copy(self, "CoCpp19Config.cmake.in", folder, self.export_sources_folder)
+        copy(self, "LICENSE", folder, self.export_sources_folder)
+        copy(self, "src/*", folder, self.export_sources_folder, excludes="*.qbs")
+        copy(self, "third_party/CMakeLists.txt", folder, self.export_sources_folder)
+        copy(self, "third_party/googletest.cmake", folder, self.export_sources_folder)
 
     def config_options(self):
         if self.settings.os == "Windows":
             del self.options.fPIC
 
     def validate(self):
-        tools.check_min_cppstd(self, "20")
+        check_min_cppstd(self, "20")
 
     def generate(self):
         tc = CMakeToolchain(self)
@@ -56,7 +57,7 @@ class Cocpp19Conan(ConanFile):
         cmake.build()
 
     def package(self):
-        self.copy("LICENSE")
+        copy(self, "LICENSE", self.source_folder, self.package_folder)
         cmake = CMake(self)
         cmake.install()
         rmdir(self, os.path.join(self.package_folder, "lib", "pkgconfig"))
@@ -65,6 +66,7 @@ class Cocpp19Conan(ConanFile):
     def package_info(self):
         self.cpp_info.set_property("cmake_find_mode", "both")
         self.cpp_info.set_property("cmake_file_name", "CoCpp19")
+        self.cpp_info.set_property("cmake_target_name", "CoCpp19")
 
         components = [
             {"name": "array19"},
@@ -90,8 +92,8 @@ class Cocpp19Conan(ConanFile):
             if "libs" in comp:
                 self.cpp_info.components[name].libs = comp["libs"]
 
-        self.cpp_info.names["cmake_find_package"] = "CoCpp19"
-        self.cpp_info.names["cmake_find_package_multi"] = "CoCpp19"
+        # self.cpp_info.names["cmake_find_package"] = "CoCpp19"
+        # self.cpp_info.names["cmake_find_package_multi"] = "CoCpp19"
 
     def test(self):
         cmake = CMake(self)

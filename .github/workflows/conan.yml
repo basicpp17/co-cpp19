@@ -21,15 +21,14 @@ jobs:
 
       - name: Create conan package
         run: |
-          cd conan
-          conan create . --build=missing --profile profiles/msvc2022
+          conan create conan/ --build=missing --profile:all=./conan/profiles/msvc2022
 
       - name: Test package components
         shell: pwsh
         run: |
           foreach ($folder in (Get-ChildItem -Path ./conan/tests -Directory | Foreach-Object {$_.Name})) {
               echo "Running ${folder}"
-              & script\test_conan.bat "${folder}" --profile "$pwd/conan/profiles/msvc2022"
+              & script\test_conan.bat "${folder}" --profile:all="$pwd/conan/profiles/msvc2022"
               if ($LASTEXITCODE -ne 0) {
                 exit(1)
               }

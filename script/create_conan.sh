@@ -9,5 +9,4 @@ shift
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 BASE_DIR="$(pwd)"
 
-cd conan
-conan create . --build=missing --profile "conan/profiles/${ConanProfile}"
+conan create conan --build=missing --profile:all="./conan/profiles/${ConanProfile}"

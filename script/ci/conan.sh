@@ -13,5 +13,5 @@ script/create_conan.sh "${ConanProfile}"
 
 for test in conan/tests/*/
 do
-  script/test_conan.sh "$(basename "${test}")" --profile "${BASE_DIR}/conan/profiles/${ConanProfile}"
+  script/test_conan.sh "$(basename "${test}")" --profile:all="${BASE_DIR}/conan/profiles/${ConanProfile}"
 done
