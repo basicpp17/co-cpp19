@@ -13,10 +13,10 @@ template<class T> struct AsHex<DynamicArrayOf<T>> {
     const Array& a;
 
     template<class Chr, class Traits>
-    friend auto operator<<(std::basic_ostream<Chr, Traits>& out, AsHex<Array>&& a) -> decltype(out)& {
+    friend auto operator<<(std::basic_ostream<Chr, Traits>& out, AsHex<Array>&& asHex) -> decltype(out)& {
         out << "[";
         bool first = true;
-        for (auto& v : a.a) {
+        for (auto& v : asHex.a) {
             if (first)
                 first = false;
             else
@@ -27,6 +27,6 @@ template<class T> struct AsHex<DynamicArrayOf<T>> {
     }
 };
 
-template<class T> AsHex(DynamicArrayOf<T>&&) -> AsHex<DynamicArrayOf<T>>;
+template<class T> AsHex(const DynamicArrayOf<T>&) -> AsHex<DynamicArrayOf<T>>;
 
 } // namespace array19
