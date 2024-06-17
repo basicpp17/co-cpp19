@@ -7,7 +7,7 @@
 template<class Char> struct fmt::formatter<string19::StringView, Char> {
     constexpr auto parse(fmt::basic_format_parse_context<Char>& ctx) { return ctx.begin(); }
 
-    template<typename FormatContext> auto format(const string19::StringView& v, FormatContext& ctx) {
+    template<typename FormatContext> auto format(const string19::StringView& v, FormatContext& ctx) const {
         auto out = ctx.out();
         for (auto i = 0u; i < v.count; i++) *out++ = v[i];
         return out;
