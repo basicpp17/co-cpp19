@@ -19,3 +19,16 @@ TEST(serialize, std_tuple) {
 
     EXPECT_EQ(output, input);
 }
+
+TEST(serialize, std_tuple_ints) {
+    using T = std::tuple<int, int, int>;
+    auto input = T{23, 13, 42};
+
+    auto buffer = dynamicWrite(input);
+
+    auto reader = ReadArchive{buffer.slice()};
+    auto output = T{};
+    serialize(reader, output);
+
+    EXPECT_EQ(output, input);
+}

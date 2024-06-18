@@ -21,3 +21,16 @@ TEST(serialize, Tuple) {
 
     EXPECT_EQ(output, input);
 }
+
+TEST(serialize, Tuple_ints) {
+    using T = Tuple<int, int, int>;
+    auto input = T{23, 42, 13};
+
+    auto buffer = dynamicWrite(input);
+
+    auto reader = ReadArchive{buffer.slice()};
+    auto output = T{};
+    serialize(reader, output);
+
+    EXPECT_EQ(output, input);
+}
