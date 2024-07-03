@@ -54,6 +54,10 @@ template<size_t N> constexpr auto selectVariantWhichValue() {
     // fail …
 }
 
+#if defined(_MSC_VER)
+#    pragma warning(push)
+#    pragma warning(disable : 4702) // we expect unreachable return code
+#endif
 template<class T, class... Ts, class V, class F, size_t I, size_t... Is>
 constexpr auto visitRecursive(V&& v, F&& f, IndexPack<I, Is...>*) -> decltype(auto) {
     if (I == v.which) {
@@ -79,6 +83,9 @@ constexpr auto amendVisitRecursive(V&& v, F&& f, IndexPack<I, Is...>*) -> declty
         META19_UNREACHABLE();
     }
 }
+#if defined(_MSC_VER)
+#    pragma warning(pop)
+#endif
 
 } // namespace details
 
@@ -254,11 +261,11 @@ public:
     /// Convinience function to overload all given lambdas
     template<class... Fs> requires(sizeof...(Fs) > 0)
     constexpr auto visitOverloaded(Fs&&... fs) const -> decltype(auto) {
-        return indexed.visitImpl(Overloaded{(Fs &&) fs...});
+        return indexed.visitImpl(Overloaded{(Fs&&)fs...});
     }
 
     template<class... Fs> requires(sizeof...(Fs) > 0) constexpr auto amendOverloaded(Fs&&... fs) -> decltype(auto) {
-        return indexed.amendVisitImpl(Overloaded{(Fs &&) fs...});
+        return indexed.amendVisitImpl(Overloaded{(Fs&&)fs...});
     }
 
     /// inplace change of indexed type inside variant
