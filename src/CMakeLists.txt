@@ -1,6 +1,7 @@
 add_subdirectory(array19.lib)
 add_subdirectory(coro19.lib)
 add_subdirectory(enum19.lib)
+add_subdirectory(flags19.lib)
 add_subdirectory(lookup19.lib)
 add_subdirectory(meta19.lib)
 add_subdirectory(optional19.lib)

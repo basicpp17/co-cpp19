@@ -43,6 +43,7 @@ Product {
             "serialize.Array.h",
             "serialize.BufferSlice.h",
             "serialize.DynamicArrayOf.h",
+            "serialize.Flags.h",
             "serialize.None.h",
             "serialize.Optional.h",
             "serialize.PackedOptional.h",

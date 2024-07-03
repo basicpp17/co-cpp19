@@ -11,6 +11,7 @@ Project {
         "src/array19.lib",
         "src/coro19.lib",
         "src/enum19.lib",
+        "src/flags19.lib",
         "src/meta19.lib",
         "src/lookup19.lib",
         "src/optional19.lib",
