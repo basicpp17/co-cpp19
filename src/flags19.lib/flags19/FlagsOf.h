@@ -13,20 +13,20 @@ using enum19::meta_enum_for;
 namespace details {
 
 template<size_t maxBit> constexpr auto storageTypeForMaxBit() {
-    if constexpr (maxBit <= sizeof(uint8_t)) {
+    if constexpr (maxBit <= 8 * sizeof(uint8_t)) {
         return uint8_t{};
     }
-    else if constexpr (maxBit <= sizeof(uint16_t)) {
+    else if constexpr (maxBit <= 8 * sizeof(uint16_t)) {
         return uint16_t{};
     }
-    else if constexpr (maxBit <= sizeof(uint32_t)) {
+    else if constexpr (maxBit <= 8 * sizeof(uint32_t)) {
         return uint32_t{};
     }
-    else if constexpr (maxBit <= sizeof(uint64_t)) {
+    else if constexpr (maxBit <= 8 * sizeof(uint64_t)) {
         return uint64_t{};
     }
     else {
-        static_assert(maxBit > sizeof(uint64_t), "not supported right now");
+        static_assert(maxBit > 8 * sizeof(uint64_t), "not supported right now");
     }
 }
 
