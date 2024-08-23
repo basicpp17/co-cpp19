@@ -40,7 +40,8 @@ template<HasMetaEnum Enum> struct FlagsOf {
     explicit constexpr FlagsOf(Value const& value) : m_value{value} {}
 
     template<class... Args> requires((sizeof...(Args) > 0) && ... && std::is_same_v<Args, Enum>)
-    explicit constexpr FlagsOf(Args... args) : FlagsOf{((1U << static_cast<UnderlyingBit>(args)) | ...)} {}
+    explicit constexpr FlagsOf(Args... args)
+            : FlagsOf{static_cast<Value>(((1U << static_cast<UnderlyingBit>(args)) | ...))} {}
 
     auto operator==(FlagsOf const&) const -> bool = default;
 
