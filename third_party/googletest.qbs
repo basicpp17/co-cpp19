@@ -3,21 +3,21 @@ import qbs.File
 import qbs.FileInfo
 
 StaticLibrary {
-    id: googletest
     name: "googletest"
 
     Probe {
         id: googletestProbe
         property pathList searchPathes: ["./googletest", "../../googletest"]
+        property path sourcePath: product.sourceDirectory
 
         property path basePath // valid if found
 
         configure: {
             for (var i=0; i < searchPathes.length; i++) {
                 var c = searchPathes[i];
-                if (File.exists(FileInfo.joinPaths(googletest.sourceDirectory, c, "googletest/src/gtest-all.cc"))) {
+                if (File.exists(FileInfo.joinPaths(sourcePath, c, "googletest/src/gtest-all.cc"))) {
                     found = true;
-                    basePath = FileInfo.joinPaths(googletest.sourceDirectory, c);
+                    basePath = FileInfo.joinPaths(sourcePath, c);
                     return;
                 }
             }
