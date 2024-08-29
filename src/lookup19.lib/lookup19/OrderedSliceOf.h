@@ -15,6 +15,7 @@ template<class T, class Less> struct OrderedSliceOf {
     using Element = const T;
     using Count = size_t;
     using Index = size_t;
+    using Unordered = SliceOf<Element>;
 
 private:
     Element* m_data{};
@@ -22,16 +23,26 @@ private:
 
 public:
     constexpr OrderedSliceOf() = default;
-    constexpr explicit OrderedSliceOf(Element* data, Element* end) noexcept : m_data(data), m_count(end - data) {}
-    constexpr explicit OrderedSliceOf(Element* data, Count count) noexcept : m_data(data), m_count(count) {}
+    constexpr explicit OrderedSliceOf(Unordered slice) : m_data{slice.begin()}, m_count{slice.count()} {}
+    constexpr explicit OrderedSliceOf(Element* data, Element* end)
+            : m_data{data}
+            , m_count{static_cast<size_t>(end - data)} {}
+    constexpr explicit OrderedSliceOf(Element* data, Count count) : m_data{data}, m_count{count} {}
 
+    [[nodiscard]] constexpr auto isEmpty() const -> bool { return m_count == 0; }
     [[nodiscard]] constexpr auto count() const -> Count { return m_count; }
-    [[nodiscard]] constexpr auto begin() const& noexcept -> Element* { return m_data; }
+    [[nodiscard]] constexpr auto begin() const& -> Element* { return m_data; }
     [[nodiscard]] constexpr auto end() const& -> Element* { return m_data + m_count; }
+    [[nodiscard]] constexpr auto operator[](Index index) const -> Element& { return m_data[index]; }
 
-    [[nodiscard]] constexpr operator SliceOf<const T>() const noexcept { return SliceOf<const T>{m_data, m_count}; }
+    [[nodiscard]] constexpr operator Unordered() const { return Unordered{m_data, m_count}; }
 
-    template<class K> [[nodiscard]] constexpr auto lowerBound(K&& key) -> Element* {
+    template<class K> [[nodiscard]] constexpr bool has(K&& key) const {
+        auto it = lowerBound((K&&)key);
+        return it != end() && *it == key;
+    }
+
+    template<class K> [[nodiscard]] constexpr auto lowerBound(K&& key) const -> Element* {
         auto less = Less{};
         auto lower_bound = m_data;
         auto count = m_count;
@@ -48,7 +59,7 @@ public:
         return lower_bound;
     }
 
-    template<class K> [[nodiscard]] constexpr auto upperBound(K&& key) -> Element* {
+    template<class K> [[nodiscard]] constexpr auto upperBound(K&& key) const -> Element* {
         auto less = Less{};
         auto upper_bound = m_data;
         auto count = m_count;
@@ -65,7 +76,7 @@ public:
         return upper_bound;
     }
 
-    template<class K> [[nodiscard]] constexpr auto equalRange(K&& key) -> OrderedSliceOf {
+    template<class K> [[nodiscard]] constexpr auto equalRange(K&& key) const -> OrderedSliceOf {
         auto less = Less{};
         auto count = m_count;
         auto lower_bound = m_data;
@@ -89,5 +100,7 @@ public:
         return OrderedSliceOf{lower_bound, upper_bound};
     }
 };
+
+template<class T, class Less> struct OrderedSliceOf<T&&, Less>; // use MoveSliceOf<T> for that
 
 } // namespace lookup19

@@ -23,6 +23,7 @@ template<class T, class Less = DefaultLess> struct OrderedSetOf {
     using Slice = OrderedSliceOf<const T, Less>;
     using AmendableSlice = SliceOf<T>;
     using UnorderedSlice = SliceOf<const T>;
+    using MoveSlice = array19::MoveSliceOf<T>;
 
     static_assert(std::is_trivial_v<T>, "Only works for trivial types!");
 
@@ -34,39 +35,68 @@ private:
     Count m_capacity{};
 
 public:
-    OrderedSetOf() = default;
-    ~OrderedSetOf() noexcept {
+    constexpr OrderedSetOf() = default;
+    explicit constexpr OrderedSetOf(Slice ordered) noexcept
+            : m_pointer{Utils::allocate(ordered.count())}
+            , m_count{ordered.count()}
+            , m_capacity{ordered.count()} {
+        Utils::copyAssign(m_pointer, ordered);
+    }
+    constexpr OrderedSetOf(const OrderedSetOf& o) noexcept
+            : m_pointer{Utils::allocate(o.m_count)}
+            , m_count{o.m_count}
+            , m_capacity{o.m_count} {
+        Utils::copyAssign(m_pointer, Slice{o});
+    }
+    constexpr OrderedSetOf(OrderedSetOf&& o) noexcept
+            : m_pointer{std::exchange(o.m_pointer, nullptr)}
+            , m_count{o.m_count}
+            , m_capacity{o.m_count} {}
+    constexpr auto operator=(const OrderedSetOf& o) noexcept -> OrderedSetOf& {
+        if (o.m_count > m_capacity) {
+            if (m_pointer) Utils::deallocate(SliceOf{m_pointer, m_capacity});
+            m_pointer = Utils::allocate(o.m_count);
+            m_capacity = o.m_count;
+        }
+        Utils::copyAssign(m_pointer, Slice{o});
+        m_count = o.m_count;
+        return *this;
+    }
+    constexpr auto operator=(OrderedSetOf&& o) noexcept -> OrderedSetOf& {
+        if (m_pointer) Utils::deallocate(SliceOf{m_pointer, m_capacity});
+        m_pointer = std::exchange(o.m_pointer, nullptr);
+        m_count = o.m_count;
+        m_capacity = o.m_capacity;
+        return *this;
+    }
+    constexpr ~OrderedSetOf() noexcept {
         if (m_pointer) Utils::deallocate(SliceOf{m_pointer, m_capacity});
     }
 
-    [[nodiscard]] constexpr auto isEmpty() const noexcept -> bool { return m_count == 0; }
-    [[nodiscard]] auto count() const -> Count { return m_count; }
-    [[nodiscard]] auto totalCapacity() const -> Count { return m_capacity; }
-    [[nodiscard]] auto unusedCapacity() const -> Count { return m_capacity - m_count; }
+    [[nodiscard]] constexpr auto isEmpty() const -> bool { return m_count == 0; }
+    [[nodiscard]] constexpr auto count() const -> Count { return m_count; }
+    [[nodiscard]] constexpr auto totalCapacity() const -> Count { return m_capacity; }
+    [[nodiscard]] constexpr auto unusedCapacity() const -> Count { return m_capacity - m_count; }
 
-    [[nodiscard]] auto front() const -> const T& { return *begin(); }
-    [[nodiscard]] auto back() const -> const T& { return *(begin() + m_count - 1); }
+    [[nodiscard]] constexpr auto front() const -> const T& { return *begin(); }
+    [[nodiscard]] constexpr auto back() const -> const T& { return *(begin() + m_count - 1); }
 
-    [[nodiscard]] auto begin() const noexcept -> ConstIterator {
-        return std::launder(reinterpret_cast<const T*>(m_pointer));
-    }
-    [[nodiscard]] auto end() const noexcept -> ConstIterator { return begin() + m_count; }
-    [[nodiscard]] auto operator[](Index index) const noexcept -> const Element& {
-        return *std::launder(reinterpret_cast<const T*>(m_pointer + index));
-    }
-    [[nodiscard]] operator Slice() const noexcept { return Slice{begin(), m_count}; }
+    [[nodiscard]] constexpr auto begin() const noexcept -> ConstIterator { return m_pointer; }
+    [[nodiscard]] constexpr auto end() const noexcept -> ConstIterator { return begin() + m_count; }
+    [[nodiscard]] constexpr auto operator[](Index index) const -> const Element& { return m_pointer[index]; }
+    [[nodiscard]] constexpr operator Slice() const { return Slice{m_pointer, m_count}; }
 
-    void ensureCapacity(Count count) {
+    constexpr void ensureCapacity(Count count) {
         if (totalCapacity() < count) growBy(static_cast<size_t>(count - totalCapacity()));
     }
-    void ensureUnusedCapacity(Count count) {
+    constexpr void ensureUnusedCapacity(Count count) {
         if (unusedCapacity() < count) growBy(static_cast<size_t>(count - unusedCapacity()));
     }
 
     /// inserts a single value to the set if it is not yet present
     /// note:
     /// * if you want to insert muliple values use merge
-    bool insert(T v) {
+    constexpr auto insert(T v) -> bool {
         auto it = const_cast<Iterator>(static_cast<Slice>(*this).lowerBound(v));
         if (it != end() && *it == v) {
             return false;
@@ -76,12 +106,12 @@ public:
             auto nPtr = newStorage.begin();
             auto fCount = static_cast<size_t>(it - m_pointer);
             if (0 != fCount) {
-                memcpy(nPtr, m_pointer, fCount);
+                Utils::moveConstruct(nPtr, MoveSlice{m_pointer, fCount});
                 nPtr += fCount;
             }
             *nPtr++ = v;
             if (fCount != m_count) {
-                memcpy(nPtr, m_pointer + fCount, m_count - fCount);
+                Utils::moveConstruct(nPtr, MoveSlice{m_pointer + fCount, m_count - fCount});
             }
             Utils::deallocate(SliceOf{m_pointer, m_capacity});
             m_pointer = newStorage.begin();
@@ -90,7 +120,7 @@ public:
             return true;
         }
         if (it != end()) {
-            memmove(it + 1, it, static_cast<size_t>(end() - it));
+            Utils::moveAssignReverse(it + 1, MoveSlice{it, static_cast<size_t>(end() - it)});
         }
         *it = v;
         m_count++;
@@ -100,117 +130,39 @@ public:
     /// removes a single element from the set
     /// preconditions:
     /// * cIt has to point between begin() and before end()
-    void remove(ConstIterator cIt) {
+    constexpr void remove(ConstIterator cIt) {
         auto it = const_cast<Iterator>(cIt);
         if (it + 1 != end()) {
-            memmove(it, it + 1, static_cast<size_t>(end() - it - 1));
+            Utils::moveAssignForward(it, MoveSlice{it + 1, static_cast<size_t>(end() - it)});
         }
         m_count--;
     }
 
     /// adds multiple elements to the set if they are not already present
-    /// note:
-    /// * assumes that enough capacity for inserting all elements is required
-    void merge(Slice elems) {
+    /// preconditions:
+    /// * assumes that elems are unique and ordered
+    constexpr void merge(Slice elems) {
         if (elems.isEmpty()) return;
-        auto less = Less{};
+        if (isEmpty()) {
+            *this = OrderedSetOf{elems};
+            return;
+        }
         auto nCount = elems.count();
-        if (unusedCapacity() < nCount) { // merge into new storage
+        if (unusedCapacity() < nCount) {
             auto newStorage = grownStorage(nCount);
-            auto dPtr = newStorage.begin();
-            auto nPtr = elems.begin();
-            auto nEnd = elems.end();
-            if (isEmpty()) {
-                memcpy(dPtr, nPtr, nCount);
-                Utils::deallocate(SliceOf{m_pointer, m_capacity});
-                m_pointer = newStorage.begin();
-                m_capacity = newStorage.count();
-                m_count = nCount;
-                return;
-            }
-            auto n = *nPtr;
-            auto oPtr = begin();
-            auto o = *oPtr;
-            auto oEnd = end();
-            while (true) {
-                if (less(n, o)) {
-                    *dPtr++ = n;
-                    nPtr++;
-                    if (nPtr == nEnd) {
-                        memcpy(dPtr, oPtr, oEnd - oPtr);
-                        break;
-                    }
-                    n = *nPtr;
-                }
-                else {
-                    *dPtr++ = o;
-                    oPtr++;
-                    if (!less(o, n)) {
-                        nPtr++;
-                        if (nPtr == nEnd) {
-                            if (oPtr != oEnd) memcpy(dPtr, oPtr, oEnd - oPtr);
-                            break;
-                        }
-                        n = *nPtr;
-                    }
-                    if (oPtr == oEnd) {
-                        memcpy(dPtr, nPtr, nEnd - nPtr);
-                        break;
-                    }
-                    o = *oPtr;
-                }
-            }
+            auto ptr = mergeInto(newStorage, elems);
             Utils::deallocate(SliceOf{m_pointer, m_capacity});
             m_pointer = newStorage.begin();
             m_capacity = newStorage.count();
-            m_count += nCount;
-            return;
+            m_count = static_cast<size_t>(ptr - m_pointer);
         }
-        if (isEmpty()) {
-            memcpy(m_pointer, elems.begin(), nCount);
-            m_count = nCount;
-            return;
+        else {
+            m_count = mergeBackwards(elems);
         }
-        auto oBegin = m_pointer;
-        auto oIt = oBegin + m_count - 1;
-        auto o = *oIt;
-        auto nBegin = elems.begin();
-        auto nIt = nBegin + nCount - 1;
-        auto n = *nIt;
-        auto dIt = oBegin + m_count + nCount - 1;
-
-        while (true) {
-            if (less(o, n)) {
-                *dIt-- = n;
-                nIt--;
-                if (nIt == nBegin) {
-                    // remaining old values are in place
-                    break;
-                }
-            }
-            else {
-                *dIt-- = o;
-                oIt--;
-                if (!less(n, o)) {
-                    nIt--;
-                    if (nIt == nBegin) {
-                        // remaining old values are in place
-                        break;
-                    }
-                    n = *nIt;
-                }
-                if (oIt == oBegin) {
-                    memcpy(oBegin, nBegin, nIt - nBegin);
-                    break;
-                }
-                o = *oIt;
-            }
-        }
-        m_count += nCount;
     }
 
 private:
-    [[nodiscard]] auto grownStorage(size_t growBy) const -> AmendableSlice {
+    [[nodiscard]] constexpr auto grownStorage(size_t growBy) const -> AmendableSlice {
         auto cur = m_capacity;
         auto res = (cur << 1) - (cur >> 1) + (cur >> 4); // * 1.563
         if (res < 5) res = 5;
@@ -218,18 +170,102 @@ private:
         auto ptr = Utils::allocate(res);
         return AmendableSlice{ptr, res};
     }
-    void growBy(size_t by) {
+    constexpr void growBy(size_t by) {
         auto newStorage = grownStorage(by);
-        memcpy(newStorage.begin(), m_pointer, m_count);
+        Utils::moveConstruct(newStorage.begin(), MoveSlice{m_pointer, m_count});
         Utils::deallocate(SliceOf{m_pointer, m_capacity});
         m_pointer = newStorage.begin();
         m_capacity = newStorage.count();
+    }
+    constexpr auto mergeInto(AmendableSlice storage, Slice elems) -> T* {
+        auto less = Less{};
+        auto dPtr = storage.begin();
+        auto nPtr = elems.begin();
+        auto const nEnd = elems.end();
+        auto n = *nPtr;
+        auto oPtr = begin();
+        auto o = *oPtr;
+        auto const oEnd = end();
+        while (true) {
+            if (less(n, o)) {
+                *dPtr++ = n;
+                nPtr++;
+                if (nPtr == nEnd) {
+                    auto r = static_cast<size_t>(oEnd - oPtr);
+                    Utils::copyAssign(dPtr, UnorderedSlice{oPtr, r});
+                    return dPtr + r;
+                }
+                n = *nPtr;
+            }
+            else {
+                if (less(o, n)) {
+                    *dPtr++ = o;
+                }
+                oPtr++;
+                if (oPtr == oEnd) {
+                    auto r = static_cast<size_t>(nEnd - nPtr);
+                    Utils::copyAssign(dPtr, UnorderedSlice{nPtr, r});
+                    return dPtr + r;
+                }
+                o = *oPtr;
+            }
+        }
+    }
+    constexpr auto mergeBackwards(Slice elems) -> size_t {
+        auto less = Less{};
+        auto const oBegin = m_pointer;
+        auto const oCount = m_count;
+        auto const nBegin = elems.begin();
+        auto const nCount = elems.count();
+        auto oIt = oBegin + oCount - 1;
+        auto nIt = nBegin + nCount - 1;
+        auto dCount = oCount + nCount;
+        auto dIt = oBegin + dCount - 1;
+
+        auto o = *oIt;
+        auto n = *nIt;
+        while (true) {
+            if (less(o, n)) {
+                *dIt-- = n;
+                if (nIt == nBegin) {
+                    dIt++;
+                    oIt++;
+                    if (oIt != dIt) { // move by skipped elements
+                        dCount -= (dIt - oIt);
+                        Utils::moveAssignForward(oIt, MoveSlice{dIt, static_cast<size_t>(dCount - (oIt - oBegin))});
+                    }
+                    // remaining old values are in place
+                    return dCount;
+                }
+                nIt--;
+                n = *nIt;
+            }
+            else {
+                if (less(n, o)) {
+                    *dIt-- = o;
+                }
+                if (oIt == oBegin) {
+                    auto const remaining = static_cast<size_t>(nIt + 1 - nBegin);
+                    Utils::copyAssign(oBegin, UnorderedSlice{nBegin, remaining});
+                    dIt++;
+                    if (oBegin + remaining != dIt) { // move by skipped elements
+                        dCount -= (dIt - (oBegin + remaining));
+                        Utils::moveAssignForward(
+                            oBegin + remaining,
+                            MoveSlice{dIt, static_cast<size_t>(dCount - remaining)});
+                    }
+                    return dCount;
+                }
+                oIt--;
+                o = *oIt;
+            }
+        }
     }
 };
 
 /// deduce OrderedSliceOf from OrderedSetOf
 /// usage:
-///     auto a = OrderedSetOf{1,2,3;
+///     auto a = OrderedSetOf{1,2,3};
 ///     auto slice = OrderedSliceOf{a};
 template<class T, class L> OrderedSliceOf(const OrderedSetOf<T, L>&) -> OrderedSliceOf<const T, L>;
 
