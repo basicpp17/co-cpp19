@@ -86,8 +86,12 @@ template<HasMetaEnum Enum> struct FlagsOf {
         m_value ^= ((1U << static_cast<UnderlyingBit>(args)) | ...);
     }
 
-    constexpr auto operator|(FlagsOf const& other) const -> FlagsOf { return FlagsOf{m_value | other.m_value}; }
-    constexpr auto operator&(FlagsOf const& other) const -> FlagsOf { return FlagsOf{m_value & other.m_value}; }
+    constexpr auto operator|(FlagsOf const& other) const -> FlagsOf {
+        return FlagsOf{static_cast<Value>(m_value | other.m_value)};
+    }
+    constexpr auto operator&(FlagsOf const& other) const -> FlagsOf {
+        return FlagsOf{static_cast<Value>(m_value & other.m_value)};
+    }
     constexpr auto operator|=(FlagsOf const& other) -> FlagsOf& { return m_value |= other.m_value, *this; }
     constexpr auto operator&=(FlagsOf const& other) -> FlagsOf& { return m_value &= other.m_value, *this; }
 
