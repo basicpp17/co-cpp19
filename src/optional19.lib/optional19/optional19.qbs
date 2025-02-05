@@ -5,7 +5,7 @@ Product {
 
     Export {
         Depends { name: "cpp" }
-        cpp.includePaths: [".."]
+        cpp.includePaths: [exportingProduct.sourceDirectory + "/.."]
         Depends { name: "meta19" }
     }
 
