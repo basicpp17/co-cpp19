@@ -20,6 +20,8 @@ template<class T, class Less = std::less<>> struct DynamicSortedSet {
         return b != e;
     }
 
+    operator SliceOf<T const>() const { return SliceOf{begin(), count()}; }
+
     void add(T const& v) {
         auto [b, e] = std::equal_range(m.amendBegin(), m.amendEnd(), v, Less{});
         if (b == e) {
