@@ -21,7 +21,7 @@ jobs:
           - image: arbmind/qbs-gcc:2.1.2-13
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Get Googletest
         run: third_party/git_clone_googletest.sh
@@ -37,7 +37,7 @@ jobs:
           -p autotest-runner
 
       - name: Test Report
-        uses: dorny/test-reporter@v1
+        uses: dorny/test-reporter@v2
         if: success() || failure()
         with:
           name: ${{ matrix.image }} Tests
@@ -69,7 +69,7 @@ jobs:
         run: |
           qbs setup-toolchains --type msvc $(cmd /c '"${{ matrix.vcvars }}" >nul & where cl') msvc
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Get Googletest
         run: third_party/git_clone_googletest.sh
@@ -84,7 +84,7 @@ jobs:
           -p autotest-runner
 
       - name: Test Report
-        uses: dorny/test-reporter@v1
+        uses: dorny/test-reporter@v2
         if: success() || failure()
         with:
           name: ${{ matrix.os }} Tests
