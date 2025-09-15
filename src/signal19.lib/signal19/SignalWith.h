@@ -88,9 +88,8 @@ private:
 
     /// Type Erasure for CallbackCancellation
     struct StoredCancellation {
-        using Storage =
-            std::aligned_storage_t<sizeof(SignalCancellation) + 2 * sizeof(void*), alignof(SignalCancellation)>;
-        Storage storage; // fixed size storage
+        using Storage = uint8_t[sizeof(SignalCancellation) + 2 * sizeof(void*)];
+        alignas(SignalCancellation) Storage storage; // fixed size storage
 
         template<class Cb> explicit StoredCancellation(SignalWith& signal, Cb&& cb) {
             using Clean = std::remove_const_t<std::remove_reference_t<Cb>>;

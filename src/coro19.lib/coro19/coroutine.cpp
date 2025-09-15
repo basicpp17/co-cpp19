@@ -1,7 +1,7 @@
 
 
 // requires C++ 17 __has_include
-#if __has_include(<yvals_core.h>)
+#if defined(_MSC_VER) && __has_include(<yvals_core.h>)
 #    include <yvals_core.h>
 #endif
 #if __has_include(<version>)

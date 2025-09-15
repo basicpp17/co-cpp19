@@ -32,7 +32,7 @@ Project {
 
         Export {
             Depends { name: "cpp" }
-            cpp.cxxLanguageVersion: "c++2a"
+            cpp.cxxLanguageVersion: "c++23"
             cpp.treatWarningsAsErrors: true
 
             Properties {

@@ -16,7 +16,7 @@
 #pragma once
 
 // requires C++ 17 __has_include
-#if __has_include(<yvals_core.h>)
+#if defined(_MSC_VER) && __has_include(<yvals_core.h>)
 #    include <yvals_core.h>
 #endif
 #if __has_include(<version>)
@@ -300,8 +300,7 @@ template<typename _PromiseT> struct hash<coroutine_handle<_PromiseT>> {
     using result_type = size_t;
 
     [[nodiscard]] //
-    result_type
-        operator()(argument_type const& _Handle) const noexcept {
+    result_type operator()(argument_type const& _Handle) const noexcept {
         return hash<void*>()(_Handle.address());
     }
 };

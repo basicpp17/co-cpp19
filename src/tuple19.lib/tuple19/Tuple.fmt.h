@@ -8,10 +8,10 @@ namespace tuple19 {
 
 /// use values of the tuple as format arguments
 /// note: you still have to craft the proper format string!
-/// usage: vformat(formatStr, tuple19::make_format_args(argsTuple));
-template<class... Ts> constexpr auto make_format_args(Tuple<Ts...> const& args) {
+/// usage: vformat(formatStr, tuple19::vargs(argsTuple));
+template<class... Ts> constexpr auto vargs(Tuple<Ts...> const& args) {
     return [&]<size_t... Is>(std::index_sequence<Is...> const&) {
-        return fmt::make_format_args(args.template at<Is>()...);
+        return fmt::vargs<Ts...>{{args.template at<Is>()...}};
     }(std::make_index_sequence<sizeof...(Ts)>{});
 }
 
