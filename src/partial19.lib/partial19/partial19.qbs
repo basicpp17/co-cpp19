@@ -11,8 +11,10 @@ Product {
     files: [
         "Bitset.h",
         "Partial.equals.h",
+        "Partial.fmt.h",
         "Partial.h",
         "Partial.ostream.h",
+        "PartialWhich.fmt.h",
         "align.h",
     ]
 }

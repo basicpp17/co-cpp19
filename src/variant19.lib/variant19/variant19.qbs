@@ -9,10 +9,13 @@ Product {
     }
 
     files: [
+        "None.fmt.h",
         "None.h",
         "None.ostream.h",
         "Variant.equals.h",
+        "Variant.fmt.h",
         "Variant.h",
         "Variant.ostream.h",
+        "VariantWhich.fmt.h",
     ]
 }
