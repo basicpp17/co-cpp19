@@ -8,5 +8,4 @@ RUN \
     git \
     gdb \
     linux-headers \
-    py3-pip \
-  && pip install conan
+    py3-pip
