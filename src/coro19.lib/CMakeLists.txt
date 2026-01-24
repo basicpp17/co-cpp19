@@ -1,3 +1,6 @@
 
 include(coro19/coro19.cmake)
-include(coro19/coro19.tests.cmake)
+
+if(COCPP_BuildTests)
+    include(coro19/coro19.tests.cmake)
+endif()

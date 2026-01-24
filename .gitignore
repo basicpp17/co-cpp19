@@ -12,3 +12,4 @@ third_party/*/
 build/
 artifacts/
 CMakeUserPresets.json
+.qtcreator

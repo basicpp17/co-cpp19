@@ -1,3 +1,6 @@
 
 include(meta19/meta19.cmake)
-include(meta19/meta19.tests.cmake)
+
+if(COCPP_BuildTests)
+    include(meta19/meta19.tests.cmake)
+endif()

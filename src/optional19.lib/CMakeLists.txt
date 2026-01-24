@@ -1,3 +1,6 @@
 
 include(optional19/optional19.cmake)
-include(optional19/optional19.tests.cmake)
+
+if(COCPP_BuildTests)
+    include(optional19/optional19.tests.cmake)
+endif()

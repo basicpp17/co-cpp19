@@ -1,3 +1,6 @@
 
 include(flags19/flags19.cmake)
-include(flags19/flags19.tests.cmake)
+
+if(COCPP_BuildTests)
+    include(flags19/flags19.tests.cmake)
+endif()
