@@ -3,37 +3,27 @@ import qbs
 Project {
     name: "Co-Cpp19"
 
-    // to use libc++ set
-    // modules.cpp.cxxStandardLibrary:libc++ modules.cpp.staticLibraries:c++,c++abi
+    property string version: "2026.01"
+    property string configProductName: "Co-Cpp19-Config"
+    property bool enableQbsImports: (sourceDirectory === path)
+    property bool enableTests: (sourceDirectory === path)
+    property bool enableThirdParty: (sourceDirectory === path)
 
-    references: [
-        "third_party/third_party.qbs",
-        "src/array19.lib",
-        "src/coro19.lib",
-        "src/enum19.lib",
-        "src/flags19.lib",
-        "src/meta19.lib",
-        "src/lookup19.lib",
-        "src/optional19.lib",
-        "src/partial19.lib",
-        "src/serialize19.lib",
-        "src/signal19.lib",
-        "src/string19.lib",
-        "src/strong19.lib",
-        "src/tuple19.lib",
-        "src/variant19.lib",
-    ]
-
-    AutotestRunner {}
+    minimumQbsVersion: "3.0"
+    qbsSearchPaths: enableQbsImports ? ["qbs"] : []
+    references: ["src/src.qbs"]
 
     // note: if do not use this .qbs project you need a similar setup
     Product {
-        name: "cpp19"
+        name: "Co-Cpp19-Config"
+        condition: parent.configProductName === "Co-Cpp19-Config"
 
         Export {
-            Depends { name: "cpp" }
             cpp.cxxLanguageVersion: "c++23"
             cpp.treatWarningsAsErrors: true
+            // to use libc++ set
+            // modules.cpp.cxxStandardLibrary:libc++
+            // modules.cpp.staticLibraries:c++,c++abi
 
             Properties {
                 condition: qbs.toolchain.contains('msvc')
@@ -55,11 +45,19 @@ Project {
                     "-Wno-gnu-zero-variadic-macro-arguments" // accept this extensions for opaque strong types
                 )
             }
+            Depends { name: "cpp" }
         }
     }
-
+    SubProject {
+        condition: parent.enableTests
+        filePath: "src/tests.qbs"
+    }
+    SubProject {
+        condition: parent.enableThirdParty
+        filePath: "third_party/third_party.qbs"
+    }
     Product {
-        name: "_Extra Files_"
+        name: "[CoCpp19 Extra Files]"
         files: [
             ".clang-format",
             ".clang-tidy",

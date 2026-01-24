@@ -1,13 +1,6 @@
+import qbs.FileInfo
 
 Product {
-    Depends { name: "cpp19" }
-
-    Export {
-        Depends { name: "cpp" }
-        cpp.includePaths: exportingProduct.sourceDirectory + "/.."
-        Depends { name: "cpp19" }
-    }
-
     files: [
         "AllocatedArrayOf.equals.h",
         "AllocatedArrayOf.h",
@@ -33,4 +26,12 @@ Product {
         "Zip.h",
         "adlRange.h",
     ]
+
+    Export {
+        cpp.includePaths: FileInfo.joinPaths(exportingProduct.sourceDirectory, "..")
+
+        Depends { name: "cpp" }
+        Depends { name: project.configProductName }
+    }
+    Depends { name: project.configProductName }
 }

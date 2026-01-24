@@ -1,16 +1,13 @@
 
 Application {
     name: "coro19.tests"
-    condition: googletest.present
-
     consoleApplication: true
-    type: ["application", "autotest"]
-
-    Depends { name: "coro19" }
-    Depends { name: "googletest" }
-
+    type: base.concat(["autotest"])
     files: [
         "CoEnumerator.rang.test.cpp",
         "CoEnumerator.test.cpp",
     ]
+
+    Depends { name: "coro19" }
+    Depends { name: "googletest" }
 }

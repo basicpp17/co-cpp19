@@ -1,13 +1,10 @@
+import qbs.FileInfo
 
 Product {
-    Depends { name: "tuple19" }
-    Depends { name: "fmt"; required: false }
-
-    Export {
-        Depends { name: "cpp" }
-        cpp.includePaths: [exportingProduct.sourceDirectory + "/.."]
-        Depends { name: "tuple19" }
-    }
+    files: [
+        "ADL.h",
+        "DynamicString.h",
+    ]
 
     Group {
         name: "Rope"
@@ -43,8 +40,12 @@ Product {
             "StringView.store.h",
         ]
     }
-    files: [
-        "ADL.h",
-        "DynamicString.h",
-    ]
+    Export {
+        cpp.includePaths: FileInfo.joinPaths(exportingProduct.sourceDirectory, "..")
+
+        Depends { name: "cpp" }
+        Depends { name: "tuple19" }
+    }
+    Depends { name: "tuple19" }
+    Depends { name: "fmt"; required: false }
 }

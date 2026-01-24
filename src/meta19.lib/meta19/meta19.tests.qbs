@@ -1,14 +1,11 @@
 
 Application {
     name: "meta19.tests"
-
-    Depends { name: "meta19" }
-    // all tests are compile time only!
-
-    Depends { name: "cpp" }
-    // cpp.combineCxxSources: true
-
+    consoleApplication: true
     files: [
         "*.test.cpp",
     ]
+
+    Depends { name: "meta19" }
+    Depends { name: "cpp" } // note: all tests are compile time only!
 }

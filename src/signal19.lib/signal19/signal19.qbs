@@ -1,17 +1,18 @@
+import qbs.FileInfo
 
 Product {
-    Depends { name: "cpp" }
-    Depends { name: "meta19" }
-
-    Export {
-        Depends { name: "cpp" }
-        cpp.includePaths: [exportingProduct.sourceDirectory + "/.."]
-        Depends { name: "meta19" }
-    }
-
     files: [
         "SignalWith.h",
         "Subscription.h",
         "Subscriptions.h",
     ]
+
+    Export {
+        cpp.includePaths: FileInfo.joinPaths(exportingProduct.sourceDirectory, "..")
+
+        Depends { name: "cpp" }
+        Depends { name: "meta19" }
+    }
+    Depends { name: "cpp" }
+    Depends { name: "meta19" }
 }

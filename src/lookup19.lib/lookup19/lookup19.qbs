@@ -1,18 +1,16 @@
+import qbs.FileInfo
 
 Product {
-    Depends { name: "cpp19" }
-    Depends { name: "array19" }
-
-    Export {
-        Depends { name: "cpp" }
-        cpp.includePaths: [ exportingProduct.sourceDirectory + "/.." ]
-        Depends { name: "cpp19" }
-
-        Depends { name: "array19" }
-    }
-
     files: [
         "OrderedSetOf.h",
         "OrderedSliceOf.h",
     ]
+
+    Export {
+        cpp.includePaths: FileInfo.joinPaths(exportingProduct.sourceDirectory, "..")
+
+        Depends { name: "cpp" }
+        Depends { name: "array19" }
+    }
+    Depends { name: "array19" }
 }

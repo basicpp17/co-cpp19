@@ -1,15 +1,6 @@
+import qbs.FileInfo
 
 Product {
-    Depends { name: "cpp" }
-    Depends { name: "string19" }
-    Depends { name: "fmt"; required: false }
-
-    Export {
-        Depends { name: "cpp" }
-        cpp.includePaths: [exportingProduct.sourceDirectory + "/.."]
-        Depends { name: "string19" }
-    }
-
     files: [
         "ADL.h",
         "Enum.extras.ostream.h",
@@ -20,4 +11,14 @@ Product {
         "Enum.ostream.h",
         "visitEnumMemberNames.h",
     ]
+
+    Export {
+        cpp.includePaths: FileInfo.joinPaths(exportingProduct.sourceDirectory, "..")
+
+        Depends { name: "cpp" }
+        Depends { name: "string19" }
+    }
+    Depends { name: "cpp" }
+    Depends { name: "string19" }
+    Depends { name: "fmt"; required: false }
 }

@@ -1,22 +1,6 @@
+import qbs.FileInfo
 
 Product {
-    Depends { name: "string19" }
-    Depends { name: "fmt"; required: false }
-    Depends { name: "array19"; required: false }
-
-    Export {
-        Depends { name: "cpp" }
-        cpp.includePaths: [exportingProduct.sourceDirectory + "/.."]
-        Depends { name: "string19" }
-
-        Properties {
-            condition: qbs.toolchain.contains('clang')
-            cpp.cxxFlags: base.concat(
-                "-Wno-gnu-zero-variadic-macro-arguments" // accept this extensions for opaque strong types
-            )
-        }
-    }
-
     files: [
         "ADL.h",
         "Macro.h",
@@ -29,4 +13,20 @@ Product {
         "Strong.traits.h",
         "WeakOf.h",
     ]
+
+    Export {
+        cpp.includePaths: FileInfo.joinPaths(exportingProduct.sourceDirectory, "..")
+
+        Properties {
+            condition: qbs.toolchain.contains('clang')
+            cpp.cxxFlags: base.concat(
+                "-Wno-gnu-zero-variadic-macro-arguments" // accept this extensions for opaque strong types
+            )
+        }
+        Depends { name: "cpp" }
+        Depends { name: "string19" }
+    }
+    Depends { name: "string19" }
+    Depends { name: "fmt"; required: false }
+    Depends { name: "array19"; required: false }
 }

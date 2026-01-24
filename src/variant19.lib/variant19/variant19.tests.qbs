@@ -1,16 +1,13 @@
 
 Application {
     name: "variant19.tests"
-    condition: googletest.present
-
     consoleApplication: true
-    type: ["application", "autotest"]
-
-    Depends { name: "variant19" }
-    Depends { name: "googletest" }
-
+    type: base.concat(["autotest"])
     files: [
         "None.test.cpp",
         "Variant.test.cpp",
     ]
+
+    Depends { name: "variant19" }
+    Depends { name: "googletest" }
 }

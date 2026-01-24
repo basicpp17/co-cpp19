@@ -11,25 +11,27 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - image: arbmind/qbs-clang:1.21.0-14
+          - image: arbmind/qbs-clang:3.1.2-18
             build_args: "modules.cpp.cxxStandardLibrary:libc++ modules.cpp.staticLibraries:c++,c++abi"
-          - image: arbmind/qbs-clang:2.1.2-17
+          - image: arbmind/qbs-clang:3.1.2-21
             build_args: "modules.cpp.cxxStandardLibrary:libc++ modules.cpp.staticLibraries:c++,c++abi"
-          - image: arbmind/qbs-clang-libstdcpp:1.24.0-15-12
-          - image: arbmind/qbs-gcc:1.21.0-11
-          - image: arbmind/qbs-gcc:1.24.0-12
-          - image: arbmind/qbs-gcc:2.1.2-13
+          - image: arbmind/qbs-clang-libstdcpp:3.1.2-21-15
+          - image: arbmind/qbs-gcc:3.1.2-13
+          - image: arbmind/qbs-gcc:3.1.2-14
+          - image: arbmind/qbs-gcc:3.1.2-15
 
     steps:
       - uses: actions/checkout@v4
 
+      # we have no git in container fetch googletest before
       - name: Get Googletest
-        run: third_party/git_clone_googletest.sh
+        run: script/git_clone_googletest.sh
 
       - name: Build and run Tests
         run: >-
           docker run --rm -v ${GITHUB_WORKSPACE}:/project -w /project
           --env GTEST_OUTPUT=xml:/project/reports/qbs/
+          --env QBS_GOOGLETEST_SOURCE=/project/script/googletest
           ${{ matrix.image }}
           build
           --build-directory /tmp/build
@@ -70,10 +72,6 @@ jobs:
           qbs setup-toolchains --type msvc $(cmd /c '"${{ matrix.vcvars }}" >nul & where cl') msvc
 
       - uses: actions/checkout@v4
-
-      - name: Get Googletest
-        run: third_party/git_clone_googletest.sh
-        shell: bash
 
       - name: Build and run Tests
         env:

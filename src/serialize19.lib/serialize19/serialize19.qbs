@@ -1,19 +1,10 @@
+import qbs.FileInfo
 
 Product {
-    Depends { name: "cpp" }
-    Depends { name: "meta19" }
-
-    Depends { name: "optional19"; required: false }
-    Depends { name: "partial19"; required: false }
-    Depends { name: "strong19"; required: false }
-    Depends { name: "tuple19"; required: false }
-    Depends { name: "variant19"; required: false }
-
-    Export {
-        Depends { name: "cpp" }
-        cpp.includePaths: [exportingProduct.sourceDirectory + "/.."]
-        Depends { name: "meta19" }
-    }
+    files: [
+        "dynamicWrite.h",
+        "serialize.h",
+    ]
 
     Group {
         name: "Archive"
@@ -66,8 +57,17 @@ Product {
             "serialize.std_vector.h",
         ]
     }
-    files: [
-        "dynamicWrite.h",
-        "serialize.h",
-    ]
+    Export {
+        cpp.includePaths: FileInfo.joinPaths(exportingProduct.sourceDirectory, "..")
+
+        Depends { name: "cpp" }
+        Depends { name: "meta19" }
+    }
+    Depends { name: "cpp" }
+    Depends { name: "meta19" }
+    Depends { name: "optional19"; required: false }
+    Depends { name: "partial19"; required: false }
+    Depends { name: "strong19"; required: false }
+    Depends { name: "tuple19"; required: false }
+    Depends { name: "variant19"; required: false }
 }

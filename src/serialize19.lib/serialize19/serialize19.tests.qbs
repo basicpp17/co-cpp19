@@ -1,17 +1,12 @@
 
 Application {
     name: "serialize19.tests"
-    condition: googletest.present
-
     consoleApplication: true
-    type: ["application", "autotest"]
-
-    Depends { name: "googletest" }
-    Depends { name: "optional19" }
-    Depends { name: "partial19" }
-    Depends { name: "serialize19" }
-    Depends { name: "tuple19" }
-    Depends { name: "variant19" }
+    type: base.concat(["autotest"])
+    files: [
+        "Codec.test.cpp",
+        "Endianness.test.cpp",
+    ]
 
     Group {
         name: "std"
@@ -35,8 +30,10 @@ Application {
             "serialize.Variant.test.cpp",
         ]
     }
-    files: [
-        "Codec.test.cpp",
-        "Endianness.test.cpp",
-    ]
+    Depends { name: "googletest" }
+    Depends { name: "optional19" }
+    Depends { name: "partial19" }
+    Depends { name: "serialize19" }
+    Depends { name: "tuple19" }
+    Depends { name: "variant19" }
 }

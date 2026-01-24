@@ -1,13 +1,6 @@
+import qbs.FileInfo
 
 Product {
-    Depends { name: "meta19" }
-
-    Export {
-        Depends { name: "cpp" }
-        cpp.includePaths: [exportingProduct.sourceDirectory + "/.."]
-        Depends { name: "meta19" }
-    }
-
     files: [
         "Bitset.h",
         "Partial.equals.h",
@@ -17,4 +10,12 @@ Product {
         "PartialWhich.fmt.h",
         "align.h",
     ]
+
+    Export {
+        cpp.includePaths: FileInfo.joinPaths(exportingProduct.sourceDirectory, "..")
+
+        Depends { name: "cpp" }
+        Depends { name: "meta19" }
+    }
+    Depends { name: "meta19" }
 }
