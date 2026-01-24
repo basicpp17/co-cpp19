@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <utility>
+#include <cstdint>
 
 namespace signal19 {
 
