@@ -1,11 +1,12 @@
-FROM mcr.microsoft.com/devcontainers/base:alpine-3.20
+FROM mcr.microsoft.com/devcontainers/base:dev-alpine3.23
 
 RUN \
   apk add --update --no-cache \
-    clang17 \
+    clang21 \
     libc++-dev \
     cmake \
     ninja \
+    qbs \
     git \
     gdb \
     linux-headers \
@@ -25,5 +26,6 @@ RUN \
   && echo "end" >>/home/vscode/.gdbinit
 
 ENV \
-  CC=/usr/bin/clang \
-  CXX=/usr/bin/clang++
+  PATH="/usr/lib/llvm21/bin:${PATH}" \
+  CC=/usr/bin/clang-21 \
+  CXX=/usr/bin/clang++-21
